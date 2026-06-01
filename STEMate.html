@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEMate — Talaba Mentorlik Platformasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Fraunces:ital,wght@0,400;0,600;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ROOT
+============================================================ */
+:root{
+  --blue:#2563EB;--blue-l:#3B82F6;--blue-d:#1D4ED8;
+  --blue-50:#EFF6FF;--blue-100:#DBEAFE;--blue-200:#BFDBFE;
+  --green:#10B981;--green-50:#ECFDF5;
+  --red:#EF4444;--red-50:#FEF2F2;
+  --amber:#F59E0B;--amber-50:#FFFBEB;
+  --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;
+  --gray-300:#D1D5DB;--gray-400:#9CA3AF;--gray-500:#6B7280;
+  --gray-600:#4B5563;--gray-700:#374151;--gray-800:#1F2937;--gray-900:#111827;
+  --white:#FFFFFF;--text:#1F2937;--text2:#6B7280;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05);
+  --shadow-lg:0 20px 48px rgba(0,0,0,.12),0 8px 20px rgba(0,0,0,.06);
+  --shadow-blue:0 8px 32px rgba(37,99,235,.22);
+  --r:12px;--r-lg:18px;--r-xl:24px;--r-2xl:32px;
+  --f-display:'Fraunces',Georgia,serif;
+  --f-body:'Plus Jakarta Sans',system-ui,sans-serif;
+  --nav-h:68px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--f-body);color:var(--text);background:var(--white);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font-family:var(--f-body);cursor:pointer}
+img{max-width:100%}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--gray-100)}
+::-webkit-scrollbar-thumb{background:var(--gray-300);border-radius:3px}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@keyframes pulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes countUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes wiggle{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes gradient-x{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+
+/* ============================================================
+   PAGES SYSTEM
+============================================================ */
+.page{display:none;min-height:100vh}
+.page.active{display:block;animation:fadeIn .3s ease}
+
+/* ============================================================
+   NAVBAR
+============================================================ */
+.navbar{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--gray-200);z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(16px,4vw,56px);transition:box-shadow .3s}
+.navbar.scrolled{box-shadow:var(--shadow)}
+.nav-brand{display:flex;align-items:center;gap:11px;cursor:pointer}
+.nav-logo{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--blue),var(--blue-l));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;letter-spacing:-.5px;box-shadow:var(--shadow-blue)}
+.nav-title{font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--gray-900);letter-spacing:-.3px}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-link{padding:8px 15px;border-radius:var(--r);font-size:14px;font-weight:500;color:var(--gray-600);transition:all .2s;cursor:pointer;border:none;background:none}
+.nav-link:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-link.active{color:var(--blue);background:var(--blue-50)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 22px;border-radius:var(--r);font-size:14px;font-weight:600;border:none;cursor:pointer;transition:all .22s;white-space:nowrap;line-height:1.4}
+.btn-outline{background:transparent;color:var(--blue);border:1.5px solid var(--blue-200)}
+.btn-outline:hover{background:var(--blue-50);border-color:var(--blue)}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:var(--shadow-blue)}
+.btn-primary:hover{background:var(--blue-d);transform:translateY(-1px);box-shadow:0 10px 28px rgba(37,99,235,.3)}
+.btn-ghost{background:transparent;color:var(--gray-600);border:1.5px solid var(--gray-200)}
+.btn-ghost:hover{border-color:var(--gray-300);background:var(--gray-50);color:var(--gray-800)}
+.btn-green{background:var(--green);color:#fff}
+.btn-green:hover{background:#059669;transform:translateY(-1px)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#DC2626}
+.btn-sm{padding:7px 16px;font-size:13px}
+.btn-lg{padding:14px 32px;font-size:16px;border-radius:var(--r-lg)}
+.mob-menu{display:none;background:none;border:none;font-size:22px;padding:4px;cursor:pointer;color:var(--gray-700)}
+
+/* ============================================================
+   HOME PAGE
+============================================================ */
+/* Hero */
+.hero{padding:calc(var(--nav-h) + 60px) clamp(16px,5vw,80px) 80px;background:linear-gradient(160deg,#F0F7FF 0%,#ffffff 55%,#F0FFF8 100%);position:relative;overflow:hidden;min-height:90vh;display:flex;align-items:center}
+.hero::before{content:'';position:absolute;top:-200px;right:-300px;width:800px;height:800px;background:radial-gradient(circle,rgba(37,99,235,.07) 0%,transparent 65%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-200px;left:-200px;width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,.06) 0%,transparent 65%);pointer-events:none}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 480px;gap:60px;align-items:center;width:100%;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--blue-50);border:1px solid var(--blue-200);color:var(--blue);font-size:13px;font-weight:600;padding:7px 14px;border-radius:100px;margin-bottom:22px;animation:fadeUp .6s ease}
+.badge-dot{width:7px;height:7px;background:var(--blue);border-radius:50%;animation:pulse2 2s infinite}
+.hero-title{font-family:var(--f-display);font-size:clamp(36px,5vw,62px);font-weight:900;line-height:1.08;letter-spacing:-2px;color:var(--gray-900);margin-bottom:20px;animation:fadeUp .6s .1s ease both}
+.hero-title span{color:var(--blue);font-style:italic}
+.hero-title .line2{display:block}
+.hero-desc{font-size:17px;color:var(--gray-600);line-height:1.7;max-width:500px;margin-bottom:36px;animation:fadeUp .6s .2s ease both;font-weight:400}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;animation:fadeUp .6s .3s ease both}
+.hero-stats{display:flex;gap:28px;margin-top:44px;animation:fadeUp .6s .4s ease both;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat-n{font-family:var(--f-display);font-size:28px;font-weight:700;color:var(--gray-900);line-height:1}
+.hero-stat-l{font-size:13px;color:var(--gray-500);margin-top:3px}
+.hero-stat-sep{width:1px;background:var(--gray-200);align-self:stretch}
+.hero-visual{position:relative;animation:fadeUp .7s .2s ease both}
+.hero-card{background:#fff;border-radius:var(--r-xl);padding:22px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-100)}
+.hero-card-top{display:flex;align-items:center;gap:13px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--gray-100)}
+.mentor-av{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#2563EB,#7C3AED);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px;flex-shrink:0}
+.mentor-av.green{background:linear-gradient(135deg,#059669,#10B981)}
+.mentor-av.orange{background:linear-gradient(135deg,#D97706,#F59E0B)}
+.mentor-av.red{background:linear-gradient(135deg,#DC2626,#EF4444)}
+.m-name{font-weight:700;font-size:15px;color:var(--gray-900);margin-bottom:3px}
+.m-sub{font-size:12px;color:var(--gray-500)}
+.rating-row{display:flex;align-items:center;gap:4px;margin-top:4px}
+.star{color:#F59E0B;font-size:12px}
+.rating-n{font-size:12px;font-weight:600;color:var(--gray-700)}
+.skill-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.skill-bar{display:flex;flex-direction:column;gap:5px}
+.skill-label{display:flex;justify-content:space-between;font-size:12px;color:var(--gray-600);font-weight:500}
+.skill-track{height:6px;background:var(--gray-100);border-radius:3px;overflow:hidden}
+.skill-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--blue-l))}
+.skill-fill.green{background:linear-gradient(90deg,var(--green),#34D399)}
+.hero-card-btn{width:100%;padding:11px;background:var(--blue-50);color:var(--blue);font-weight:700;font-size:14px;border-radius:var(--r);border:1.5px solid var(--blue-200);transition:all .2s}
+.hero-card-btn:hover{background:var(--blue);color:#fff}
+.floating-badge{position:absolute;background:#fff;border-radius:var(--r-lg);padding:13px 18px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-100);animation:float 4s ease-in-out infinite}
+.fb-1{top:-28px;right:-28px;animation-delay:.5s}
+.fb-2{bottom:-20px;left:-24px;animation-delay:1.5s}
+.fb-icon{font-size:22px;margin-bottom:4px}
+.fb-txt{font-size:12px;font-weight:700;color:var(--gray-900)}
+.fb-sub{font-size:11px;color:var(--gray-500)}
+
+/* Stats section */
+.stats-section{background:var(--gray-900);padding:56px clamp(16px,5vw,80px)}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.stat-block{text-align:center;padding:32px 20px;position:relative}
+.stat-block+.stat-block::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:rgba(255,255,255,.1)}
+.stat-n{font-family:var(--f-display);font-size:44px;font-weight:900;color:#fff;line-height:1}
+.stat-l{font-size:14px;color:rgba(255,255,255,.55);margin-top:8px;font-weight:400}
+.stat-acc{color:var(--blue-l)}
+.stat-acc2{color:var(--green)}
+
+/* Subjects */
+.subjects-section{padding:80px clamp(16px,5vw,80px);background:var(--gray-50)}
+.section-header{text-align:center;max-width:580px;margin:0 auto 52px}
+.section-tag{display:inline-flex;align-items:center;gap:6px;background:var(--blue-50);color:var(--blue);font-size:12px;font-weight:700;padding:5px 12px;border-radius:100px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:14px}
+.section-title{font-family:var(--f-display);font-size:clamp(28px,4vw,42px);font-weight:800;color:var(--gray-900);letter-spacing:-1px;line-height:1.15;margin-bottom:14px}
+.section-desc{font-size:16px;color:var(--gray-500);line-height:1.7}
+.subjects-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
+.subject-card{background:#fff;border-radius:var(--r-lg);padding:24px 20px;text-align:center;border:1.5px solid var(--gray-200);cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.subject-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sc,var(--blue));transform:scaleX(0);transition:transform .25s}
+.subject-card:hover{border-color:transparent;box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.subject-card:hover::before{transform:scaleX(1)}
+.subj-icon{font-size:36px;margin-bottom:12px;display:block}
+.subj-name{font-weight:700;font-size:14px;color:var(--gray-900);margin-bottom:5px}
+.subj-count{font-size:12px;color:var(--gray-500)}
+.subjects-more{text-align:center;margin-top:32px}
+
+/* Top mentors */
+.mentors-section{padding:80px clamp(16px,5vw,80px);background:#fff}
+.mentors-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:22px}
+.mentor-card{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:24px;transition:all .25s;cursor:pointer}
+.mentor-card:hover{background:#fff;border-color:var(--blue-200);box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.mc-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.mc-av{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:20px;flex-shrink:0}
+.mc-info{flex:1}
+.mc-name{font-weight:700;font-size:16px;color:var(--gray-900);margin-bottom:3px}
+.mc-role{font-size:12px;color:var(--gray-500);margin-bottom:5px}
+.rank-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:11px;font-weight:700}
+.rank-1{background:#FFF9EB;color:#92400E;border:1px solid #FDE68A}
+.rank-2{background:#F0F4F9;color:#374151;border:1px solid #D1D5DB}
+.rank-3{background:#FFF4EC;color:#9A3412;border:1px solid #FED7AA}
+.mc-body{border-top:1px solid var(--gray-200);padding-top:16px}
+.mc-subjects{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.subject-tag{background:var(--blue-50);color:var(--blue);font-size:11px;font-weight:600;padding:4px 10px;border-radius:100px;border:1px solid var(--blue-100)}
+.mc-footer{display:flex;align-items:center;justify-content:space-between}
+.mc-rating{display:flex;align-items:center;gap:5px}
+.mc-students{font-size:12px;color:var(--gray-500)}
+.mc-btn{padding:8px 18px;font-size:13px;font-weight:600;background:var(--blue);color:#fff;border:none;border-radius:var(--r);cursor:pointer;transition:all .2s}
+.mc-btn:hover{background:var(--blue-d)}
+
+/* How it works */
+.how-section{padding:80px clamp(16px,5vw,80px);background:linear-gradient(160deg,var(--gray-50) 0%,var(--blue-50) 100%)}
+.how-steps{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:32px;position:relative}
+.how-steps::before{content:'';position:absolute;top:38px;left:16.6%;right:16.6%;height:2px;background:linear-gradient(90deg,var(--blue-200),var(--blue-200));z-index:0}
+.how-step{text-align:center;position:relative;z-index:1}
+.step-num{width:72px;height:72px;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--f-display);font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:var(--shadow-blue);position:relative}
+.step-num::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--blue-200)}
+.step-icon{font-size:28px;position:absolute}
+.step-title{font-weight:700;font-size:17px;color:var(--gray-900);margin-bottom:8px;font-family:var(--f-display)}
+.step-desc{font-size:14px;color:var(--gray-500);line-height:1.6}
+
+/* Testimonials */
+.testi-section{padding:80px clamp(16px,5vw,80px);background:#fff}
+.testi-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.testi-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--r-xl);padding:26px;position:relative}
+.testi-card::before{content:'"';font-family:var(--f-display);font-size:80px;line-height:.8;color:var(--blue-200);position:absolute;top:18px;left:22px}
+.testi-text{font-size:15px;color:var(--gray-700);line-height:1.7;padding-top:36px;margin-bottom:18px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-av{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--blue-l));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:14px;flex-shrink:0}
+.testi-name{font-weight:700;font-size:14px;color:var(--gray-900)}
+.testi-role{font-size:12px;color:var(--gray-500)}
+
+/* Footer */
+.footer{background:var(--gray-900);color:#fff;padding:60px clamp(16px,5vw,80px) 28px}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:48px;margin-bottom:44px}
+.footer-brand{font-family:var(--f-display);font-size:24px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.footer-desc{font-size:14px;color:rgba(255,255,255,.5);line-height:1.7;max-width:260px}
+.footer-col-title{font-weight:700;font-size:14px;margin-bottom:16px;color:rgba(255,255,255,.9);letter-spacing:.3px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-link{font-size:14px;color:rgba(255,255,255,.5);cursor:pointer;transition:color .2s}
+.footer-link:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:gap}
+.footer-copy{font-size:13px;color:rgba(255,255,255,.35)}
+.footer-socials{display:flex;gap:10px}
+.social-btn{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;transition:all .2s}
+.social-btn:hover{background:var(--blue);border-color:var(--blue)}
+
+/* ============================================================
+   AUTH PAGES
+============================================================ */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:calc(var(--nav-h) + 20px) 16px 40px;background:linear-gradient(160deg,#F0F7FF 0%,#fff 50%)}
+.auth-card{background:#fff;border-radius:var(--r-2xl);padding:40px;width:100%;max-width:460px;box-shadow:var(--shadow-lg);border:1px solid var(--gray-100);animation:scaleIn .35s ease}
+.auth-logo{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:28px}
+.auth-title{font-family:var(--f-display);font-size:28px;font-weight:800;text-align:center;color:var(--gray-900);margin-bottom:7px;letter-spacing:-.5px}
+.auth-sub{font-size:14px;color:var(--gray-500);text-align:center;margin-bottom:28px;line-height:1.6}
+.form-group{margin-bottom:18px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:7px;letter-spacing:.2px}
+.form-input{width:100%;padding:12px 15px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-size:15px;font-family:var(--f-body);outline:none;transition:all .2s;background:var(--gray-50);color:var(--gray-900)}
+.form-input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.form-input::placeholder{color:var(--gray-400)}
+.form-select{width:100%;padding:12px 15px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-size:14px;font-family:var(--f-body);outline:none;cursor:pointer;background:var(--gray-50);color:var(--gray-900);transition:all .2s}
+.form-select:focus{border-color:var(--blue)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.auth-btn{width:100%;padding:13px;font-size:15px;font-weight:700;margin-top:6px}
+.auth-link{text-align:center;margin-top:20px;font-size:14px;color:var(--gray-500)}
+.auth-link a{color:var(--blue);font-weight:600;cursor:pointer}
+.auth-link a:hover{text-decoration:underline}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--gray-400);font-size:13px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+.role-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px}
+.role-tab{padding:12px;border-radius:var(--r);border:2px solid var(--gray-200);background:var(--gray-50);font-size:14px;font-weight:600;color:var(--gray-600);cursor:pointer;text-align:center;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.role-tab:hover{border-color:var(--blue-200);background:var(--blue-50);color:var(--blue)}
+.role-tab.active{border-color:var(--blue);background:var(--blue-50);color:var(--blue)}
+
+/* ============================================================
+   DASHBOARD LAYOUT
+============================================================ */
+.dash-layout{display:flex;min-height:100vh;padding-top:var(--nav-h)}
+.dash-sidebar{width:248px;background:#fff;border-right:1px solid var(--gray-200);min-height:calc(100vh - var(--nav-h));position:sticky;top:var(--nav-h);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-user{padding:20px 18px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:12px}
+.sidebar-av{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:17px;flex-shrink:0}
+.sidebar-name{font-weight:700;font-size:14px;color:var(--gray-900);margin-bottom:2px}
+.sidebar-role{font-size:11px;color:var(--gray-500);background:var(--gray-100);padding:2px 8px;border-radius:100px;display:inline-block}
+.sidebar-nav{padding:10px 10px;flex:1}
+.sidebar-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--gray-400);padding:12px 8px 6px}
+.sidebar-item{display:flex;align-items:center;gap:11px;padding:10px 10px;border-radius:var(--r);font-size:14px;font-weight:500;color:var(--gray-600);cursor:pointer;transition:all .18s;margin-bottom:2px;border:none;background:none;width:100%}
+.sidebar-item:hover{background:var(--gray-100);color:var(--gray-900)}
+.sidebar-item.active{background:var(--blue-50);color:var(--blue);font-weight:600}
+.sidebar-item .si-icon{width:20px;text-align:center;font-size:17px;flex-shrink:0}
+.sidebar-item .si-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;min-width:18px;text-align:center}
+.dash-content{flex:1;background:var(--gray-50);min-height:calc(100vh - var(--nav-h))}
+.dash-topbar{background:#fff;border-bottom:1px solid var(--gray-200);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:var(--nav-h);z-index:50}
+.dash-page-title{font-family:var(--f-display);font-size:20px;font-weight:700;color:var(--gray-900)}
+.dash-actions{display:flex;align-items:center;gap:10px}
+.notif-btn{width:38px;height:38px;border-radius:var(--r);border:1.5px solid var(--gray-200);background:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;position:relative;transition:all .2s}
+.notif-btn:hover{border-color:var(--blue);background:var(--blue-50)}
+.notif-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--red);border-radius:50%;border:2px solid #fff}
+.dash-body{padding:26px 28px}
+
+/* Dashboard panels */
+.dpanel{display:none;animation:fadeIn .3s ease}
+.dpanel.active{display:block}
+
+/* Cards */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:26px}
+.dash-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-lg);padding:22px;transition:all .2s}
+.dash-card:hover{box-shadow:var(--shadow);border-color:var(--gray-300)}
+.dc-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px}
+.dc-num{font-family:var(--f-display);font-size:30px;font-weight:800;color:var(--gray-900);line-height:1}
+.dc-label{font-size:13px;color:var(--gray-500);margin-top:4px}
+.dc-trend{font-size:12px;margin-top:7px;display:flex;align-items:center;gap:4px;font-weight:500}
+.trend-up{color:var(--green)}
+.trend-down{color:var(--red)}
+
+/* Content cards */
+.content-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-xl);padding:24px;margin-bottom:22px}
+.cc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.cc-title{font-weight:700;font-size:16px;color:var(--gray-900)}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse}
+.data-table th{text-align:left;padding:11px 14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-500);background:var(--gray-50);border-bottom:1px solid var(--gray-200)}
+.data-table td{padding:13px 14px;font-size:14px;color:var(--gray-700);border-bottom:1px solid var(--gray-100)}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--gray-50)}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600}
+.status-done{background:var(--green-50);color:#065F46}
+.status-wait{background:var(--amber-50);color:#92400E}
+.status-cancel{background:var(--red-50);color:#991B1B}
+.status-active{background:var(--blue-50);color:#1E40AF}
+
+/* ============================================================
+   MENTOR PROFILE
+============================================================ */
+.profile-hero{background:linear-gradient(135deg,var(--gray-900),var(--blue-d));padding:calc(var(--nav-h) + 40px) clamp(16px,5vw,80px) 60px;color:#fff}
+.ph-inner{max-width:1100px;margin:0 auto;display:flex;gap:36px;align-items:flex-start}
+.ph-av{width:120px;height:120px;border-radius:22px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:40px;border:4px solid rgba(255,255,255,.2);flex-shrink:0;position:relative}
+.ph-info{flex:1}
+.ph-name{font-family:var(--f-display);font-size:32px;font-weight:800;margin-bottom:6px;letter-spacing:-.5px}
+.ph-meta{font-size:15px;color:rgba(255,255,255,.7);margin-bottom:14px}
+.ph-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.ph-tag{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:600;padding:5px 12px;border-radius:100px}
+.ph-stats{display:flex;gap:24px;flex-wrap:wrap}
+.ph-stat{text-align:center}
+.ph-stat-n{font-family:var(--f-display);font-size:24px;font-weight:700;color:#fff}
+.ph-stat-l{font-size:12px;color:rgba(255,255,255,.55);margin-top:2px}
+.ph-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.ph-btn{padding:12px 24px;border-radius:var(--r-lg);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:8px}
+.ph-btn-primary{background:#fff;color:var(--blue)}
+.ph-btn-primary:hover{background:var(--blue-50);transform:translateY(-1px)}
+.ph-btn-outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.3)}
+.ph-btn-outline:hover{background:rgba(255,255,255,.1)}
+.profile-body{max-width:1100px;margin:0 auto;padding:40px clamp(16px,5vw,80px);display:grid;grid-template-columns:1fr 320px;gap:28px}
+.skill-section{margin-bottom:22px}
+.skill-item{margin-bottom:14px}
+.skill-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.skill-name{font-size:14px;font-weight:600;color:var(--gray-800)}
+.skill-pct{font-size:13px;font-weight:700;color:var(--blue)}
+.skill-track-lg{height:9px;background:var(--gray-100);border-radius:4px;overflow:hidden}
+.skill-fill-lg{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--blue),var(--blue-l))}
+.time-slots{display:flex;flex-wrap:wrap;gap:8px}
+.time-slot{background:var(--blue-50);border:1.5px solid var(--blue-200);color:var(--blue);font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--r);cursor:pointer;transition:all .2s}
+.time-slot:hover,.time-slot.selected{background:var(--blue);color:#fff;border-color:var(--blue)}
+.review-item{border-bottom:1px solid var(--gray-100);padding:16px 0}
+.review-item:last-child{border-bottom:none}
+.review-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.review-name{font-weight:700;font-size:14px;color:var(--gray-900)}
+.review-text{font-size:14px;color:var(--gray-600);line-height:1.6}
+.sidebar-card{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-xl);padding:22px;margin-bottom:16px;position:sticky;top:calc(var(--nav-h) + 20px)}
+
+/* ============================================================
+   CHAT
+============================================================ */
+.chat-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - var(--nav-h) - 60px);background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-xl);overflow:hidden}
+.chat-sidebar{border-right:1px solid var(--gray-200);display:flex;flex-direction:column}
+.chat-search{padding:14px;border-bottom:1px solid var(--gray-100)}
+.chat-search input{width:100%;padding:9px 14px;border:1.5px solid var(--gray-200);border-radius:var(--r);font-size:14px;font-family:var(--f-body);outline:none}
+.chat-search input:focus{border-color:var(--blue)}
+.chat-contacts{flex:1;overflow-y:auto}
+.chat-contact{display:flex;gap:11px;padding:13px 14px;cursor:pointer;border-bottom:1px solid var(--gray-50);transition:background .2s;align-items:center}
+.chat-contact:hover,.chat-contact.active-chat{background:var(--blue-50)}
+.cc-av{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px;flex-shrink:0}
+.cc-info{flex:1;min-width:0}
+.cc-name{font-weight:600;font-size:14px;color:var(--gray-900);margin-bottom:2px}
+.cc-last{font-size:12px;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc-time{font-size:11px;color:var(--gray-400);flex-shrink:0}
+.cc-unread{width:18px;height:18px;background:var(--blue);color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-main{display:flex;flex-direction:column}
+.chat-topbar{padding:14px 20px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:12px}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--gray-50)}
+.msg{display:flex;gap:9px;align-items:flex-end;max-width:68%;animation:fadeUp .25s ease}
+.msg.sent{margin-left:auto;flex-direction:row-reverse}
+.msg-av{width:30px;height:30px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px;flex-shrink:0}
+.msg-bubble{padding:11px 15px;border-radius:var(--r-lg);font-size:14px;line-height:1.5;max-width:100%}
+.msg.received .msg-bubble{background:#fff;border:1px solid var(--gray-200);border-bottom-left-radius:4px;color:var(--gray-800)}
+.msg.sent .msg-bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.msg-time{font-size:11px;color:var(--gray-400);margin-top:4px;text-align:right}
+.msg.received .msg-time{text-align:left}
+.chat-input{padding:14px 18px;border-top:1px solid var(--gray-200);display:flex;gap:10px;align-items:center}
+.chat-input input{flex:1;padding:12px 16px;border:1.5px solid var(--gray-200);border-radius:var(--r-lg);font-size:14px;font-family:var(--f-body);outline:none;background:var(--gray-50);transition:all .2s}
+.chat-input input:focus{border-color:var(--blue);background:#fff}
+.send-btn{width:42px;height:42px;border-radius:var(--r-lg);background:var(--blue);color:#fff;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.send-btn:hover{background:var(--blue-d);transform:translateY(-1px)}
+
+/* ============================================================
+   CALENDAR
+============================================================ */
+.calendar-wrap{background:#fff;border-radius:var(--r-xl);border:1px solid var(--gray-200);overflow:hidden}
+.cal-header{background:var(--gray-900);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;color:#fff}
+.cal-month{font-family:var(--f-display);font-size:20px;font-weight:700}
+.cal-nav{display:flex;gap:6px}
+.cal-nav-btn{width:34px;height:34px;border-radius:var(--r);background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.cal-nav-btn:hover{background:rgba(255,255,255,.2)}
+.cal-grid{padding:20px 24px}
+.cal-days-header{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:10px}
+.cal-day-name{font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;padding:4px}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:var(--r);font-size:14px;font-weight:500;color:var(--gray-700);cursor:pointer;position:relative;transition:all .2s;border:none;background:none}
+.cal-day:hover{background:var(--gray-100)}
+.cal-day.today{background:var(--blue);color:#fff;font-weight:700}
+.cal-day.has-event{font-weight:700;color:var(--blue)}
+.cal-day.has-event::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:5px;height:5px;background:var(--blue);border-radius:50%}
+.cal-day.today.has-event::after{background:#fff}
+.cal-day.other-month{color:var(--gray-300)}
+.cal-events{padding:0 24px 24px}
+.cal-event-title{font-weight:700;font-size:14px;margin-bottom:12px;color:var(--gray-900)}
+.cal-event-item{display:flex;gap:12px;align-items:flex-start;padding:12px;background:var(--blue-50);border:1px solid var(--blue-200);border-radius:var(--r-lg);margin-bottom:8px}
+.cal-event-time{font-weight:700;font-size:13px;color:var(--blue);flex-shrink:0;min-width:46px;font-family:'Courier New',monospace}
+.cal-event-info{flex:1}
+.cal-event-name{font-weight:700;font-size:14px;color:var(--gray-900);margin-bottom:2px}
+.cal-event-sub{font-size:12px;color:var(--gray-500)}
+.cal-event-dot{width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:3px}
+
+/* ============================================================
+   SEARCH PAGE
+============================================================ */
+.search-page{padding:calc(var(--nav-h) + 32px) clamp(16px,5vw,80px) 60px;max-width:1100px;margin:0 auto}
+.search-hero{text-align:center;margin-bottom:40px}
+.search-box{position:relative;max-width:600px;margin:0 auto 28px}
+.search-input{width:100%;padding:16px 56px 16px 18px;border:2px solid var(--gray-200);border-radius:var(--r-xl);font-size:16px;font-family:var(--f-body);outline:none;background:#fff;transition:all .2s;box-shadow:var(--shadow)}
+.search-input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.search-input-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--gray-400)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:32px}
+.filter-select{padding:10px 16px;border:1.5px solid var(--gray-200);border-radius:var(--r-lg);font-size:14px;font-family:var(--f-body);background:#fff;outline:none;cursor:pointer;transition:all .2s;color:var(--gray-700);min-width:150px}
+.filter-select:focus{border-color:var(--blue)}
+.search-results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.results-count{font-size:14px;color:var(--gray-500)}
+.results-count span{color:var(--gray-900);font-weight:700}
+.search-result-card{background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--r-xl);padding:20px 22px;margin-bottom:14px;display:flex;gap:18px;align-items:center;cursor:pointer;transition:all .25s}
+.search-result-card:hover{border-color:var(--blue-200);box-shadow:var(--shadow-lg);transform:translateX(4px)}
+.src-av{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:22px;flex-shrink:0}
+.src-info{flex:1}
+.src-name{font-weight:700;font-size:17px;color:var(--gray-900);margin-bottom:3px}
+.src-meta{font-size:13px;color:var(--gray-500);margin-bottom:8px}
+.src-tags{display:flex;gap:6px;flex-wrap:wrap}
+.src-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0}
+.src-rating{display:flex;align-items:center;gap:5px;font-weight:700;font-size:15px;color:var(--gray-900)}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:28px}
+.page-btn{width:38px;height:38px;border-radius:var(--r);border:1.5px solid var(--gray-200);background:#fff;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;color:var(--gray-700)}
+.page-btn:hover,.page-btn.active-page{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ============================================================
+   ADMIN PANEL
+============================================================ */
+.admin-chart{background:#fff;border:1px solid var(--gray-200);border-radius:var(--r-xl);padding:22px;margin-bottom:22px}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:130px;margin-top:16px}
+.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.chart-bar{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(180deg,var(--blue-l),var(--blue));position:relative;cursor:default;transition:all .3s;min-height:4px}
+.chart-bar:hover{background:linear-gradient(180deg,var(--blue),var(--blue-d))}
+.chart-bar::after{content:attr(data-val);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:10px;font-weight:700;color:var(--gray-600);white-space:nowrap;opacity:0;transition:opacity .2s}
+.chart-bar:hover::after{opacity:1}
+.chart-bar-label{font-size:11px;color:var(--gray-400);font-weight:500}
+.pending-item{display:flex;align-items:center;justify-content:space-between;padding:13px;background:var(--gray-50);border-radius:var(--r-lg);margin-bottom:8px;gap:10px}
+.pi-info{flex:1}
+.pi-name{font-weight:600;font-size:14px;color:var(--gray-900)}
+.pi-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.pi-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ============================================================
+   TOAST
+============================================================ */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column-reverse;gap:10px}
+.toast{background:var(--gray-900);color:#fff;padding:13px 18px;border-radius:var(--r-lg);font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow-lg);animation:slideDown .3s ease;max-width:320px}
+.toast.success{border-left:4px solid var(--green)}
+.toast.error{border-left:4px solid var(--red)}
+.toast.info{border-left:4px solid var(--blue)}
+.toast.warning{border-left:4px solid var(--amber)}
+.toast-icon{font-size:16px}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);animation:fadeIn .2s ease}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:var(--r-2xl);width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.25);animation:scaleIn .3s ease}
+.modal-header{padding:22px 26px;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1}
+.modal-title{font-family:var(--f-display);font-size:20px;font-weight:700;color:var(--gray-900)}
+.modal-close{width:34px;height:34px;border-radius:var(--r);border:1.5px solid var(--gray-200);background:transparent;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:var(--red-50);border-color:var(--red);color:var(--red)}
+.modal-body{padding:22px 26px}
+.modal-footer{padding:16px 26px;border-top:1px solid var(--gray-200);display:flex;gap:10px;justify-content:flex-end}
+
+/* MISC */
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600}
+.tag-blue{background:var(--blue-50);color:var(--blue);border:1px solid var(--blue-100)}
+.tag-green{background:var(--green-50);color:#065F46;border:1px solid #A7F3D0}
+.tag-amber{background:var(--amber-50);color:#92400E;border:1px solid #FDE68A}
+.tag-red{background:var(--red-50);color:#991B1B;border:1px solid #FECACA}
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{font-size:56px;margin-bottom:16px;opacity:.3}
+.empty-title{font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--gray-900);margin-bottom:8px}
+.empty-sub{font-size:14px;color:var(--gray-500);line-height:1.6;max-width:320px;margin:0 auto 22px}
+.avatar-circle{width:48px;height:48px;border-radius:50%}
+.skeleton{background:linear-gradient(90deg,var(--gray-200) 25%,var(--gray-100) 50%,var(--gray-200) 75%);background-size:400px 100%;animation:shimmer 1.5s infinite}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;max-width:600px}
+  .hero-visual{display:none}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .profile-body{grid-template-columns:1fr}
+  .dash-sidebar{width:220px}
+}
+@media(max-width:768px){
+  .nav-links,.nav-actions .btn-outline{display:none}
+  .mob-menu{display:flex}
+  .stats-inner{grid-template-columns:1fr 1fr}
+  .stat-block+.stat-block::before{display:none}
+  .how-steps{grid-template-columns:1fr}
+  .how-steps::before{display:none}
+  .testi-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr}
+  .dash-sidebar{display:none}
+  .dash-sidebar.mob-open{display:flex;position:fixed;top:var(--nav-h);bottom:0;left:0;z-index:100;width:260px;box-shadow:var(--shadow-lg)}
+  .chat-layout{grid-template-columns:1fr}
+  .chat-sidebar{display:none}
+  .form-row{grid-template-columns:1fr}
+  .hero-stats{gap:16px}
+}
+@media(max-width:480px){
+  .stats-inner{grid-template-columns:1fr}
+  .auth-card{padding:28px 20px}
+  .profile-hero .ph-inner{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+   NAVBAR
+============================================================ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand" onclick="goPage('home')">
+    <div class="nav-logo">ST</div>
+    <span class="nav-title">STEMate</span>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="goPage('home');setActive(this)">Bosh sahifa</button>
+    <button class="nav-link" onclick="goPage('search');setActive(this)">Mentorlar</button>
+    <button class="nav-link" onclick="goPage('about');setActive(this)">Haqimizda</button>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-outline btn-sm" onclick="goPage('login')">Kirish</button>
+    <button class="btn btn-primary btn-sm" onclick="goPage('register')">Ro'yxatdan o'tish</button>
+    <button class="mob-menu" onclick="toggleMobSidebar()">☰</button>
+  </div>
+</nav>
+
+<!-- ============================================================
+   HOME PAGE
+============================================================ -->
+<div class="page active" id="page-home">
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge"><span class="badge-dot"></span>TATU Talabalar Platformasi</div>
+        <h1 class="hero-title">
+          Fanlardan <span>qiynalyapsizmi?</span>
+          <span class="line2">Mentor toping!</span>
+        </h1>
+        <p class="hero-desc">TATU'ning eng iqtidorli talabalari siz bilan bilimlarini ulashishga tayyor. Bepul, qulay va samarali mentorlik.</p>
+        <div class="hero-btns">
+          <button class="btn btn-primary btn-lg" onclick="goPage('search')">🔍 Mentor qidirish</button>
+          <button class="btn btn-outline btn-lg" onclick="goPage('register')">🎓 Mentor bo'lish</button>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hero-stat-n">500+</div><div class="hero-stat-l">Faol talaba</div></div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat"><div class="hero-stat-n">50+</div><div class="hero-stat-l">Mentor</div></div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat"><div class="hero-stat-n">12</div><div class="hero-stat-l">Fan</div></div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat"><div class="hero-stat-n">98%</div><div class="hero-stat-l">Muvaffaqiyat</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="floating-badge fb-1">
+          <div class="fb-icon">🏆</div>
+          <div class="fb-txt">#1 Mentor</div>
+          <div class="fb-sub">Bu hafta</div>
+        </div>
+        <div class="hero-card" onclick="goPage('mentor-profile')" style="cursor:pointer">
+          <div class="hero-card-top">
+            <div class="mentor-av">AK</div>
+            <div>
+              <div class="m-name">Karimov Alisher</div>
+              <div class="m-sub">3-kurs · AKT fakulteti</div>
+              <div class="rating-row">
+                <span class="star">★★★★★</span>
+                <span class="rating-n">4.9 (45 ta)</span>
+              </div>
+            </div>
+          </div>
+          <div class="skill-bars">
+            <div class="skill-bar">
+              <div class="skill-label"><span>Matematik analiz</span><span>100%</span></div>
+              <div class="skill-track"><div class="skill-fill" style="width:100%"></div></div>
+            </div>
+            <div class="skill-bar">
+              <div class="skill-label"><span>Chiziqli algebra</span><span>80%</span></div>
+              <div class="skill-track"><div class="skill-fill" style="width:80%"></div></div>
+            </div>
+            <div class="skill-bar">
+              <div class="skill-label"><span>Differensial teng.</span><span>60%</span></div>
+              <div class="skill-track"><div class="skill-fill green" style="width:60%"></div></div>
+            </div>
+          </div>
+          <button class="hero-card-btn" onclick="event.stopPropagation();openModal('enroll-modal')">📅 Darsga yozilish</button>
+        </div>
+        <div class="floating-badge fb-2">
+          <div class="fb-icon">✅</div>
+          <div class="fb-txt">320 dars</div>
+          <div class="fb-sub">Yakunlangan</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="stats-inner">
+      <div class="stat-block">
+        <div class="stat-n stat-acc">1,250</div>
+        <div class="stat-l">Jami mashg'ulotlar</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-n stat-acc2">320</div>
+        <div class="stat-l">Faol mentorlar</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-n" style="color:#F59E0B">98%</div>
+        <div class="stat-l">Muvaffaqiyat darajasi</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-n" style="color:#EF4444">4.8 ⭐</div>
+        <div class="stat-l">O'rtacha baho</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Subjects -->
+  <section class="subjects-section">
+    <div class="section-header">
+      <div class="section-tag">🎯 Fanlar</div>
+      <h2 class="section-title">Qaysi fandan yordam kerak?</h2>
+      <p class="section-desc">12 dan ortiq fan bo'yicha tajribali talaba-mentorlar sizni kutmoqda</p>
+    </div>
+    <div class="subjects-grid" id="subjects-grid"></div>
+    <div class="subjects-more">
+      <button class="btn btn-ghost" onclick="goPage('search')">Barcha fanlar →</button>
+    </div>
+  </section>
+
+  <!-- Top Mentors -->
+  <section class="mentors-section">
+    <div style="max-width:1100px;margin:0 auto">
+      <div class="section-header" style="text-align:left;max-width:none;margin-bottom:32px">
+        <div class="section-tag">⭐ Top mentorlar</div>
+        <h2 class="section-title" style="text-align:left">Hafta eng yaxshi mentorlari</h2>
+      </div>
+      <div class="mentors-grid" id="top-mentors-grid"></div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how-section">
+    <div class="section-header">
+      <div class="section-tag">🔄 Jarayon</div>
+      <h2 class="section-title">Qanday ishlaydi?</h2>
+      <p class="section-desc">3 oddiy qadam bilan o'qishni boshlang</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-num"><span style="font-size:26px">📚</span></div>
+        <div class="step-title">Fan tanlash</div>
+        <div class="step-desc">Sizga kerakli fanni toping. Matematika, fizika, dasturlash va boshqa 12 ta fan mavjud.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num" style="background:var(--green)"><span style="font-size:26px">👥</span></div>
+        <div class="step-title">Mentor tanlash</div>
+        <div class="step-desc">Reyting, sharhlar va bo'sh vaqtga qarab eng mos mentorni tanlang.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num" style="background:var(--amber)"><span style="font-size:26px">💬</span></div>
+        <div class="step-title">Darsni boshlash</div>
+        <div class="step-desc">Online yoki offline dars rejalashtiring va o'qishni boshlang. Bepul!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testi-section">
+    <div class="section-header">
+      <div class="section-tag">💬 Sharhlar</div>
+      <h2 class="section-title">Talabalar fikrlari</h2>
+    </div>
+    <div class="testi-grid" id="testi-grid"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">
+            <div class="nav-logo" style="width:34px;height:34px;font-size:14px">ST</div>
+            STEMate
+          </div>
+          <p class="footer-desc">TATU talabalari uchun bepul mentorlik platformasi. Bilim ulashish — muvaffaqiyat kaliti.</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Platforma</div>
+          <div class="footer-links">
+            <span class="footer-link" onclick="goPage('home')">Bosh sahifa</span>
+            <span class="footer-link" onclick="goPage('search')">Mentorlar</span>
+            <span class="footer-link" onclick="goPage('about')">Haqimizda</span>
+            <span class="footer-link">FAQ</span>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Bog'lanish</div>
+          <div class="footer-links">
+            <span class="footer-link">📞 +998 71 234 56 78</span>
+            <span class="footer-link">📧 info@stemate.uz</span>
+            <span class="footer-link">📱 @stemate_bot</span>
+            <span class="footer-link">🏢 TATU, Toshkent</span>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Ilova</div>
+          <div class="footer-links">
+            <span class="footer-link">📱 Google Play</span>
+            <span class="footer-link">🍎 App Store</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 STEMate. Barcha huquqlar himoyalangan.</span>
+        <div class="footer-socials">
+          <div class="social-btn">📘</div>
+          <div class="social-btn">📸</div>
+          <div class="social-btn">✉️</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================================================
+   LOGIN PAGE
+============================================================ -->
+<div class="page" id="page-login">
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="nav-logo">ST</div>
+        <span style="font-family:var(--f-display);font-size:22px;font-weight:700">STEMate</span>
+      </div>
+      <div class="auth-title">Tizimga kirish</div>
+      <div class="auth-sub">HEMIS login yoki elektron pochta orqali kiring</div>
+      <div class="form-group">
+        <label class="form-label">Login yoki Email</label>
+        <input type="text" class="form-input" placeholder="HEMIS ID yoki email@mail.ru" id="login-email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parol</label>
+        <input type="password" class="form-input" placeholder="Parol" id="login-pass">
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gray-600);cursor:pointer">
+          <input type="checkbox" style="accent-color:var(--blue)"> Eslab qol
+        </label>
+        <span style="font-size:13px;color:var(--blue);cursor:pointer;font-weight:600">Parolni unutdim?</span>
+      </div>
+      <button class="btn btn-primary auth-btn" onclick="doLogin()">Kirish →</button>
+      <div class="auth-divider">yoki</div>
+      <button class="btn btn-ghost auth-btn" style="width:100%;margin-bottom:0" onclick="doLogin()">
+        🎓 HEMIS orqali kirish
+      </button>
+      <div class="auth-link">Akkaunt yo'qmi? <a onclick="goPage('register')">Ro'yxatdan o'tish</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   REGISTER PAGE
+============================================================ -->
+<div class="page" id="page-register">
+  <div class="auth-page">
+    <div class="auth-card" style="max-width:500px">
+      <div class="auth-logo">
+        <div class="nav-logo">ST</div>
+        <span style="font-family:var(--f-display);font-size:22px;font-weight:700">STEMate</span>
+      </div>
+      <div class="auth-title">Ro'yxatdan o'tish</div>
+      <div class="auth-sub">Rol tanlang va platforma imkoniyatlaridan foydalaning</div>
+      <div class="role-tabs">
+        <div class="role-tab active" id="rt-student" onclick="setRole('student')">👨‍🎓 Talaba (Menti)</div>
+        <div class="role-tab" id="rt-mentor" onclick="setRole('mentor')">🧑‍🏫 Mentor bo'lish</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ism</label>
+          <input class="form-input" placeholder="Ismingiz">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Familiya</label>
+          <input class="form-input" placeholder="Familiyangiz">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">HEMIS ID</label>
+        <input class="form-input" placeholder="TATU HEMIS ID raqamingiz">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fakultet</label>
+          <select class="form-select">
+            <option value="">Tanlang</option>
+            <option>AKT</option><option>ET</option><option>KI</option><option>TI</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kurs</label>
+          <select class="form-select">
+            <option value="">Tanlang</option>
+            <option>1-kurs</option><option>2-kurs</option><option>3-kurs</option><option>4-kurs</option>
+          </select>
+        </div>
+      </div>
+      <div id="mentor-fields" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Mutaxassislik fanlari</label>
+          <select class="form-select">
+            <option value="">Fan tanlang</option>
+            <option>Matematika</option><option>Fizika</option><option>Dasturlash</option>
+            <option>Ingliz tili</option><option>Kimyo</option><option>Elektronika</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tajriba (yillar)</label>
+          <input class="form-input" type="number" placeholder="1" min="0" max="10">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Parol</label>
+        <input type="password" class="form-input" placeholder="Parol (min 8 ta belgi)">
+      </div>
+      <button class="btn btn-primary auth-btn" onclick="doRegister()">Ro'yxatdan o'tish →</button>
+      <div class="auth-link">Akkaunt bormi? <a onclick="goPage('login')">Kirish</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   MENTOR PROFILE PAGE
+============================================================ -->
+<div class="page" id="page-mentor-profile">
+  <div class="profile-hero">
+    <button onclick="goPage('search')" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 16px;border-radius:var(--r);font-size:14px;cursor:pointer;margin-bottom:24px;font-family:var(--f-body)">← Orqaga</button>
+    <div class="ph-inner">
+      <div class="ph-av" style="background:linear-gradient(135deg,#1D4ED8,#3B82F6)">AK</div>
+      <div class="ph-info">
+        <h1 class="ph-name">Karimov Alisher</h1>
+        <div class="ph-meta">📚 3-kurs · AKT fakulteti · 201-21 guruh</div>
+        <div class="ph-tags">
+          <span class="ph-tag">Matematika</span>
+          <span class="ph-tag">Chiziqli algebra</span>
+          <span class="ph-tag">Differensial tenglamalar</span>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat"><div class="ph-stat-n">⭐ 4.9</div><div class="ph-stat-l">Reyting</div></div>
+          <div class="ph-stat"><div class="ph-stat-n">45</div><div class="ph-stat-l">Talabalar</div></div>
+          <div class="ph-stat"><div class="ph-stat-n">120</div><div class="ph-stat-l">Darslar</div></div>
+          <div class="ph-stat"><div class="ph-stat-n">98%</div><div class="ph-stat-l">Muvaffaqiyat</div></div>
+        </div>
+        <div class="ph-actions">
+          <button class="ph-btn ph-btn-primary" onclick="openModal('enroll-modal')">📅 Darsga yozilish</button>
+          <button class="ph-btn ph-btn-outline" onclick="goPage('dashboard-student');showToast('Chat ochildi','info')">💬 Xabar yozish</button>
+          <button class="ph-btn ph-btn-outline" onclick="showToast('Tavsiya edildi!','success')">🔗 Ulashish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="profile-body">
+    <div>
+      <div class="content-card">
+        <div class="cc-header"><div class="cc-title">📊 Mutaxassislik darajasi</div></div>
+        <div class="skill-section">
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">Matematik analiz</span><span class="skill-pct">100%</span></div>
+            <div class="skill-track-lg"><div class="skill-fill-lg" style="width:100%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">Chiziqli algebra</span><span class="skill-pct">85%</span></div>
+            <div class="skill-track-lg"><div class="skill-fill-lg" style="width:85%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">Differensial tenglamalar</span><span class="skill-pct">70%</span></div>
+            <div class="skill-track-lg"><div class="skill-fill-lg" style="width:70%"></div></div>
+          </div>
+          <div class="skill-item">
+            <div class="skill-header"><span class="skill-name">Ehtimollar nazariyasi</span><span class="skill-pct">60%</span></div>
+            <div class="skill-track-lg"><div class="skill-fill-lg" style="width:60%"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="cc-header"><div class="cc-title">📋 Qisqacha ma'lumot</div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div style="background:var(--gray-50);border-radius:var(--r-lg);padding:16px;text-align:center">
+            <div style="font-size:28px;font-family:var(--f-display);font-weight:800;color:var(--blue)">3</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:3px">Yillik tajriba</div>
+          </div>
+          <div style="background:var(--gray-50);border-radius:var(--r-lg);padding:16px;text-align:center">
+            <div style="font-size:28px;font-family:var(--f-display);font-weight:800;color:var(--green)">2</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:3px">Ilmiy maqolalar</div>
+          </div>
+          <div style="background:var(--gray-50);border-radius:var(--r-lg);padding:16px;text-align:center">
+            <div style="font-size:28px;font-family:var(--f-display);font-weight:800;color:var(--amber)">🏆</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:3px">Olimpiada g'olibi</div>
+          </div>
+          <div style="background:var(--gray-50);border-radius:var(--r-lg);padding:16px;text-align:center">
+            <div style="font-size:28px;font-family:var(--f-display);font-weight:800;color:var(--red)">45+</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:3px">O'quvchilar</div>
+          </div>
+        </div>
+      </div>
+      <div class="content-card">
+        <div class="cc-header">
+          <div class="cc-title">💬 Talabalar sharhlari</div>
+          <span class="tag tag-amber">★ 4.9 o'rtacha</span>
+        </div>
+        <div id="mentor-reviews"></div>
+      </div>
+    </div>
+    <div>
+      <div class="sidebar-card">
+        <div style="font-weight:700;font-size:15px;color:var(--gray-900);margin-bottom:14px">🕒 Bo'sh vaqtlar</div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Dushanba — Chorshanba</div>
+          <div class="time-slots">
+            <div class="time-slot" onclick="this.classList.toggle('selected')">14:00</div>
+            <div class="time-slot" onclick="this.classList.toggle('selected')">15:00</div>
+            <div class="time-slot" onclick="this.classList.toggle('selected')">16:00</div>
+          </div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:700;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Juma — Shanba</div>
+          <div class="time-slots">
+            <div class="time-slot" onclick="this.classList.toggle('selected')">09:00</div>
+            <div class="time-slot" onclick="this.classList.toggle('selected')">10:00</div>
+            <div class="time-slot" onclick="this.classList.toggle('selected')">11:00</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="openModal('enroll-modal')">📅 Darsga yozilish</button>
+      </div>
+      <div class="sidebar-card">
+        <div style="font-weight:700;font-size:15px;color:var(--gray-900);margin-bottom:12px">📍 Dars formati</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)">✅ Online (Zoom, Telegram)</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)">✅ Offline (TATU kutubxona)</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--gray-700)">✅ Guruhli darslar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   SEARCH PAGE
+============================================================ -->
+<div class="page" id="page-search">
+  <div class="search-page">
+    <div class="search-hero">
+      <div class="section-tag" style="margin:0 auto 14px;width:fit-content">🔍 Qidirish</div>
+      <h1 class="section-title">Mentor qidirish</h1>
+      <p style="font-size:16px;color:var(--gray-500);margin-bottom:28px">Fan, kurs va reyting bo'yicha mos mentor toping</p>
+    </div>
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="Mentor ismi yoki fan bo'yicha qidiring..." id="search-input" oninput="filterMentors()">
+      <span class="search-input-icon">🔍</span>
+    </div>
+    <div class="filters">
+      <select class="filter-select" id="filter-subject" onchange="filterMentors()">
+        <option value="">Barcha fanlar</option>
+        <option>Matematika</option><option>Fizika</option><option>Dasturlash</option>
+        <option>Ingliz tili</option><option>Kimyo</option><option>Elektronika</option>
+      </select>
+      <select class="filter-select" id="filter-course" onchange="filterMentors()">
+        <option value="">Barcha kurslar</option>
+        <option>2-kurs</option><option>3-kurs</option><option>4-kurs</option>
+      </select>
+      <select class="filter-select" id="filter-rating" onchange="filterMentors()">
+        <option value="">Barcha reytinglar</option>
+        <option value="4">4+ yulduz</option>
+        <option value="4.5">4.5+ yulduz</option>
+      </select>
+    </div>
+    <div class="search-results-header">
+      <div class="results-count">Ko'rsatilmoqda: <span id="results-count">0</span> ta mentor</div>
+      <div style="display:flex;gap:8px">
+        <select class="filter-select" style="min-width:140px" id="sort-select" onchange="filterMentors()">
+          <option>Reyting bo'yicha</option>
+          <option>Talabalar soni</option>
+          <option>Ism bo'yicha</option>
+        </select>
+      </div>
+    </div>
+    <div id="search-results-list"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+   STUDENT DASHBOARD
+============================================================ -->
+<div class="page" id="page-dashboard-student">
+  <div class="dash-layout">
+    <aside class="dash-sidebar" id="student-sidebar">
+      <div class="sidebar-user">
+        <div class="sidebar-av" style="background:linear-gradient(135deg,var(--blue),var(--blue-l))">AS</div>
+        <div>
+          <div class="sidebar-name">Aliyev Sardor</div>
+          <div class="sidebar-role">Talaba · 2-kurs</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Asosiy</div>
+        <button class="sidebar-item active" onclick="showDPanel('overview',this)"><span class="si-icon">🏠</span>Bosh sahifa</button>
+        <button class="sidebar-item" onclick="showDPanel('lessons',this)"><span class="si-icon">📚</span>Darslarim<span class="si-badge">3</span></button>
+        <button class="sidebar-item" onclick="showDPanel('calendar',this)"><span class="si-icon">📅</span>Kalendar</button>
+        <button class="sidebar-item" onclick="showDPanel('chat',this)"><span class="si-icon">💬</span>Xabarlar<span class="si-badge">2</span></button>
+        <div class="sidebar-section">Shaxsiy</div>
+        <button class="sidebar-item" onclick="showDPanel('profile',this)"><span class="si-icon">👤</span>Profilim</button>
+        <button class="sidebar-item" onclick="showDPanel('achievements',this)"><span class="si-icon">🏆</span>Yutuqlar</button>
+        <button class="sidebar-item" onclick="goPage('search')"><span class="si-icon">🔍</span>Mentor topish</button>
+        <div class="sidebar-section">Boshqa</div>
+        <button class="sidebar-item" onclick="goPage('home')"><span class="si-icon">🚪</span>Chiqish</button>
+      </nav>
+    </aside>
+    <div class="dash-content">
+      <div class="dash-topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="mob-menu" onclick="toggleStudentSidebar()">☰</button>
+          <div class="dash-page-title" id="student-page-title">Bosh sahifa</div>
+        </div>
+        <div class="dash-actions">
+          <button class="notif-btn" onclick="showToast('3 ta yangi bildirishnoma','info')">🔔<div class="notif-dot"></div></button>
+          <button class="btn btn-primary btn-sm" onclick="goPage('search')">+ Mentor topish</button>
+        </div>
+      </div>
+      <div class="dash-body">
+        <!-- Overview Panel -->
+        <div class="dpanel active" id="dpanel-overview">
+          <div style="margin-bottom:22px">
+            <div style="font-family:var(--f-display);font-size:22px;font-weight:700;color:var(--gray-900);margin-bottom:4px">Xush kelibsiz, Sardor! 👋</div>
+            <div style="font-size:14px;color:var(--gray-500)">Bugungi darslaringizni ko'ring va mentorlar bilan bog'laning.</div>
+          </div>
+          <div class="dash-grid">
+            <div class="dash-card">
+              <div class="dc-icon" style="background:#EFF6FF">📚</div>
+              <div class="dc-num">5</div>
+              <div class="dc-label">Yakunlangan darslar</div>
+              <div class="dc-trend trend-up">↑ +2 bu oy</div>
+            </div>
+            <div class="dash-card">
+              <div class="dc-icon" style="background:#ECFDF5">⭐</div>
+              <div class="dc-num">45</div>
+              <div class="dc-label">Yig'ilgan ball</div>
+              <div class="dc-trend trend-up">↑ +15 bu hafta</div>
+            </div>
+            <div class="dash-card">
+              <div class="dc-icon" style="background:#FFFBEB">📅</div>
+              <div class="dc-num">2</div>
+              <div class="dc-label">Kelgusi darslar</div>
+              <div class="dc-trend" style="color:var(--amber)">Bu hafta</div>
+            </div>
+            <div class="dash-card">
+              <div class="dc-icon" style="background:#FEF2F2">🏆</div>
+              <div class="dc-num">3</div>
+              <div class="dc-label">Sertifikatlar</div>
+              <div class="dc-trend trend-up">↑ Yangi</div>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="cc-header">
+              <div class="cc-title">📅 Kelgusi darslar</div>
+              <button class="btn btn-ghost btn-sm" onclick="showDPanel('calendar')">Kalendarni ko'rish</button>
+            </div>
+            <div id="upcoming-lessons"></div>
+          </div>
+          <div class="content-card">
+            <div class="cc-header">
+              <div class="cc-title">📊 Mentorlik tarixi</div>
+              <button class="btn btn-ghost btn-sm">Barchasi</button>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Mentor</th><th>Fan</th><th>Sana</th><th>Holat</th><th>Baho</th></tr></thead>
+              <tbody id="history-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Lessons Panel -->
+        <div class="dpanel" id="dpanel-lessons">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">📚 Mening darslarim</div><button class="btn btn-primary btn-sm" onclick="goPage('search')">+ Yangi dars</button></div>
+            <div id="my-lessons-list"></div>
+          </div>
+        </div>
+        <!-- Calendar Panel -->
+        <div class="dpanel" id="dpanel-calendar">
+          <div style="display:grid;grid-template-columns:1fr 340px;gap:22px">
+            <div class="calendar-wrap">
+              <div class="cal-header">
+                <div class="cal-month">Aprel 2025</div>
+                <div class="cal-nav">
+                  <button class="cal-nav-btn">◀</button>
+                  <button class="cal-nav-btn">▶</button>
+                </div>
+              </div>
+              <div class="cal-grid">
+                <div class="cal-days-header">
+                  <div class="cal-day-name">Du</div><div class="cal-day-name">Se</div>
+                  <div class="cal-day-name">Ch</div><div class="cal-day-name">Pa</div>
+                  <div class="cal-day-name">Ju</div><div class="cal-day-name">Sh</div>
+                  <div class="cal-day-name">Ya</div>
+                </div>
+                <div class="cal-days" id="cal-days"></div>
+              </div>
+              <div class="cal-events">
+                <div class="cal-event-title">📌 Bugungi darslar (14-Aprel)</div>
+                <div class="cal-event-item">
+                  <div class="cal-event-dot"></div>
+                  <div class="cal-event-time">14:00</div>
+                  <div class="cal-event-info"><div class="cal-event-name">Matematika darsi</div><div class="cal-event-sub">Karimov Alisher bilan · Online (Zoom)</div></div>
+                </div>
+                <div class="cal-event-item" style="border-color:#A7F3D0;background:var(--green-50)">
+                  <div class="cal-event-dot" style="background:var(--green)"></div>
+                  <div class="cal-event-time" style="color:var(--green)">16:00</div>
+                  <div class="cal-event-info"><div class="cal-event-name">Dasturlash darsi</div><div class="cal-event-sub">Rahimova Nilufar bilan · Offline</div></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="content-card">
+                <div class="cc-title" style="margin-bottom:14px">📊 Bu oylik statistika</div>
+                <div class="dash-grid" style="grid-template-columns:1fr 1fr">
+                  <div class="dash-card" style="padding:14px"><div class="dc-num" style="font-size:24px">8</div><div class="dc-label" style="font-size:11px">Dars bo'ldi</div></div>
+                  <div class="dash-card" style="padding:14px"><div class="dc-num" style="font-size:24px">2</div><div class="dc-label" style="font-size:11px">Bekor qilindi</div></div>
+                </div>
+                <button class="btn btn-primary" style="width:100%;margin-top:8px" onclick="openModal('enroll-modal')">+ Yangi dars qo'shish</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Chat Panel -->
+        <div class="dpanel" id="dpanel-chat">
+          <div class="chat-layout">
+            <div class="chat-sidebar">
+              <div class="chat-search"><input placeholder="🔍 Qidirish..." type="text"></div>
+              <div class="chat-contacts" id="chat-contacts-list"></div>
+            </div>
+            <div class="chat-main">
+              <div class="chat-topbar">
+                <div class="cc-av" style="background:linear-gradient(135deg,var(--blue),var(--blue-l));width:36px;height:36px;border-radius:10px;font-size:13px">AK</div>
+                <div><div style="font-weight:700;font-size:14px">Karimov Alisher</div><div style="font-size:12px;color:var(--green)">● Online</div></div>
+                <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="goPage('mentor-profile')">Profilni ko'rish</button>
+              </div>
+              <div class="chat-messages" id="chat-messages"></div>
+              <div class="chat-input">
+                <input type="text" placeholder="Xabar yozing..." id="chat-inp" onkeydown="if(event.key==='Enter')sendMsg()">
+                <button class="send-btn" onclick="sendMsg()">➤</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Profile Panel -->
+        <div class="dpanel" id="dpanel-profile">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+            <div class="content-card">
+              <div class="cc-header"><div class="cc-title">👤 Asosiy ma'lumotlar</div><button class="btn btn-ghost btn-sm" onclick="openModal('edit-profile-modal')">✏️ Tahrirlash</button></div>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--gray-100)"><span style="font-size:13px;color:var(--gray-500)">FIO</span><span style="font-weight:600;font-size:14px">Aliyev Sardor Anvarovich</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--gray-100)"><span style="font-size:13px;color:var(--gray-500)">Fakultet</span><span style="font-weight:600;font-size:14px">AKT</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--gray-100)"><span style="font-size:13px;color:var(--gray-500)">Kurs/Guruh</span><span style="font-weight:600;font-size:14px">2-kurs · 201-22</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--gray-100)"><span style="font-size:13px;color:var(--gray-500)">Telegram</span><span style="font-weight:600;font-size:14px">@sardor_aliev</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0"><span style="font-size:13px;color:var(--gray-500)">Email</span><span style="font-weight:600;font-size:14px">sardor@mail.ru</span></div>
+              </div>
+            </div>
+            <div class="content-card">
+              <div class="cc-title" style="margin-bottom:16px">🏆 Statistika</div>
+              <div class="dash-grid" style="grid-template-columns:1fr 1fr">
+                <div class="dash-card" style="padding:16px"><div class="dc-icon" style="background:var(--blue-50);font-size:16px;width:36px;height:36px;border-radius:9px;margin-bottom:9px">📚</div><div class="dc-num" style="font-size:26px">5</div><div class="dc-label">Darslar</div></div>
+                <div class="dash-card" style="padding:16px"><div class="dc-icon" style="background:var(--amber-50);font-size:16px;width:36px;height:36px;border-radius:9px;margin-bottom:9px">⭐</div><div class="dc-num" style="font-size:26px">45</div><div class="dc-label">Ball</div></div>
+                <div class="dash-card" style="padding:16px"><div class="dc-icon" style="background:var(--green-50);font-size:16px;width:36px;height:36px;border-radius:9px;margin-bottom:9px">🏆</div><div class="dc-num" style="font-size:26px">3</div><div class="dc-label">Sertifikat</div></div>
+                <div class="dash-card" style="padding:16px"><div class="dc-icon" style="background:var(--red-50);font-size:16px;width:36px;height:36px;border-radius:9px;margin-bottom:9px">👥</div><div class="dc-num" style="font-size:26px">3</div><div class="dc-label">Mentorlar</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Achievements Panel -->
+        <div class="dpanel" id="dpanel-achievements">
+          <div class="content-card">
+            <div class="cc-title" style="margin-bottom:18px">🏆 Yutuqlar va sertifikatlar</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px" id="achievements-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   MENTOR DASHBOARD
+============================================================ -->
+<div class="page" id="page-dashboard-mentor">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="sidebar-user">
+        <div class="sidebar-av" style="background:linear-gradient(135deg,#059669,var(--green))">AK</div>
+        <div>
+          <div class="sidebar-name">Karimov Alisher</div>
+          <div class="sidebar-role">🧑‍🏫 Mentor · 4.9⭐</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Boshqaruv</div>
+        <button class="sidebar-item active" onclick="showMPanel('m-overview',this)"><span class="si-icon">📊</span>Statistika</button>
+        <button class="sidebar-item" onclick="showMPanel('m-requests',this)"><span class="si-icon">📨</span>So'rovlar<span class="si-badge">3</span></button>
+        <button class="sidebar-item" onclick="showMPanel('m-lessons',this)"><span class="si-icon">📚</span>Darslarim</button>
+        <button class="sidebar-item" onclick="showMPanel('m-chat',this)"><span class="si-icon">💬</span>Xabarlar<span class="si-badge">2</span></button>
+        <div class="sidebar-section">Profil</div>
+        <button class="sidebar-item" onclick="goPage('mentor-profile')"><span class="si-icon">👤</span>Profilim</button>
+        <button class="sidebar-item" onclick="showMPanel('m-schedule',this)"><span class="si-icon">🕒</span>Jadval</button>
+        <button class="sidebar-item" onclick="goPage('home')"><span class="si-icon">🚪</span>Chiqish</button>
+      </nav>
+    </aside>
+    <div class="dash-content">
+      <div class="dash-topbar">
+        <div class="dash-page-title" id="mentor-page-title">Statistika</div>
+        <div class="dash-actions">
+          <button class="notif-btn">🔔<div class="notif-dot"></div></button>
+          <button class="btn btn-ghost btn-sm" onclick="goPage('mentor-profile')">Profilimni ko'rish</button>
+        </div>
+      </div>
+      <div class="dash-body">
+        <div class="dpanel active" id="dpanel-m-overview">
+          <div class="dash-grid">
+            <div class="dash-card"><div class="dc-icon" style="background:var(--blue-50)">📚</div><div class="dc-num">24</div><div class="dc-label">Jami darslar</div><div class="dc-trend trend-up">↑ Bu oy: 12</div></div>
+            <div class="dash-card"><div class="dc-icon" style="background:var(--green-50)">👥</div><div class="dc-num">45</div><div class="dc-label">Talabalar</div><div class="dc-trend trend-up">↑ +5 bu oy</div></div>
+            <div class="dash-card"><div class="dc-icon" style="background:var(--amber-50)">⭐</div><div class="dc-num">4.9</div><div class="dc-label">O'rtacha baho</div><div class="dc-trend trend-up">↑ Oshdi</div></div>
+            <div class="dash-card"><div class="dc-icon" style="background:var(--red-50)">🏆</div><div class="dc-num">450</div><div class="dc-label">Ball</div><div class="dc-trend trend-up">↑ +50 bu oy</div></div>
+          </div>
+          <div class="admin-chart">
+            <div class="cc-title">📊 Oylik darslar soni</div>
+            <div class="chart-bars" id="mentor-chart"></div>
+          </div>
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">📨 Yangi so'rovlar</div><button class="btn btn-ghost btn-sm" onclick="showMPanel('m-requests')">Barchasi</button></div>
+            <div id="mentor-requests-mini"></div>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-m-requests">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">📨 Dars so'rovlari</div></div>
+            <div id="all-requests-list"></div>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-m-lessons">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">📚 Mening darslarim</div></div>
+            <table class="data-table">
+              <thead><tr><th>Talaba</th><th>Fan</th><th>Sana</th><th>Holat</th><th>Baho</th></tr></thead>
+              <tbody id="mentor-lessons-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-m-chat">
+          <div class="chat-layout">
+            <div class="chat-sidebar">
+              <div class="chat-search"><input placeholder="🔍 Qidirish..." type="text"></div>
+              <div class="chat-contacts" id="mentor-chat-contacts"></div>
+            </div>
+            <div class="chat-main">
+              <div class="chat-topbar">
+                <div class="cc-av" style="background:linear-gradient(135deg,#7C3AED,#9333EA);width:36px;height:36px;border-radius:10px;font-size:13px">AS</div>
+                <div><div style="font-weight:700;font-size:14px">Aliyev Sardor</div><div style="font-size:12px;color:var(--gray-400)">● Oxirgi: bugun</div></div>
+              </div>
+              <div class="chat-messages" id="mentor-chat-messages"></div>
+              <div class="chat-input">
+                <input type="text" placeholder="Xabar yozing..." id="m-chat-inp" onkeydown="if(event.key==='Enter')sendMentorMsg()">
+                <button class="send-btn" onclick="sendMentorMsg()">➤</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-m-schedule">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">🕒 Vaqt jadvali</div><button class="btn btn-primary btn-sm" onclick="openModal('time-modal')">+ Vaqt qo'shish</button></div>
+            <div id="schedule-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   ADMIN PANEL
+============================================================ -->
+<div class="page" id="page-admin">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <div class="sidebar-user">
+        <div class="sidebar-av" style="background:linear-gradient(135deg,#7C3AED,#9333EA)">AD</div>
+        <div><div class="sidebar-name">Admin Panel</div><div class="sidebar-role">⚙ Administrator</div></div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="sidebar-item active" onclick="showAPanel('a-overview',this)"><span class="si-icon">📊</span>Statistika</button>
+        <button class="sidebar-item" onclick="showAPanel('a-users',this)"><span class="si-icon">👥</span>Foydalanuvchilar</button>
+        <button class="sidebar-item" onclick="showAPanel('a-mentors',this)"><span class="si-icon">🧑‍🏫</span>Mentor arizalar<span class="si-badge">12</span></button>
+        <button class="sidebar-item" onclick="showAPanel('a-complaints',this)"><span class="si-icon">⚠️</span>Shikoyatlar<span class="si-badge">3</span></button>
+        <button class="sidebar-item" onclick="showAPanel('a-announce',this)"><span class="si-icon">📢</span>E'lonlar</button>
+        <button class="sidebar-item" onclick="goPage('home')"><span class="si-icon">🚪</span>Chiqish</button>
+      </nav>
+    </aside>
+    <div class="dash-content">
+      <div class="dash-topbar">
+        <div class="dash-page-title" id="admin-page-title">Statistika</div>
+        <div class="dash-actions">
+          <button class="btn btn-ghost btn-sm" onclick="showToast('Hisobot yuklanmoqda...','info')">📤 Eksport</button>
+        </div>
+      </div>
+      <div class="dash-body">
+        <div class="dpanel active" id="dpanel-a-overview">
+          <div class="dash-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="dash-card"><div class="dc-icon" style="background:var(--blue-50)">👨‍🎓</div><div class="dc-num">124</div><div class="dc-label">Jami talabalar</div></div>
+            <div class="dash-card"><div class="dc-icon" style="background:var(--green-50)">🧑‍🏫</div><div class="dc-num">45</div><div class="dc-label">Faol mentorlar</div></div>
+            <div class="dash-card"><div class="dc-icon" style="background:var(--amber-50)">📚</div><div class="dc-num">320</div><div class="dc-label">Jami darslar</div></div>
+            <div class="dash-card"><div class="dc-icon" style="background:var(--red-50)">⭐</div><div class="dc-num">4.8</div><div class="dc-label">O'rtacha baho</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+            <div class="admin-chart">
+              <div class="cc-title">📊 Haftalik darslar</div>
+              <div class="chart-bars" id="admin-chart"></div>
+            </div>
+            <div class="content-card">
+              <div class="cc-title" style="margin-bottom:14px">⏳ Kutilayotgan tasdiqlar</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="pending-item">
+                  <div class="pi-info"><div class="pi-name">Mentorlik arizalar</div><div class="pi-sub">12 ta yangi ariza</div></div>
+                  <button class="btn btn-primary btn-sm" onclick="showAPanel('a-mentors')">Ko'rish</button>
+                </div>
+                <div class="pending-item">
+                  <div class="pi-info"><div class="pi-name">Shikoyatlar</div><div class="pi-sub">3 ta ko'rib chiqilmagan</div></div>
+                  <button class="btn btn-outline btn-sm" onclick="showAPanel('a-complaints')">Ko'rish</button>
+                </div>
+                <div class="pending-item">
+                  <div class="pi-info"><div class="pi-name">Yangi talabalar</div><div class="pi-sub">25 ta bu oy</div></div>
+                  <button class="btn btn-ghost btn-sm" onclick="showAPanel('a-users')">Ko'rish</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-a-users">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">👥 Foydalanuvchilar</div><button class="btn btn-ghost btn-sm">📤 Eksport</button></div>
+            <table class="data-table"><thead><tr><th>Ism</th><th>Rol</th><th>Holat</th><th>Sana</th><th>Amallar</th></tr></thead>
+            <tbody id="admin-users-tbody"></tbody></table>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-a-mentors">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">🧑‍🏫 Mentor arizalar</div></div>
+            <div id="mentor-applications"></div>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-a-complaints">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">⚠️ Shikoyatlar</div></div>
+            <div id="complaints-list"></div>
+          </div>
+        </div>
+        <div class="dpanel" id="dpanel-a-announce">
+          <div class="content-card">
+            <div class="cc-header"><div class="cc-title">📢 E'lon yuborish</div></div>
+            <div class="form-group"><label class="form-label">Sarlavha</label><input class="form-input" placeholder="E'lon sarlavhasi"></div>
+            <div class="form-group"><label class="form-label">Matn</label><textarea class="form-input" rows="4" placeholder="E'lon matni..."></textarea></div>
+            <div class="form-group"><label class="form-label">Kimga</label><select class="form-select"><option>Barcha</option><option>Talabalar</option><option>Mentorlar</option></select></div>
+            <button class="btn btn-primary" onclick="showToast('E\'lon yuborildi!','success')">📢 Yuborish</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+   MODALS
+============================================================ -->
+<div class="modal-backdrop" id="modal-enroll">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📅 Darsga yozilish</div>
+      <button class="modal-close" onclick="closeModal('modal-enroll')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--blue-50);border:1px solid var(--blue-100);border-radius:var(--r-lg);padding:14px;margin-bottom:18px;display:flex;gap:12px;align-items:center">
+        <div class="mentor-av" style="width:44px;height:44px;font-size:16px">AK</div>
+        <div><div style="font-weight:700;font-size:15px">Karimov Alisher</div><div style="font-size:12px;color:var(--gray-500)">Matematik analiz · ⭐ 4.9</div></div>
+      </div>
+      <div class="form-group"><label class="form-label">Fan</label><select class="form-select"><option>Matematik analiz</option><option>Chiziqli algebra</option><option>Differensial tenglamalar</option></select></div>
+      <div class="form-group"><label class="form-label">Sana</label><input type="date" class="form-input"></div>
+      <div class="form-group"><label class="form-label">Vaqt</label><select class="form-select"><option>14:00 – 15:30</option><option>15:00 – 16:30</option><option>16:00 – 17:30</option></select></div>
+      <div class="form-group"><label class="form-label">Format</label><select class="form-select"><option>Online (Zoom)</option><option>Online (Telegram)</option><option>Offline (TATU)</option></select></div>
+      <div class="form-group"><label class="form-label">Izoh (ixtiyoriy)</label><textarea class="form-input" rows="3" placeholder="Nimaga yordam kerak?"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-enroll')">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="submitEnroll()">📅 Yozilish</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-edit-profile">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">✏️ Profilni tahrirlash</div><button class="modal-close" onclick="closeModal('modal-edit-profile')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">Ism</label><input class="form-input" value="Sardor"></div><div class="form-group"><label class="form-label">Familiya</label><input class="form-input" value="Aliyev"></div></div>
+      <div class="form-group"><label class="form-label">Telegram</label><input class="form-input" value="@sardor_aliev"></div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="sardor@mail.ru"></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" value="+998 90 123 45 67"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-edit-profile')">Bekor</button><button class="btn btn-primary" onclick="closeModal('modal-edit-profile');showToast('Profil yangilandi!','success')">Saqlash</button></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal-time">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">🕒 Vaqt qo'shish</div><button class="modal-close" onclick="closeModal('modal-time')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row"><div class="form-group"><label class="form-label">Kun</label><select class="form-select"><option>Dushanba</option><option>Seshamba</option><option>Chorshanba</option><option>Payshanba</option><option>Juma</option><option>Shanba</option></select></div><div class="form-group"><label class="form-label">Boshlanish</label><input type="time" class="form-input" value="14:00"></div></div>
+      <div class="form-group"><label class="form-label">Tugash</label><input type="time" class="form-input" value="16:00"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modal-time')">Bekor</button><button class="btn btn-primary" onclick="closeModal('modal-time');showToast('Vaqt qo\'shildi!','success')">Saqlash</button></div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ============================================================
+   JAVASCRIPT
+============================================================ -->
+<script>
+/* ── DATA ── */
+const SUBJECTS=[
+  {name:'Matematika',icon:'📐',count:12,color:'var(--blue)'},
+  {name:'Fizika',icon:'⚡',count:8,color:'#7C3AED'},
+  {name:'Dasturlash',icon:'💻',count:15,color:'var(--green)'},
+  {name:'Ingliz tili',icon:'🌍',count:6,color:'var(--amber)'},
+  {name:'Kimyo',icon:'🧪',count:4,color:'#EF4444'},
+  {name:'Elektronika',icon:'🔌',count:5,color:'#06B6D4'},
+  {name:'Informatika',icon:'🖥️',count:9,color:'#8B5CF6'},
+  {name:'Iqtisodiyot',icon:'📊',count:3,color:'#059669'},
+  {name:'Tarix',icon:'📜',count:2,color:'#92400E'},
+];
+
+const MENTORS=[
+  {id:1,name:'Karimov Alisher',initials:'AK',grade:'3-kurs',subjects:['Matematika','Algebra'],rating:4.9,reviews:45,rank:1,color:'linear-gradient(135deg,#1D4ED8,#3B82F6)'},
+  {id:2,name:'Salimova Nilufar',initials:'SN',grade:'4-kurs',subjects:['Dasturlash','Python'],rating:4.8,reviews:38,rank:2,color:'linear-gradient(135deg,#059669,#10B981)'},
+  {id:3,name:'Rahimov Bekzod',initials:'RB',grade:'3-kurs',subjects:['Fizika','Mexanika'],rating:4.7,reviews:32,rank:3,color:'linear-gradient(135deg,#D97706,#F59E0B)'},
+  {id:4,name:'Tursunova Madina',initials:'TM',grade:'4-kurs',subjects:['Ingliz tili'],rating:4.7,reviews:28,rank:4,color:'linear-gradient(135deg,#DC2626,#EF4444)'},
+  {id:5,name:'Yusupov Jasur',initials:'YJ',grade:'3-kurs',subjects:['Kimyo','Organik kimyo'],rating:4.6,reviews:24,rank:5,color:'linear-gradient(135deg,#7C3AED,#9333EA)'},
+  {id:6,name:'Nazarova Dilnoza',initials:'ND',grade:'4-kurs',subjects:['Matematika','Analiz'],rating:4.5,reviews:21,rank:6,color:'linear-gradient(135deg,#0369A1,#0EA5E9)'},
+  {id:7,name:'Holiqov Sanjar',initials:'HS',grade:'3-kurs',subjects:['Elektronika'],rating:4.4,reviews:18,rank:7,color:'linear-gradient(135deg,#065F46,#059669)'},
+  {id:8,name:'Mirzayeva Barno',initials:'MB',grade:'2-kurs',subjects:['Ingliz tili','Tarjima'],rating:4.3,reviews:15,rank:8,color:'linear-gradient(135deg,#9A3412,#EA580C)'},
+];
+
+const REVIEWS=[
+  {name:'Sardor A.',stars:5,text:'Ajoyib tushuntirish, rahmat! Imtihonga yaxshi tayyorlandim.',date:'12 Apr'},
+  {name:'Nilufar K.',stars:5,text:'Differensial tenglamalarni nihoyat tushundim.',date:'8 Apr'},
+  {name:'Jasur T.',stars:4,text:'Biroz tezroq bo\'lsa yaxshi edi, lekin umuman yaxshi.',date:'5 Apr'},
+  {name:'Zulfiya M.',stars:5,text:'Karimov aka juda sabr bilan tushuntiradi.',date:'1 Apr'},
+];
+
+const TESTIMONIALS=[
+  {text:'Matematikadan Azizbek mentordan yordam oldim. 2 oyda imtihonni 5 ga topshirdim!',name:'Karimova Zilola',role:'2-kurs · AKT fakulteti',initials:'KZ',color:'var(--blue)'},
+  {text:'Dasturlashni Jamshid aka bilan o\'rgandim. Hozir o\'zim mentor bo\'lishga tayyorlanaman!',name:'Tursunov Anvar',role:'3-kurs · ET fakulteti',initials:'TA',color:'var(--green)'},
+  {text:'Ingliz tilidan Madina opa bilan 3 oy mashq qildim. IELTS 6.5 oldim!',name:'Rahimov Bobur',role:'4-kurs · KI fakulteti',initials:'RB',color:'var(--amber)'},
+  {text:'Fizika darslari orqali olimpiadaga tayyorlandim va 2-o\'rinni egallladim.',name:'Yusupova Gulnora',role:'2-kurs · TI fakulteti',initials:'YG',color:'var(--red)'},
+];
+
+const ADMIN_USERS=[
+  {name:'Karimov Alisher',role:'Mentor',status:'active',date:'01 Mar 2025'},
+  {name:'Aliyev Sardor',role:'Talaba',status:'active',date:'05 Mar 2025'},
+  {name:'Rahimova Nilufar',role:'Mentor',status:'pending',date:'10 Apr 2025'},
+  {name:'Tursunov Jasur',role:'Talaba',status:'active',date:'12 Apr 2025'},
+  {name:'Nazarova Dilnoza',role:'Mentor',status:'blocked',date:'08 Feb 2025'},
+];
+
+const LESSONS_HISTORY=[
+  {mentor:'Karimov A.',subject:'Matematika',date:'12.04.2025',rating:5,status:'done'},
+  {mentor:'Rahimova N.',subject:'Dasturlash',date:'05.04.2025',rating:4,status:'done'},
+  {mentor:'Tursunov B.',subject:'Fizika',date:'28.03.2025',rating:5,status:'done'},
+];
+
+const MENTOR_REQUESTS=[
+  {student:'Tursunova Madina',subject:'Matematika',date:'16.04.2025',time:'14:00',format:'Online'},
+  {student:'Salimov Jahongir',subject:'Matematika',date:'16.04.2025',time:'16:00',format:'Offline'},
+  {student:'Abdullayeva Nargiza',subject:'Matematika',date:'17.04.2025',time:'10:00',format:'Online'},
+];
+
+const CHAT_MSGS=[
+  {from:'other',text:'Salom! Ertaga dars boradigan vaqtni 15:00 ga o\'zgartirsak bo\'ladimi?',time:'14:30'},
+  {from:'me',text:'Ha, mayli 15:00 yaxshi.',time:'14:32'},
+  {from:'other',text:'Rahmat! Zoom link yuborasizmi?',time:'14:33'},
+  {from:'me',text:'Albatta, vaqt yaqinlashganda yuboraman.',time:'14:35'},
+];
+
+let filteredMentors=[...MENTORS];
+
+/* ── PAGE NAVIGATION ── */
+function goPage(pg){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById('page-'+pg);
+  if(el){el.classList.add('active');}
+  window.scrollTo(0,0);
+  updateNavLinks(pg);
+  // Render page-specific content
+  if(pg==='home')renderHome();
+  if(pg==='search')renderSearch();
+  if(pg==='mentor-profile')renderMentorProfile();
+  if(pg==='dashboard-student')renderStudentDash();
+  if(pg==='dashboard-mentor')renderMentorDash();
+  if(pg==='admin')renderAdmin();
+}
+
+function setActive(el){
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function updateNavLinks(pg){
+  const map={home:0,search:1,about:2};
+  document.querySelectorAll('.nav-link').forEach((n,i)=>n.classList.toggle('active',i===map[pg]));
+}
+
+/* ── DASHBOARD PANELS ── */
+function showDPanel(name,btn){
+  document.querySelectorAll('#page-dashboard-student .dpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('dpanel-'+name)?.classList.add('active');
+  document.querySelectorAll('#student-sidebar .sidebar-item').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const titles={overview:'Bosh sahifa',lessons:'Darslarim',calendar:'Kalendar',chat:'Xabarlar',profile:'Profilim',achievements:'Yutuqlar'};
+  const el=document.getElementById('student-page-title');
+  if(el)el.textContent=titles[name]||name;
+  if(name==='calendar')renderCalendar();
+  if(name==='chat')renderChat();
+  if(name==='achievements')renderAchievements();
+}
+
+function showMPanel(name,btn){
+  document.querySelectorAll('#page-dashboard-mentor .dpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('dpanel-'+name)?.classList.add('active');
+  document.querySelectorAll('#page-dashboard-mentor .sidebar-item').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const titles={'m-overview':'Statistika','m-requests':'So\'rovlar','m-lessons':'Darslarim','m-chat':'Xabarlar','m-schedule':'Jadval'};
+  const el=document.getElementById('mentor-page-title');
+  if(el)el.textContent=titles[name]||name;
+}
+
+function showAPanel(name,btn){
+  document.querySelectorAll('#page-admin .dpanel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('dpanel-'+name)?.classList.add('active');
+  document.querySelectorAll('#page-admin .sidebar-item').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+}
+
+/* ── RENDER HOME ── */
+function renderHome(){
+  // Subjects
+  const sg=document.getElementById('subjects-grid');
+  if(sg)sg.innerHTML=SUBJECTS.map(s=>`
+    <div class="subject-card" style="--sc:${s.color}" onclick="goPage('search')">
+      <span class="subj-icon">${s.icon}</span>
+      <div class="subj-name">${s.name}</div>
+      <div class="subj-count">${s.count} ta mentor</div>
+    </div>`).join('');
+  // Top mentors
+  const mg=document.getElementById('top-mentors-grid');
+  if(mg)mg.innerHTML=MENTORS.slice(0,4).map(m=>`
+    <div class="mentor-card" onclick="goPage('mentor-profile')">
+      <div class="mc-top">
+        <div class="mc-av" style="background:${m.color}">${m.initials}</div>
+        <div class="mc-info">
+          <div class="mc-name">${m.name}</div>
+          <div class="mc-role">${m.grade} · TATU</div>
+          <span class="rank-badge rank-${m.rank}">${m.rank===1?'🥇':m.rank===2?'🥈':'🥉'} ${m.rank}-o'rin</span>
+        </div>
+      </div>
+      <div class="mc-body">
+        <div class="mc-subjects">${m.subjects.map(s=>`<span class="subject-tag">${s}</span>`).join('')}</div>
+        <div class="mc-footer">
+          <div class="mc-rating"><span style="color:#F59E0B;font-size:14px">★</span><strong>${m.rating}</strong><span class="mc-students">(${m.reviews} ta)</span></div>
+          <button class="mc-btn" onclick="event.stopPropagation();openModal('enroll-modal')">Murojaat</button>
+        </div>
+      </div>
+    </div>`).join('');
+  // Testimonials
+  const tg=document.getElementById('testi-grid');
+  if(tg)tg.innerHTML=TESTIMONIALS.map(t=>`
+    <div class="testi-card">
+      <p class="testi-text">${t.text}</p>
+      <div class="testi-author">
+        <div class="testi-av" style="background:${t.color}">${t.initials}</div>
+        <div><div class="testi-name">${t.name}</div><div class="testi-role">${t.role}</div></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── RENDER SEARCH ── */
+function renderSearch(){
+  filterMentors();
+}
+
+function filterMentors(){
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase();
+  const subj=document.getElementById('filter-subject')?.value||'';
+  const rating=parseFloat(document.getElementById('filter-rating')?.value||0);
+  filteredMentors=MENTORS.filter(m=>{
+    const matchQ=!q||m.name.toLowerCase().includes(q)||m.subjects.some(s=>s.toLowerCase().includes(q));
+    const matchS=!subj||m.subjects.some(s=>s.includes(subj));
+    const matchR=!rating||m.rating>=rating;
+    return matchQ&&matchS&&matchR;
+  });
+  // Sort
+  const sort=document.getElementById('sort-select')?.value||'';
+  if(sort==='Talabalar soni')filteredMentors.sort((a,b)=>b.reviews-a.reviews);
+  else if(sort==='Ism bo\'yicha')filteredMentors.sort((a,b)=>a.name.localeCompare(b.name));
+  else filteredMentors.sort((a,b)=>b.rating-a.rating);
+
+  const cnt=document.getElementById('results-count');
+  if(cnt)cnt.textContent=filteredMentors.length;
+  const res=document.getElementById('search-results-list');
+  if(!res)return;
+  if(!filteredMentors.length){
+    res.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Hech narsa topilmadi</div><div class="empty-sub">Boshqa kalit so'z bilan qidiring</div></div>`;
+    return;
+  }
+  res.innerHTML=filteredMentors.map(m=>`
+    <div class="search-result-card" onclick="goPage('mentor-profile')">
+      <div class="src-av" style="background:${m.color}">${m.initials}</div>
+      <div class="src-info">
+        <div class="src-name">${m.name}</div>
+        <div class="src-meta">📚 ${m.grade} · TATU · ${m.reviews} ta sharh</div>
+        <div class="src-tags">${m.subjects.map(s=>`<span class="tag tag-blue">${s}</span>`).join('')}</div>
+      </div>
+      <div class="src-right">
+        <div class="src-rating"><span style="color:#F59E0B">★</span>${m.rating}</div>
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();openModal('enroll-modal')">Yozilish</button>
+        <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();goPage('mentor-profile')">Profil</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ── RENDER MENTOR PROFILE ── */
+function renderMentorProfile(){
+  const el=document.getElementById('mentor-reviews');
+  if(el)el.innerHTML=REVIEWS.map(r=>`
+    <div class="review-item">
+      <div class="review-top">
+        <span class="review-name">${r.name}</span>
+        <span style="color:#F59E0B;font-size:13px">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span>
+        <span style="font-size:12px;color:var(--gray-400)">${r.date}</span>
+      </div>
+      <div class="review-text">${r.text}</div>
+    </div>`).join('');
+}
+
+/* ── RENDER STUDENT DASH ── */
+function renderStudentDash(){
+  // Upcoming
+  const ul=document.getElementById('upcoming-lessons');
+  if(ul)ul.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:14px;align-items:center;padding:13px;background:var(--blue-50);border:1px solid var(--blue-100);border-radius:var(--r-lg)">
+        <div style="background:var(--blue);color:#fff;padding:8px 12px;border-radius:var(--r);font-family:'Courier New',monospace;font-weight:700;font-size:13px;flex-shrink:0">14:00</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:14px">Matematika darsi</div><div style="font-size:12px;color:var(--gray-500)">Karimov Alisher · Online (Zoom) · 15.04.2025</div></div>
+        <span class="status-badge status-active">Tasdiqlandi</span>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center;padding:13px;background:var(--green-50);border:1px solid #A7F3D0;border-radius:var(--r-lg)">
+        <div style="background:var(--green);color:#fff;padding:8px 12px;border-radius:var(--r);font-family:'Courier New',monospace;font-weight:700;font-size:13px;flex-shrink:0">10:00</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:14px">Dasturlash darsi</div><div style="font-size:12px;color:var(--gray-500)">Rahimova Nilufar · Offline · 17.04.2025</div></div>
+        <span class="status-badge status-active">Tasdiqlandi</span>
+      </div>
+    </div>`;
+  // History table
+  const ht=document.getElementById('history-tbody');
+  if(ht)ht.innerHTML=LESSONS_HISTORY.map(l=>`
+    <tr>
+      <td><strong>${l.mentor}</strong></td>
+      <td><span class="tag tag-blue">${l.subject}</span></td>
+      <td style="font-size:13px;color:var(--gray-500)">${l.date}</td>
+      <td><span class="status-badge status-done">Yakunlandi</span></td>
+      <td style="color:#F59E0B;font-size:14px">${'★'.repeat(l.rating)}${'☆'.repeat(5-l.rating)}</td>
+    </tr>`).join('');
+  // My lessons
+  const ml=document.getElementById('my-lessons-list');
+  if(ml)ml.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px">
+      ${LESSONS_HISTORY.map(l=>`<div style="display:flex;gap:14px;align-items:center;padding:14px;background:var(--gray-50);border-radius:var(--r-lg);border:1px solid var(--gray-200)">
+        <div style="width:44px;height:44px;background:linear-gradient(135deg,var(--blue),var(--blue-l));border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:16px">${l.mentor.split(' ')[0][0]}${l.mentor.split(' ')[1]?.[0]||''}</div>
+        <div style="flex:1"><div style="font-weight:700;font-size:14px">${l.mentor}</div><div style="font-size:12px;color:var(--gray-500)">${l.subject} · ${l.date}</div></div>
+        <span class="status-badge status-done">Yakunlandi</span>
+        <span style="color:#F59E0B">${'★'.repeat(l.rating)}</span>
+      </div>`).join('')}
+    </div>`;
+}
+
+/* ── RENDER CALENDAR ── */
+function renderCalendar(){
+  const cd=document.getElementById('cal-days');
+  if(!cd)return;
+  const hasEvent=[3,7,10,14,15,17,22,24];
+  let html='';
+  // April 2025 starts on Tuesday (index 1)
+  for(let i=0;i<1;i++)html+=`<button class="cal-day other-month">${30-i}</button>`;
+  for(let d=1;d<=30;d++){
+    const isToday=d===14;
+    const evt=hasEvent.includes(d);
+    html+=`<button class="cal-day${isToday?' today':''}${evt?' has-event':''}" onclick="showToast('${d}-Aprel','info')">${d}</button>`;
+  }
+  cd.innerHTML=html;
+}
+
+/* ── RENDER CHAT ── */
+function renderChat(){
+  const contacts=document.getElementById('chat-contacts-list');
+  if(contacts)contacts.innerHTML=[
+    {n:'Karimov Alisher',l:'Zoom link yuborasizmi?',t:'14:35',c:'var(--blue)',i:'AK',u:2},
+    {n:'Rahimova Nilufar',l:'Ertaga 10:00 da...',t:'12:15',c:'var(--green)',i:'RN',u:0},
+    {n:'Tursunov Bekzod',l:'Rahmat!',t:'10:02',c:'var(--amber)',i:'TB',u:0},
+  ].map((c,idx)=>`
+    <div class="chat-contact${idx===0?' active-chat':''}" onclick="loadChatWith(${idx})">
+      <div class="cc-av" style="background:${c.c}">${c.i}</div>
+      <div class="cc-info"><div class="cc-name">${c.n}</div><div class="cc-last">${c.l}</div></div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+        <span class="cc-time">${c.t}</span>
+        ${c.u>0?`<span class="cc-unread">${c.u}</span>`:''}
+      </div>
+    </div>`).join('');
+
+  const msgs=document.getElementById('chat-messages');
+  if(msgs)msgs.innerHTML=CHAT_MSGS.map(m=>`
+    <div class="msg ${m.from==='me'?'sent':'received'}">
+      ${m.from!=='me'?`<div class="msg-av">AK</div>`:''}
+      <div>
+        <div class="msg-bubble">${m.text}</div>
+        <div class="msg-time">${m.time}</div>
+      </div>
+    </div>`).join('');
+  // Scroll to bottom
+  setTimeout(()=>{if(msgs)msgs.scrollTop=msgs.scrollHeight;},100);
+}
+
+/* ── RENDER ACHIEVEMENTS ── */
+function renderAchievements(){
+  const ag=document.getElementById('achievements-grid');
+  if(!ag)return;
+  const items=[
+    {icon:'🏆',title:'Birinchi dars',desc:'1 ta darsni yakunladingiz',color:'#FEF3C7',cColor:'#92400E',earned:true},
+    {icon:'📚',title:'5 ta dars',desc:'5 ta darsni yakunladingiz',color:'#DBEAFE',cColor:'#1E40AF',earned:true},
+    {icon:'⭐',title:'A\'lo o\'quvchi',desc:'Barcha darslarda 5 baho',color:'#D1FAE5',cColor:'#065F46',earned:true},
+    {icon:'🌟',title:'Faol talaba',desc:'Oyda 10 ta dars',color:'#EDE9FE',cColor:'#5B21B6',earned:false},
+    {icon:'🏅',title:'Mentor bo\'lish',desc:'Mentor ro\'lini oling',color:'#FCE7F3',cColor:'#9D174D',earned:false},
+    {icon:'🎓',title:'Bitiruvchi',desc:'100 ta darsni yakunlang',color:'#FEF2F2',cColor:'#991B1B',earned:false},
+  ];
+  ag.innerHTML=items.map(a=>`
+    <div style="background:${a.earned?a.color:'var(--gray-100)'};border:1.5px solid ${a.earned?a.cColor+'44':'var(--gray-200)'};border-radius:var(--r-lg);padding:20px;text-align:center;transition:all .2s;${a.earned?'':'opacity:.5'}">
+      <div style="font-size:32px;margin-bottom:10px;${a.earned?'':'filter:grayscale(1)'}">${a.icon}</div>
+      <div style="font-weight:700;font-size:14px;color:${a.earned?a.cColor:'var(--gray-400)'};margin-bottom:5px">${a.title}</div>
+      <div style="font-size:12px;color:var(--gray-500)">${a.desc}</div>
+      ${a.earned?`<div style="margin-top:10px"><span class="status-badge status-done">Olindi ✓</span></div>`:''}
+    </div>`).join('');
+}
+
+/* ── RENDER MENTOR DASH ── */
+function renderMentorDash(){
+  // Chart
+  const mc=document.getElementById('mentor-chart');
+  if(mc){
+    const data=[{l:'Yan',v:5},{l:'Fev',v:8},{l:'Mar',v:12},{l:'Apr',v:10},{l:'May',v:0},{l:'Iyn',v:0}];
+    const max=Math.max(...data.map(d=>d.v),1);
+    mc.innerHTML=data.map(d=>`<div class="chart-bar-wrap"><div class="chart-bar" style="height:${Math.max(d.v/max*100,4)}%" data-val="${d.v} ta"></div><div class="chart-bar-label">${d.l}</div></div>`).join('');
+  }
+  // Requests mini
+  const rm=document.getElementById('mentor-requests-mini');
+  if(rm)rm.innerHTML=MENTOR_REQUESTS.slice(0,2).map(r=>`
+    <div class="pending-item">
+      <div class="pi-info"><div class="pi-name">${r.student}</div><div class="pi-sub">${r.subject} · ${r.date} ${r.time} · ${r.format}</div></div>
+      <div class="pi-actions">
+        <button class="btn btn-green btn-sm" onclick="showToast('Qabul qilindi!','success');this.closest('.pending-item').style.opacity='.4'">✓</button>
+        <button class="btn btn-red btn-sm" onclick="this.closest('.pending-item').style.opacity='.3'">✕</button>
+      </div>
+    </div>`).join('');
+  // All requests
+  const ar=document.getElementById('all-requests-list');
+  if(ar)ar.innerHTML=MENTOR_REQUESTS.map(r=>`
+    <div class="pending-item">
+      <div class="pi-info"><div class="pi-name">${r.student}</div><div class="pi-sub">${r.subject} · ${r.date} ${r.time} · ${r.format}</div></div>
+      <div class="pi-actions">
+        <button class="btn btn-green btn-sm" onclick="showToast('Qabul qilindi!','success');this.closest('.pending-item').style.opacity='.4'">✓ Qabul</button>
+        <button class="btn btn-red btn-sm" onclick="this.closest('.pending-item').style.opacity='.3'">✕ Rad</button>
+      </div>
+    </div>`).join('');
+  // Lessons table
+  const lt=document.getElementById('mentor-lessons-tbody');
+  if(lt)lt.innerHTML=[
+    {student:'Aliyev S.',subject:'Matematika',date:'12.04',status:'done',rating:4},
+    {student:'Karimova Z.',subject:'Matematika',date:'14.04',status:'wait',rating:0},
+    {student:'Rahimov B.',subject:'Matematika',date:'15.04',status:'cancel',rating:0},
+  ].map(l=>`<tr>
+    <td><strong>${l.student}</strong></td>
+    <td><span class="tag tag-blue">${l.subject}</span></td>
+    <td style="font-size:13px">${l.date}</td>
+    <td><span class="status-badge status-${l.status==='done'?'done':l.status==='wait'?'wait':'cancel'}">${l.status==='done'?'✅ Yakunlandi':l.status==='wait'?'⏳ Kutilyapti':'❌ Bekor'}</span></td>
+    <td style="color:#F59E0B">${l.rating?'★'.repeat(l.rating):'—'}</td>
+  </tr>`).join('');
+  // Mentor chat contacts
+  const mcc=document.getElementById('mentor-chat-contacts');
+  if(mcc)mcc.innerHTML=[
+    {n:'Aliyev Sardor',l:'Rahmat!',t:'14:35',c:'#7C3AED',i:'AS'},
+    {n:'Karimova Zilola',l:'Ok, tushundim',t:'12:00',c:'#059669',i:'KZ'},
+  ].map((c,idx)=>`
+    <div class="chat-contact${idx===0?' active-chat':''}">
+      <div class="cc-av" style="background:${c.c}">${c.i}</div>
+      <div class="cc-info"><div class="cc-name">${c.n}</div><div class="cc-last">${c.l}</div></div>
+      <span class="cc-time">${c.t}</span>
+    </div>`).join('');
+  // Mentor chat msgs
+  const mcm=document.getElementById('mentor-chat-messages');
+  if(mcm){
+    mcm.innerHTML=CHAT_MSGS.map(m=>`
+      <div class="msg ${m.from==='me'?'received':'sent'}">
+        ${m.from==='me'?`<div class="msg-av" style="background:#7C3AED">AS</div>`:''}
+        <div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div>
+      </div>`).join('');
+    setTimeout(()=>{mcm.scrollTop=mcm.scrollHeight;},100);
+  }
+  // Schedule
+  const sg2=document.getElementById('schedule-grid');
+  if(sg2)sg2.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">
+      ${[['Dushanba','14:00–16:00'],['Chorshanba','10:00–12:00'],['Juma','15:00–17:00'],['Shanba','09:00–11:00']].map(([day,time])=>`
+        <div style="background:var(--blue-50);border:1px solid var(--blue-100);border-radius:var(--r-lg);padding:16px">
+          <div style="font-weight:700;font-size:14px;color:var(--blue);margin-bottom:5px">${day}</div>
+          <div style="font-size:13px;color:var(--gray-600)">${time}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+/* ── RENDER ADMIN ── */
+function renderAdmin(){
+  // Chart
+  const ac=document.getElementById('admin-chart');
+  if(ac){
+    const data=[{l:'Du',v:40},{l:'Se',v:55},{l:'Ch',v:45},{l:'Pa',v:70},{l:'Ju',v:52},{l:'Sh',v:25},{l:'Ya',v:10}];
+    const max=Math.max(...data.map(d=>d.v));
+    ac.innerHTML=data.map(d=>`<div class="chart-bar-wrap"><div class="chart-bar" style="height:${d.v/max*100}%" data-val="${d.v} ta"></div><div class="chart-bar-label">${d.l}</div></div>`).join('');
+  }
+  // Users table
+  const ut=document.getElementById('admin-users-tbody');
+  if(ut)ut.innerHTML=ADMIN_USERS.map(u=>`
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td><span class="tag ${u.role==='Mentor'?'tag-green':'tag-blue'}">${u.role}</span></td>
+      <td><span class="status-badge ${u.status==='active'?'status-done':u.status==='pending'?'status-wait':'status-cancel'}">${u.status==='active'?'Faol':u.status==='pending'?'Kutilmoqda':'Bloklangan'}</span></td>
+      <td style="font-size:12px;color:var(--gray-500)">${u.date}</td>
+      <td><div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="showToast('Tahrirlash','info')">✏️</button>
+        <button class="btn btn-red btn-sm" style="font-size:11px" onclick="showToast('Bloklandi','error')">🚫</button>
+      </div></td>
+    </tr>`).join('');
+  // Mentor applications
+  const ma=document.getElementById('mentor-applications');
+  if(ma)ma.innerHTML=[
+    {name:'Umarov Sherzod',subject:'Kimyo',grade:'3-kurs',date:'10.04.2025'},
+    {name:'Qodirov Firdavs',subject:'Fizika',grade:'4-kurs',date:'11.04.2025'},
+    {name:'Nazarova Shahnoza',subject:'Matematika',grade:'3-kurs',date:'12.04.2025'},
+  ].map(a=>`
+    <div class="pending-item">
+      <div class="pi-info"><div class="pi-name">${a.name}</div><div class="pi-sub">${a.subject} · ${a.grade} · ${a.date}</div></div>
+      <div class="pi-actions">
+        <button class="btn btn-green btn-sm" onclick="showToast('Tasdiqlandi!','success');this.closest('.pending-item').style.opacity='.4'">✓ Tasdiqla</button>
+        <button class="btn btn-red btn-sm" onclick="this.closest('.pending-item').style.opacity='.3'">✕ Rad</button>
+      </div>
+    </div>`).join('');
+  // Complaints
+  const cl=document.getElementById('complaints-list');
+  if(cl)cl.innerHTML=[
+    {from:'Aliyev Sardor',about:'Karimov Alisher',text:'Mentor darsga kelmadi va xabar ham qilmadi.',date:'14.04.2025'},
+    {from:'Yusupova Gulnora',about:'Rahimov Bekzod',text:'Berilgan materiallar noto\'g\'ri edi.',date:'12.04.2025'},
+  ].map(c=>`
+    <div style="background:var(--red-50);border:1px solid #FECACA;border-radius:var(--r-lg);padding:16px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <div><strong style="font-size:14px">${c.from}</strong> → <span style="color:var(--gray-600);font-size:14px">${c.about}</span></div>
+        <span style="font-size:12px;color:var(--gray-400)">${c.date}</span>
+      </div>
+      <div style="font-size:14px;color:var(--gray-700);margin-bottom:12px">${c.text}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm">Ko'rib chiqish</button>
+        <button class="btn btn-red btn-sm" onclick="this.closest('div[style]').style.opacity='.4'">Hal qilindi</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ── CHAT SEND ── */
+let chatLog=[...CHAT_MSGS];
+function sendMsg(){
+  const inp=document.getElementById('chat-inp');
+  if(!inp||!inp.value.trim())return;
+  chatLog.push({from:'me',text:inp.value,time:new Date().toLocaleTimeString('uz',{hour:'2-digit',minute:'2-digit'})});
+  inp.value='';
+  renderChatMsgs();
+  setTimeout(()=>{chatLog.push({from:'other',text:'Tushundim, bir oz kuting 🙂',time:new Date().toLocaleTimeString('uz',{hour:'2-digit',minute:'2-digit'})});renderChatMsgs();},1200);
+}
+function renderChatMsgs(){
+  const msgs=document.getElementById('chat-messages');
+  if(!msgs)return;
+  msgs.innerHTML=chatLog.map(m=>`
+    <div class="msg ${m.from==='me'?'sent':'received'}">
+      ${m.from!=='me'?`<div class="msg-av">AK</div>`:''}
+      <div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div>
+    </div>`).join('');
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+let mentorChatLog=[{from:'me',text:'Salom Sardor! Ertaga dars vaqti mos keladimi?',time:'14:28'},{from:'other',text:'Ha, mos keladi. Zoom linkni yuboring.',time:'14:30'}];
+function sendMentorMsg(){
+  const inp=document.getElementById('m-chat-inp');
+  if(!inp||!inp.value.trim())return;
+  mentorChatLog.push({from:'me',text:inp.value,time:new Date().toLocaleTimeString('uz',{hour:'2-digit',minute:'2-digit'})});
+  inp.value='';
+  const mcm=document.getElementById('mentor-chat-messages');
+  if(!mcm)return;
+  mcm.innerHTML=mentorChatLog.map(m=>`
+    <div class="msg ${m.from==='me'?'received':'sent'}">
+      ${m.from==='me'?`<div class="msg-av" style="background:#7C3AED">AS</div>`:''}
+      <div><div class="msg-bubble">${m.text}</div><div class="msg-time">${m.time}</div></div>
+    </div>`).join('');
+  mcm.scrollTop=mcm.scrollHeight;
+}
+
+/* ── AUTH ── */
+function doLogin(){
+  const e=document.getElementById('login-email')?.value;
+  if(!e){showToast('Email yoki login kiriting!','error');return;}
+  const role=e.includes('admin')?'admin':e.includes('mentor')?'dashboard-mentor':'dashboard-student';
+  showToast('Tizimga kirildi! ✓','success');
+  setTimeout(()=>goPage(role),700);
+}
+function doRegister(){
+  showToast('Ro\'yxatdan o\'tildi! Emailingizni tasdiqlang.','success');
+  setTimeout(()=>goPage('dashboard-student'),1000);
+}
+function setRole(role){
+  document.getElementById('rt-student')?.classList.toggle('active',role==='student');
+  document.getElementById('rt-mentor')?.classList.toggle('active',role==='mentor');
+  const mf=document.getElementById('mentor-fields');
+  if(mf)mf.style.display=role==='mentor'?'block':'none';
+}
+
+/* ── MODAL ── */
+function openModal(id){
+  const el=document.getElementById('modal-'+id.replace('modal-',''));
+  if(!el){
+    // try direct id
+    const el2=document.getElementById(id);
+    if(el2)el2.classList.add('open');
+    return;
+  }
+  el.classList.add('open');
+}
+function closeModal(id){
+  document.getElementById('modal-'+id.replace('modal-',''))?.classList.remove('open');
+  document.getElementById(id)?.classList.remove('open');
+}
+function openModal(id){document.getElementById(id)?.classList.add('open');}
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('modal-backdrop'))e.target.classList.remove('open');
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.modal-backdrop.open').forEach(m=>m.classList.remove('open'));
+});
+function submitEnroll(){
+  closeModal('modal-enroll');
+  showToast('Darsga yozilish so\'rovi yuborildi! ✓','success');
+  setTimeout(()=>goPage('dashboard-student'),800);
+}
+
+/* ── TOAST ── */
+function showToast(msg,type='info'){
+  const icons={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};
+  const tc=document.getElementById('toast-container');
+  const t=document.createElement('div');
+  t.className=`toast ${type}`;
+  t.innerHTML=`<span class="toast-icon">${icons[type]}</span><span>${msg}</span>`;
+  tc.appendChild(t);
+  setTimeout(()=>t.remove(),3500);
+}
+
+/* ── NAVBAR SCROLL ── */
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar')?.classList.toggle('scrolled',window.scrollY>20);
+});
+
+/* ── MOBILE SIDEBAR ── */
+function toggleMobSidebar(){
+  document.getElementById('student-sidebar')?.classList.toggle('mob-open');
+}
+function toggleStudentSidebar(){
+  document.getElementById('student-sidebar')?.classList.toggle('mob-open');
+}
+
+/* ── INIT ── */
+renderHome();
+</script>
+</body>
+</html>

@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TATU TalentHub — Iqtidorli Talabalar Platformasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0A1628;
+  --navy-mid: #0F2044;
+  --navy-light: #162E5E;
+  --gold: #F5C842;
+  --gold-light: #FFD966;
+  --gold-dim: #C9A227;
+  --cyan: #00C2FF;
+  --cyan-dim: #007BAB;
+  --white: #F0F4FF;
+  --gray: #8A99BE;
+  --card-bg: rgba(15, 32, 68, 0.85);
+  --border: rgba(245, 200, 66, 0.18);
+  --shadow: 0 8px 40px rgba(0,0,0,0.45);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  overflow-x: hidden;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,200,66,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 6%;
+  height: 68px;
+  background: rgba(10, 22, 40, 0.92);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800; font-size: 1.25rem;
+  letter-spacing: -0.5px;
+  cursor: pointer;
+}
+.logo-badge {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 800; color: var(--navy);
+}
+.nav-links { display: flex; gap: 2px; }
+.nav-links a {
+  color: var(--gray); text-decoration: none;
+  font-size: 0.875rem; font-weight: 500;
+  padding: 8px 14px; border-radius: 8px;
+  transition: all 0.2s; cursor: pointer;
+}
+.nav-links a:hover { color: var(--white); background: rgba(245,200,66,0.08); }
+.nav-links a.active { color: var(--gold); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+.btn-outline {
+  border: 1px solid var(--border); background: transparent; color: var(--white);
+  padding: 8px 18px; border-radius: 8px;
+  font-size: 0.875rem; font-family: 'DM Sans', sans-serif; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: var(--navy); border: none;
+  padding: 9px 20px; border-radius: 8px;
+  font-size: 0.875rem; font-family: 'DM Sans', sans-serif; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(245,200,66,0.35); }
+/* PAGE SYSTEM */
+section { position: relative; z-index: 1; }
+.page { display: none; }
+.page.active { display: block; }
+/* HERO */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 120px 6% 80px; overflow: hidden;
+}
+.hero-orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+.orb-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(245,200,66,0.12) 0%, transparent 70%);
+  top: -100px; left: -100px;
+  animation: floatOrb 8s ease-in-out infinite;
+}
+.orb-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,194,255,0.1) 0%, transparent 70%);
+  bottom: -50px; right: -80px;
+  animation: floatOrb 10s ease-in-out infinite reverse;
+}
+@keyframes floatOrb {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, 20px); }
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(245,200,66,0.1); border: 1px solid rgba(245,200,66,0.3);
+  color: var(--gold); padding: 6px 16px; border-radius: 100px;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;
+  margin-bottom: 28px; animation: fadeUp 0.6s ease both;
+}
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 800; line-height: 1.05; letter-spacing: -2px;
+  margin-bottom: 24px; animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero-title .accent { color: var(--gold); }
+.hero-title .accent-blue { color: var(--cyan); }
+.hero-sub {
+  font-size: 1.1rem; color: var(--gray);
+  max-width: 560px; line-height: 1.7;
+  margin: 0 auto 40px; font-weight: 400;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-cta {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.btn-hero {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: var(--navy); border: none;
+  padding: 14px 32px; border-radius: 10px;
+  font-size: 1rem; font-family: 'DM Sans', sans-serif; font-weight: 700;
+  cursor: pointer; transition: all 0.25s;
+  display: flex; align-items: center; gap: 8px;
+}
+.btn-hero:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(245,200,66,0.4); }
+.btn-hero-ghost {
+  background: transparent; color: var(--white);
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 14px 32px; border-radius: 10px;
+  font-size: 1rem; font-family: 'DM Sans', sans-serif; font-weight: 500;
+  cursor: pointer; transition: all 0.25s;
+}
+.btn-hero-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.hero-stats {
+  display: flex; gap: 60px; justify-content: center; margin-top: 72px;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+.stat-item { text-align: center; }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; color: var(--gold); line-height: 1; }
+.stat-label { font-size: 0.8rem; color: var(--gray); margin-top: 4px; font-weight: 500; }
+.hero-divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--gold), transparent); margin: 12px auto 0; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* SECTION SHARED */
+.section-header { text-align: center; margin-bottom: 64px; }
+.section-tag {
+  display: inline-block; font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800; letter-spacing: -1px; line-height: 1.15;
+}
+.section-sub {
+  color: var(--gray); font-size: 1rem; margin-top: 12px;
+  max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.6;
+}
+/* FEATURES */
+#features { padding: 100px 6%; }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.feature-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 36px 32px;
+  position: relative; overflow: hidden; transition: all 0.3s;
+}
+.feature-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.feature-card:hover { transform: translateY(-6px); border-color: rgba(245,200,66,0.35); box-shadow: var(--shadow); }
+.feature-card:hover::before { opacity: 1; }
+.feature-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; margin-bottom: 22px;
+}
+.icon-gold { background: rgba(245,200,66,0.15); }
+.icon-blue { background: rgba(0,194,255,0.12); }
+.icon-purple { background: rgba(160,100,255,0.12); }
+.feature-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+.feature-desc { color: var(--gray); font-size: 0.875rem; line-height: 1.65; }
+/* LEADERBOARD */
+#leaderboard { padding: 100px 6%; background: rgba(10,22,40,0.5); }
+.leaderboard-wrap { display: grid; grid-template-columns: 1fr 380px; gap: 40px; }
+.top-students-list { display: flex; flex-direction: column; gap: 14px; }
+.student-row {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px 24px;
+  display: flex; align-items: center; gap: 18px;
+  transition: all 0.25s; cursor: pointer;
+}
+.student-row:hover { border-color: rgba(245,200,66,0.4); transform: translateX(6px); }
+.rank-badge { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; min-width: 36px; text-align: center; }
+.rank-1 { color: var(--gold); }
+.rank-2 { color: #C0C8D8; }
+.rank-3 { color: #CD7F32; }
+.rank-other { color: var(--gray); font-size: 0.9rem; }
+.student-avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 2px solid var(--border); background: var(--navy-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; flex-shrink: 0;
+}
+.student-info { flex: 1; }
+.student-name { font-weight: 600; font-size: 0.95rem; }
+.student-meta { color: var(--gray); font-size: 0.78rem; margin-top: 2px; }
+.student-score { text-align: right; }
+.score-num { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--gold); font-size: 1.1rem; }
+.score-label { color: var(--gray); font-size: 0.7rem; }
+.score-bar-wrap { flex: 0 0 100px; }
+.score-bar { height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.score-fill { height: 100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); border-radius: 3px; transition: width 1s ease; }
+.lb-sidebar { display: flex; flex-direction: column; gap: 20px; }
+.sidebar-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 28px; }
+.sidebar-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.category-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.category-item:last-child { border-bottom: none; }
+.cat-name { font-size: 0.875rem; color: var(--gray); }
+.cat-count { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--gold); }
+/* PRIVILEGES */
+#privileges { padding: 100px 6%; }
+.privileges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.priv-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px 24px; text-align: center;
+  position: relative; overflow: hidden; transition: all 0.3s;
+}
+.priv-card.featured {
+  border-color: rgba(245,200,66,0.5);
+  background: linear-gradient(135deg, rgba(245,200,66,0.08), var(--card-bg));
+}
+.priv-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+.priv-star {
+  position: absolute; top: 16px; right: 16px;
+  background: var(--gold); color: var(--navy);
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.5px;
+  padding: 3px 8px; border-radius: 100px;
+}
+.priv-emoji { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+.priv-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 10px; line-height: 1.3; }
+.priv-desc { color: var(--gray); font-size: 0.8rem; line-height: 1.6; margin-bottom: 16px; }
+.priv-req {
+  display: inline-block;
+  background: rgba(0,194,255,0.1); border: 1px solid rgba(0,194,255,0.2); color: var(--cyan);
+  font-size: 0.72rem; font-weight: 600; padding: 4px 12px; border-radius: 100px;
+}
+/* DASHBOARD */
+#dashboard { padding: 100px 6%; background: rgba(10,22,40,0.5); }
+.dashboard-layout {
+  display: grid; grid-template-columns: 280px 1fr; gap: 28px;
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; overflow: hidden;
+}
+.dash-sidebar {
+  background: rgba(10,22,40,0.8); padding: 32px 24px;
+  border-right: 1px solid var(--border);
+}
+.dash-profile { text-align: center; margin-bottom: 32px; }
+.dash-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  margin: 0 auto 14px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+}
+.dash-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
+.dash-role { color: var(--gray); font-size: 0.78rem; margin-top: 2px; }
+.dash-score-ring { width: 80px; height: 80px; margin: 16px auto 6px; position: relative; }
+.dash-score-ring svg { transform: rotate(-90deg); }
+.dash-score-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.dash-score-num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--gold); line-height: 1; }
+.dash-score-sub { font-size: 0.58rem; color: var(--gray); }
+.dash-nav { list-style: none; }
+.dash-nav li a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; border-radius: 10px;
+  color: var(--gray); text-decoration: none;
+  font-size: 0.875rem; font-weight: 500;
+  transition: all 0.2s; margin-bottom: 3px;
+}
+.dash-nav li a:hover { background: rgba(245,200,66,0.08); color: var(--white); }
+.dash-nav li a.active { background: rgba(245,200,66,0.12); color: var(--gold); }
+.dash-main { padding: 32px; }
+.dash-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+.dash-welcome { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; }
+.dash-date { color: var(--gray); font-size: 0.8rem; }
+.dash-kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.kpi-card { background: rgba(10,22,40,0.6); border: 1px solid var(--border); border-radius: 14px; padding: 20px 18px; }
+.kpi-label { color: var(--gray); font-size: 0.75rem; font-weight: 500; margin-bottom: 8px; }
+.kpi-value { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem; line-height: 1; }
+.kpi-delta { color: #4AE387; font-size: 0.72rem; margin-top: 4px; }
+.dash-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.dash-card { background: rgba(10,22,40,0.6); border: 1px solid var(--border); border-radius: 14px; padding: 22px; }
+.dash-card-title {
+  font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 18px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.dash-card-action { color: var(--gold); font-size: 0.75rem; cursor: pointer; font-weight: 400; font-family: 'DM Sans', sans-serif; }
+.achievement-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.achievement-item:last-child { border-bottom: none; }
+.ach-icon { font-size: 1.4rem; }
+.ach-name { font-size: 0.82rem; font-weight: 500; }
+.ach-info { color: var(--gray); font-size: 0.72rem; margin-top: 1px; }
+.ach-status { margin-left: auto; font-size: 0.68rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+.status-verified { background: rgba(74,227,135,0.15); color: #4AE387; }
+.status-pending { background: rgba(245,200,66,0.12); color: var(--gold); }
+.notification-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.notification-item:last-child { border-bottom: none; }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.dot-gold { background: var(--gold); }
+.dot-blue { background: var(--cyan); }
+.dot-green { background: #4AE387; }
+.notif-text { font-size: 0.8rem; line-height: 1.5; }
+.notif-time { color: var(--gray); font-size: 0.7rem; margin-top: 3px; }
+/* ANNOUNCEMENTS */
+#announcements { padding: 100px 6%; }
+.announce-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.announce-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 20px; padding: 28px; transition: all 0.3s; cursor: pointer;
+}
+.announce-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: rgba(245,200,66,0.3); }
+.announce-cat {
+  display: inline-block; font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 12px; border-radius: 100px; margin-bottom: 16px;
+}
+.cat-tanlov { background: rgba(245,200,66,0.12); color: var(--gold); }
+.cat-grant { background: rgba(0,194,255,0.12); color: var(--cyan); }
+.cat-sport { background: rgba(74,227,135,0.12); color: #4AE387; }
+.cat-ilm { background: rgba(200,100,255,0.12); color: #C864FF; }
+.announce-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 10px; }
+.announce-desc { color: var(--gray); font-size: 0.82rem; line-height: 1.6; margin-bottom: 18px; }
+.announce-footer { display: flex; align-items: center; justify-content: space-between; }
+.announce-date { color: var(--gray); font-size: 0.75rem; }
+.announce-arrow { color: var(--gold); font-size: 1rem; }
+/* ADMIN */
+#admin { padding: 100px 6%; }
+.admin-wrap { background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; overflow: hidden; }
+.admin-header {
+  background: rgba(10,22,40,0.9); padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.admin-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+.admin-badge { background: rgba(245,200,66,0.15); color: var(--gold); border: 1px solid rgba(245,200,66,0.3); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; }
+.admin-body { display: grid; grid-template-columns: 200px 1fr; }
+.admin-sidebar { border-right: 1px solid var(--border); padding: 24px 16px; }
+.admin-menu-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 8px; color: var(--gray);
+  font-size: 0.82rem; cursor: pointer; transition: all 0.2s; margin-bottom: 2px;
+}
+.admin-menu-item:hover { background: rgba(245,200,66,0.08); color: var(--white); }
+.admin-menu-item.active { background: rgba(245,200,66,0.12); color: var(--gold); }
+.admin-content { padding: 28px; }
+.admin-stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+.admin-stat { background: rgba(10,22,40,0.6); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
+.admin-stat-n { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--gold); }
+.admin-stat-l { color: var(--gray); font-size: 0.72rem; margin-top: 3px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; padding: 12px 16px; color: var(--gray); font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+td { padding: 14px 16px; font-size: 0.82rem; border-bottom: 1px solid rgba(245,200,66,0.06); }
+tr:hover td { background: rgba(245,200,66,0.03); }
+.status-pill { display: inline-block; padding: 3px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 700; }
+.pill-active { background: rgba(74,227,135,0.12); color: #4AE387; }
+.pill-pending { background: rgba(245,200,66,0.12); color: var(--gold); }
+.pill-blocked { background: rgba(255,80,80,0.12); color: #FF5050; }
+.action-btn {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--gray); padding: 4px 12px; border-radius: 6px;
+  font-size: 0.72rem; cursor: pointer; transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif; margin-right: 6px;
+}
+.action-btn:hover { border-color: var(--gold); color: var(--gold); }
+/* ROADMAP */
+#roadmap { padding: 100px 6%; background: rgba(10,22,40,0.5); }
+.roadmap-list { max-width: 800px; margin: 0 auto; }
+.roadmap-item { display: flex; gap: 24px; margin-bottom: 4px; }
+.roadmap-line { display: flex; flex-direction: column; align-items: center; }
+.roadmap-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--gold); background: var(--navy); flex-shrink: 0; }
+.roadmap-dot.done { background: var(--gold); }
+.roadmap-connector { width: 2px; flex: 1; min-height: 40px; background: linear-gradient(180deg, var(--gold-dim), rgba(245,200,66,0.1)); }
+.roadmap-content {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px 28px; flex: 1; margin-bottom: 20px; transition: all 0.3s;
+}
+.roadmap-content:hover { border-color: rgba(245,200,66,0.35); transform: translateX(6px); }
+.road-phase { color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.road-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+.road-desc { color: var(--gray); font-size: 0.82rem; line-height: 1.6; }
+.road-duration { display: inline-flex; align-items: center; gap: 5px; background: rgba(0,194,255,0.1); color: var(--cyan); font-size: 0.72rem; font-weight: 600; padding: 3px 10px; border-radius: 100px; margin-top: 12px; }
+/* CATALOG */
+#catalog { padding: 100px 6%; }
+.catalog-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.catalog-card {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px;
+  padding: 24px 20px; text-align: center; transition: all 0.3s; cursor: pointer;
+}
+.catalog-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: rgba(245,200,66,0.35); }
+.catalog-avatar {
+  width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 14px;
+  font-size: 2rem; background: linear-gradient(135deg, var(--navy-light), var(--navy-mid));
+  border: 2px solid var(--border); display: flex; align-items: center; justify-content: center;
+}
+.catalog-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+.catalog-faculty { color: var(--gray); font-size: 0.75rem; margin-bottom: 12px; }
+.catalog-tags { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 12px; }
+.tag { font-size: 0.65rem; font-weight: 600; padding: 2px 8px; border-radius: 100px; }
+.tag-science { background: rgba(160,100,255,0.12); color: #A064FF; }
+.tag-sport { background: rgba(74,227,135,0.12); color: #4AE387; }
+.tag-creative { background: rgba(245,200,66,0.12); color: var(--gold); }
+.tag-social { background: rgba(0,194,255,0.12); color: var(--cyan); }
+.catalog-score { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--gold); }
+.catalog-score-label { color: var(--gray); font-size: 0.7rem; }
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 28px; background: rgba(10,22,40,0.5); border-radius: 10px; padding: 4px; width: fit-content; }
+.tab-btn { padding: 8px 18px; border-radius: 8px; border: none; background: transparent; color: var(--gray); font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+.tab-btn.active { background: var(--navy-light); color: var(--white); }
+/* SEARCH */
+.search-bar { display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap; }
+.search-input-wrap { position: relative; flex: 1; min-width: 200px; }
+.search-input-wrap input {
+  width: 100%; background: var(--card-bg); border: 1px solid var(--border); color: var(--white);
+  padding: 11px 16px 11px 42px; border-radius: 10px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s;
+}
+.search-input-wrap input:focus { border-color: var(--gold); }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gray); font-size: 0.9rem; }
+.filter-select { background: var(--card-bg); border: 1px solid var(--border); color: var(--white); padding: 11px 16px; border-radius: 10px; font-size: 0.875rem; font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer; }
+.filter-select option { background: var(--navy-mid); }
+/* FOOTER */
+footer { background: rgba(5,12,25,0.95); border-top: 1px solid var(--border); padding: 60px 6% 32px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand p { color: var(--gray); font-size: 0.875rem; line-height: 1.7; max-width: 300px; }
+.footer-links h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; margin-bottom: 18px; color: var(--white); }
+.footer-links ul { list-style: none; }
+.footer-links ul li { margin-bottom: 10px; }
+.footer-links ul li a { color: var(--gray); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; cursor: pointer; }
+.footer-links ul li a:hover { color: var(--gold); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { color: var(--gray); font-size: 0.78rem; }
+.footer-socials { display: flex; gap: 12px; }
+.social-btn {
+  width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray); font-size: 0.85rem; text-decoration: none; transition: all 0.2s;
+}
+.social-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(245,200,66,0.06); }
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
+  z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--navy-mid); border: 1px solid var(--border); border-radius: 24px;
+  width: 100%; max-width: 440px; padding: 40px; position: relative;
+  transform: scale(0.95) translateY(20px); transition: transform 0.25s;
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header { text-align: center; margin-bottom: 28px; }
+.modal-logo {
+  width: 60px; height: 60px; background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; margin: 0 auto 16px;
+}
+.modal-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; margin-bottom: 6px; }
+.modal-sub { color: var(--gray); font-size: 0.875rem; }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--gray); margin-bottom: 8px; }
+.form-input {
+  width: 100%; background: rgba(10,22,40,0.8); border: 1px solid var(--border);
+  color: var(--white); padding: 12px 16px; border-radius: 10px;
+  font-size: 0.875rem; font-family: 'DM Sans', sans-serif; transition: border-color 0.2s; outline: none;
+}
+.form-input:focus { border-color: var(--gold); }
+.form-select {
+  width: 100%; background: rgba(10,22,40,0.8); border: 1px solid var(--border);
+  color: var(--white); padding: 12px 16px; border-radius: 10px;
+  font-size: 0.875rem; font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer;
+}
+.form-select option { background: var(--navy-mid); }
+.btn-full {
+  width: 100%; background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color: var(--navy); border: none; padding: 13px; border-radius: 10px;
+  font-size: 0.95rem; font-family: 'DM Sans', sans-serif; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+}
+.btn-full:hover { transform: translateY(-1px); box-shadow: 0 4px 24px rgba(245,200,66,0.35); }
+.modal-close {
+  position: absolute; top: 18px; right: 18px;
+  background: rgba(255,255,255,0.08); border: none; color: var(--gray);
+  width: 32px; height: 32px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.2s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.15); color: var(--white); }
+/* TOAST */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--navy-mid); border: 1px solid rgba(74,227,135,0.4); color: #4AE387;
+  padding: 14px 22px; border-radius: 12px; font-size: 0.875rem; font-weight: 600;
+  z-index: 3000; transform: translateY(80px) scale(0.9); opacity: 0; transition: all 0.3s;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateY(0) scale(1); opacity: 1; }
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .features-grid, .announce-grid { grid-template-columns: repeat(2, 1fr); }
+  .privileges-grid, .catalog-grid { grid-template-columns: repeat(2, 1fr); }
+  .leaderboard-wrap, .dashboard-layout { grid-template-columns: 1fr; }
+  .admin-stats-row { grid-template-columns: repeat(3, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .hero-stats { gap: 30px; }
+  .features-grid, .privileges-grid, .catalog-grid, .announce-grid { grid-template-columns: 1fr; }
+  .admin-body { grid-template-columns: 1fr; }
+  .dash-kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .dash-grid2 { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .admin-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="logo-badge">TH</div>
+    TATU TalentHub
+  </div>
+  <div class="nav-links">
+    <a id="nav-home" class="active" onclick="showPage('home')">Bosh sahifa</a>
+    <a id="nav-catalog" onclick="showPage('catalog')">Talabalar</a>
+    <a onclick="showPage('home');setTimeout(()=>document.getElementById('privileges').scrollIntoView({behavior:'smooth'}),100)">Imtiyozlar</a>
+    <a onclick="showPage('home');setTimeout(()=>document.getElementById('announcements').scrollIntoView({behavior:'smooth'}),100)">E'lonlar</a>
+    <a id="nav-admin" onclick="showPage('admin')">Admin panel</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-outline" onclick="openModal('login')">Kirish</button>
+    <button class="btn-primary" onclick="openModal('register')">Ro'yxatdan o'tish</button>
+  </div>
+</nav>
+
+<!-- ═══ HOME PAGE ═══ -->
+<div id="page-home" class="page active">
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-tag">🏆 TATU — Iqtidorlilar Platformasi</div>
+  <h1 class="hero-title">
+    <span class="accent">Iqtidoringizni</span> kashf eting,<br>
+    <span class="accent-blue">yutuqlaringizni</span> ulashing
+  </h1>
+  <p class="hero-sub">
+    TATU TalentHub — universitetning eng iqtidorli talabalarini birlashtiruvchi, yutuqlarni rag'batlantiradigan va imtiyozlar taqdim etadigan yagona platforma.
+  </p>
+  <div class="hero-cta">
+    <button class="btn-hero" onclick="openModal('register')">✦ Hoziroq boshlash</button>
+    <button class="btn-hero-ghost" onclick="showPage('catalog')">Talabalarni ko'rish →</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">2,400+</div>
+      <div class="hero-divider"></div>
+      <div class="stat-label">Faol talabalar</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">8,750</div>
+      <div class="hero-divider"></div>
+      <div class="stat-label">Tasdiqlangan yutuqlar</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">340+</div>
+      <div class="hero-divider"></div>
+      <div class="stat-label">Berilgan imtiyozlar</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">12</div>
+      <div class="hero-divider"></div>
+      <div class="stat-label">Fakultetlar</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-header reveal">
+    <div class="section-tag">Imkoniyatlar</div>
+    <h2 class="section-title">Platforma nima beradi?</h2>
+    <p class="section-sub">Talabalar va adminlar uchun keng qamrovli vositalar to'plami</p>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal" style="transition-delay:0s">
+      <div class="feature-icon icon-gold">🏅</div>
+      <div class="feature-title">Yutuqlar portfeli</div>
+      <p class="feature-desc">Sertifikatlar, diplomlar, medal va kuboklaRingizni yuklang. Xalqaro, respublika va universitet miqyosidagi kategoriyalar.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.08s">
+      <div class="feature-icon icon-blue">📊</div>
+      <div class="feature-title">Shaxsiy reyting</div>
+      <p class="feature-desc">Admin tomonidan belgilangan mezonlar asosida avtomatik hisoblanadigan reyting bali va faollik ko'rsatkichlari.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.16s">
+      <div class="feature-icon icon-purple">🎁</div>
+      <div class="feature-title">Imtiyozlar tizimi</div>
+      <p class="feature-desc">Stipendiya oshirilishi, yotoqxona, xorijiy grantlar va TATU inkubatsiya dasturlariga kirish imkoni.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.24s">
+      <div class="feature-icon icon-gold">🔔</div>
+      <div class="feature-title">Smart bildirishnomalar</div>
+      <p class="feature-desc">Yangi tanlov, grant va musobaqalar haqida vaqtida xabardor bo'ling. Telegram bot integratsiyasi.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.32s">
+      <div class="feature-icon icon-blue">🤝</div>
+      <div class="feature-title">Mentorlik tizimi</div>
+      <p class="feature-desc">Iqtidorli talabalarni tajribali professorlar va sanoat mutaxassislari bilan bog'laydigan platforma.</p>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:0.4s">
+      <div class="feature-icon icon-purple">🤖</div>
+      <div class="feature-title">AI tasniflovchi</div>
+      <p class="feature-desc">OCR texnologiyasi yordamida sertifikatlarni avtomatik o'qish va to'g'ri kategoriyaga joylashtirish.</p>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERBOARD -->
+<section id="leaderboard">
+  <div class="section-header reveal">
+    <div class="section-tag">Reyting</div>
+    <h2 class="section-title">Top talabalar — Aprel 2025</h2>
+    <p class="section-sub">Eng faol va yutuqli talabalarimiz</p>
+  </div>
+  <div class="leaderboard-wrap">
+    <div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="setLbTab(this,'all')">Umumiy</button>
+        <button class="tab-btn" onclick="setLbTab(this,'ilm')">Ilmiy</button>
+        <button class="tab-btn" onclick="setLbTab(this,'sport')">Sport</button>
+        <button class="tab-btn" onclick="setLbTab(this,'ijod')">Ijodiy</button>
+      </div>
+      <div class="top-students-list" id="lb-list"></div>
+    </div>
+    <div class="lb-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-title">📊 Yo'nalishlar bo'yicha</div>
+        <div class="category-item"><span class="cat-name">Ilmiy</span><span class="cat-count">847</span></div>
+        <div class="category-item"><span class="cat-name">Sport</span><span class="cat-count">634</span></div>
+        <div class="category-item"><span class="cat-name">Ijodiy</span><span class="cat-count">512</span></div>
+        <div class="category-item"><span class="cat-name">Ijtimoiy</span><span class="cat-count">389</span></div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-title">🏛️ Fakultetlar bo'yicha</div>
+        <div class="category-item"><span class="cat-name">Kompyuter tizimlari</span><span class="cat-count">312</span></div>
+        <div class="category-item"><span class="cat-name">Axborot xavfsizligi</span><span class="cat-count">278</span></div>
+        <div class="category-item"><span class="cat-name">Dasturiy injiniring</span><span class="cat-count">256</span></div>
+        <div class="category-item"><span class="cat-name">Telekommunikatsiya</span><span class="cat-count">201</span></div>
+        <div class="category-item"><span class="cat-name">Raqamli iqtisodiyot</span><span class="cat-count">188</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVILEGES -->
+<section id="privileges">
+  <div class="section-header reveal">
+    <div class="section-tag">Imtiyozlar</div>
+    <h2 class="section-title">Yutuqlaringiz uchun mukofotlar</h2>
+    <p class="section-sub">Reyting balingizga qarab qo'shimcha imkoniyatlar qo'lga kiriting</p>
+  </div>
+  <div class="privileges-grid">
+    <div class="priv-card featured reveal" style="transition-delay:0s">
+      <span class="priv-star">★ PREMIUM</span>
+      <span class="priv-emoji">💰</span>
+      <div class="priv-title">Stipendiya oshirilishi</div>
+      <p class="priv-desc">Joriy stipendiyangizni 50% gacha oshirish imkoniyati. Xalqaro va respublika miqyosidagi yutuqlar uchun.</p>
+      <span class="priv-req">≥ 500 ball</span>
+    </div>
+    <div class="priv-card reveal" style="transition-delay:0.06s">
+      <span class="priv-emoji">🏠</span>
+      <div class="priv-title">Yotoqxona imtiyozi</div>
+      <p class="priv-desc">Yotoqxonadan birinchi navbat bilan foydalanish va yaxshilangan xona sharoitlari.</p>
+      <span class="priv-req">≥ 300 ball</span>
+    </div>
+    <div class="priv-card reveal" style="transition-delay:0.12s">
+      <span class="priv-emoji">✈️</span>
+      <div class="priv-title">Xorijiy grantlar</div>
+      <p class="priv-desc">Xalqaro universitetlarda o'qish va stajirovka dasturlariga yo'llanma.</p>
+      <span class="priv-req">≥ 700 ball</span>
+    </div>
+    <div class="priv-card reveal" style="transition-delay:0.18s">
+      <span class="priv-emoji">🔬</span>
+      <div class="priv-title">Ilmiy laboratoriya</div>
+      <p class="priv-desc">Ilmiy rahbarlar bilan birgalikda ishlash va laboratoriyalarga maxsus kirish imkoni.</p>
+      <span class="priv-req">≥ 400 ball</span>
+    </div>
+    <div class="priv-card reveal" style="transition-delay:0.24s">
+      <span class="priv-emoji">🚀</span>
+      <div class="priv-title">TATU Inkubator</div>
+      <p class="priv-desc">Startap g'oyangizni rivojlantirish uchun TATU texnopark inkubatsiya dasturida ishtirok etish.</p>
+      <span class="priv-req">≥ 600 ball</span>
+    </div>
+    <div class="priv-card reveal" style="transition-delay:0.3s">
+      <span class="priv-emoji">📚</span>
+      <div class="priv-title">Maxsus kutubxona</div>
+      <p class="priv-desc">Premium xalqaro resurslar va tadqiqot ma'lumotlar bazalariga cheksiz kirish.</p>
+      <span class="priv-req">≥ 200 ball</span>
+    </div>
+    <div class="priv-card reveal" style="transition-delay:0.36s">
+      <span class="priv-emoji">🎓</span>
+      <div class="priv-title">Mentorlik dasturi</div>
+      <p class="priv-desc">Sanoat mutaxassislari va muvaffaqiyatli bitiruvchilar bilan to'g'ridan-to'g'ri aloqa.</p>
+      <span class="priv-req">≥ 350 ball</span>
+    </div>
+    <div class="priv-card reveal" style="transition-delay:0.42s">
+      <span class="priv-emoji">💼</span>
+      <div class="priv-title">Ish beruvchilar bazasi</div>
+      <p class="priv-desc">Hamkor kompaniyalar bilan bevosita bog'lanish va yashirin vakansiyalarga kirish.</p>
+      <span class="priv-req">≥ 450 ball</span>
+    </div>
+  </div>
+</section>
+
+<!-- ANNOUNCEMENTS -->
+<section id="announcements">
+  <div class="section-header reveal">
+    <div class="section-tag">E'lonlar</div>
+    <h2 class="section-title">Tanlov va grantlar</h2>
+    <p class="section-sub">So'nggi imkoniyatlardan xabardor bo'ling</p>
+  </div>
+  <div class="announce-grid">
+    <div class="announce-card reveal" onclick="showToast('📋 ACM ICPC batafsil ma\'lumot...')">
+      <span class="announce-cat cat-tanlov">Tanlov</span>
+      <div class="announce-title">ACM ICPC 2025 — Mintaqaviy bosqich</div>
+      <p class="announce-desc">Dasturlash bo'yicha xalqaro olimpiada. Jamoalar ro'yxatdan o'tishi uchun oxirgi sana yaqinlashmoqda.</p>
+      <div class="announce-footer"><span class="announce-date">📅 Ariza: 30 Aprel 2025</span><span class="announce-arrow">→</span></div>
+    </div>
+    <div class="announce-card reveal" onclick="showToast('📋 Erasmus+ batafsil ma\'lumot...')">
+      <span class="announce-cat cat-grant">Grant</span>
+      <div class="announce-title">Erasmus+ 2025/26 — Stipendiya dasturi</div>
+      <p class="announce-desc">Yevropa universitetlarida 1 semestr o'qish imkoniyati. Barcha xarajatlar qoplanadi.</p>
+      <div class="announce-footer"><span class="announce-date">📅 Ariza: 15 May 2025</span><span class="announce-arrow">→</span></div>
+    </div>
+    <div class="announce-card reveal" onclick="showToast('📋 Konferentsiya batafsil ma\'lumot...')">
+      <span class="announce-cat cat-ilm">Ilmiy</span>
+      <div class="announce-title">Yosh olimlar konferentsiyasi — TATU 2025</div>
+      <p class="announce-desc">Universitetlar arasi ilmiy maqolalar va prezentatsiyalar tanlovi. I–III o'rin uchun maxsus mukofotlar.</p>
+      <div class="announce-footer"><span class="announce-date">📅 Taqdimot: 10 May 2025</span><span class="announce-arrow">→</span></div>
+    </div>
+    <div class="announce-card reveal" onclick="showToast('📋 Universiada batafsil ma\'lumot...')">
+      <span class="announce-cat cat-sport">Sport</span>
+      <div class="announce-title">TATU Universiada — Bahorgi mavsum</div>
+      <p class="announce-desc">Futzal, basketbol, tennis va esports bo'yicha universitetlar arasi musobaqa.</p>
+      <div class="announce-footer"><span class="announce-date">📅 Boshlanish: 5 May 2025</span><span class="announce-arrow">→</span></div>
+    </div>
+    <div class="announce-card reveal" onclick="showToast('📋 DigiHack batafsil ma\'lumot...')">
+      <span class="announce-cat cat-tanlov">Hackathon</span>
+      <div class="announce-title">DigiHack Uzbekistan 2025</div>
+      <p class="announce-desc">48 soatlik raqamlashtirish hackathoni. Yechimingiz haqiqiy muammolarni hal qilishi kerak. $5,000 sovrin.</p>
+      <div class="announce-footer"><span class="announce-date">📅 Ariza: 25 Aprel 2025</span><span class="announce-arrow">→</span></div>
+    </div>
+    <div class="announce-card reveal" onclick="showToast('📋 Uzdigital amaliyot batafsil...')">
+      <span class="announce-cat cat-grant">Stajirovka</span>
+      <div class="announce-title">Uzdigital Summer Internship 2025</div>
+      <p class="announce-desc">O'zbekiston Raqamlashtirish vazirligida 3 oylik haq to'lanadigan amaliyot dasturi. 20 ta o'rin mavjud.</p>
+      <div class="announce-footer"><span class="announce-date">📅 Ariza: 1 May 2025</span><span class="announce-arrow">→</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD PREVIEW -->
+<section id="dashboard">
+  <div class="section-header reveal">
+    <div class="section-tag">Shaxsiy kabinet</div>
+    <h2 class="section-title">Profilingiz — hamma narsa bir joyda</h2>
+    <p class="section-sub">Yutuqlaringiz, imtiyozlaringiz va statistikangizni kuzating</p>
+  </div>
+  <div class="dashboard-layout reveal">
+    <div class="dash-sidebar">
+      <div class="dash-profile">
+        <div class="dash-avatar">👨‍💻</div>
+        <div class="dash-name">Jahongir Toshmatov</div>
+        <div class="dash-role">4-kurs · Kompyuter tizimlari</div>
+        <div class="dash-score-ring">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(245,200,66,0.12)" stroke-width="6"/>
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#F5C842" stroke-width="6"
+              stroke-dasharray="201" stroke-dashoffset="50" stroke-linecap="round"/>
+          </svg>
+          <div class="dash-score-center">
+            <div class="dash-score-num">742</div>
+            <div class="dash-score-sub">ball</div>
+          </div>
+        </div>
+        <div style="color:var(--gray);font-size:0.72rem;margin-top:4px">Top 3% · Universitet reytingi</div>
+      </div>
+      <ul class="dash-nav">
+        <li><a class="active"><span>🏠</span> Bosh sahifa</a></li>
+        <li><a onclick="showToast('🏅 Yutuqlar bo\'limi')"><span>🏅</span> Yutuqlarim</a></li>
+        <li><a onclick="showToast('🎁 Imtiyozlar bo\'limi')"><span>🎁</span> Imtiyozlarim</a></li>
+        <li><a onclick="showToast('📊 Statistika bo\'limi')"><span>📊</span> Statistika</a></li>
+        <li><a onclick="showToast('🔔 Bildirishnomalar')"><span>🔔</span> Bildirishnomalar</a></li>
+        <li><a onclick="showToast('⚙️ Sozlamalar bo\'limi')"><span>⚙️</span> Sozlamalar</a></li>
+      </ul>
+    </div>
+    <div class="dash-main">
+      <div class="dash-topbar">
+        <div>
+          <div class="dash-welcome">Xush kelibsiz, Jahongir! 👋</div>
+          <div class="dash-date">Seshanba, 22 Aprel 2025</div>
+        </div>
+        <button class="btn-primary" onclick="openModal('addAchievement')">+ Yutuq qo'shish</button>
+      </div>
+      <div class="dash-kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Jami yutuqlar</div><div class="kpi-value" style="color:var(--gold)">24</div><div class="kpi-delta">↑ +3 bu oy</div></div>
+        <div class="kpi-card"><div class="kpi-label">Reyting bali</div><div class="kpi-value" style="color:var(--cyan)">742</div><div class="kpi-delta">↑ +48 bu hafta</div></div>
+        <div class="kpi-card"><div class="kpi-label">Faol imtiyozlar</div><div class="kpi-value" style="color:#4AE387">5</div><div class="kpi-delta">Joriy semestr</div></div>
+        <div class="kpi-card"><div class="kpi-label">Reyting o'rni</div><div class="kpi-value" style="color:#C864FF">#7</div><div class="kpi-delta">Universitetda</div></div>
+      </div>
+      <div class="dash-grid2">
+        <div class="dash-card">
+          <div class="dash-card-title">So'nggi yutuqlar <span class="dash-card-action">Barchasini ko'rish</span></div>
+          <div class="achievement-item"><span class="ach-icon">🥇</span><div><div class="ach-name">ICPC Mintaqaviy — 1-o'rin</div><div class="ach-info">Xalqaro · Mar 2025</div></div><span class="ach-status status-verified">Tasdiqlangan</span></div>
+          <div class="achievement-item"><span class="ach-icon">📜</span><div><div class="ach-name">Google Cloud Associate</div><div class="ach-info">Xalqaro · Feb 2025</div></div><span class="ach-status status-verified">Tasdiqlangan</span></div>
+          <div class="achievement-item"><span class="ach-icon">🏆</span><div><div class="ach-name">Xalqaro hackathon — TOP 5</div><div class="ach-info">Xalqaro · Jan 2025</div></div><span class="ach-status status-pending">Tekshirilmoqda</span></div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">Bildirishnomalar <span class="dash-card-action">Barchasini o'qish</span></div>
+          <div class="notification-item"><div class="notif-dot dot-gold"></div><div><div class="notif-text">Erasmus+ ariza berish muddati yaqinlashmoqda</div><div class="notif-time">2 soat oldin</div></div></div>
+          <div class="notification-item"><div class="notif-dot dot-green"></div><div><div class="notif-text">ICPC yutuğingiz tasdiqlandi ✓</div><div class="notif-time">Kecha · 15:30</div></div></div>
+          <div class="notification-item"><div class="notif-dot dot-blue"></div><div><div class="notif-text">Yangi mentorlik dasturi — Prof. Karimov</div><div class="notif-time">2 kun oldin</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="section-header reveal">
+    <div class="section-tag">Loyiha rejasi</div>
+    <h2 class="section-title">Rivojlanish yo'l xaritasi</h2>
+    <p class="section-sub">Loyihani amalga oshirish bosqichlari</p>
+  </div>
+  <div class="roadmap-list">
+    <div class="roadmap-item reveal"><div class="roadmap-line"><div class="roadmap-dot done"></div><div class="roadmap-connector"></div></div><div class="roadmap-content"><div class="road-phase">Bosqich 1</div><div class="road-title">Tahlil va loyihalash</div><p class="road-desc">Talablar yig'ish, ma'lumotlar bazasi arxitekturasi, UI/UX wireframelari va texnik hujjatlarni tayyorlash.</p><span class="road-duration">⏱ 2 hafta</span></div></div>
+    <div class="roadmap-item reveal"><div class="roadmap-line"><div class="roadmap-dot done"></div><div class="roadmap-connector"></div></div><div class="roadmap-content"><div class="road-phase">Bosqich 2</div><div class="road-title">Ma'lumotlar bazasi dizayni</div><p class="road-desc">PostgreSQL sxema yaratish, HEMIS integratsiya modeli, indekslar va munosabatlar loyihalash.</p><span class="road-duration">⏱ 1 hafta</span></div></div>
+    <div class="roadmap-item reveal"><div class="roadmap-line"><div class="roadmap-dot"></div><div class="roadmap-connector"></div></div><div class="roadmap-content"><div class="road-phase">Bosqich 3</div><div class="road-title">Backend ishlanmasi</div><p class="road-desc">Django/FastAPI REST API, JWT autentifikatsiya, rollar tizimi, yutuqlar va imtiyozlar modullari.</p><span class="road-duration">⏱ 4 hafta</span></div></div>
+    <div class="roadmap-item reveal"><div class="roadmap-line"><div class="roadmap-dot"></div><div class="roadmap-connector"></div></div><div class="roadmap-content"><div class="road-phase">Bosqich 4</div><div class="road-title">Frontend ishlanmasi</div><p class="road-desc">React.js SPA, Redux state management, Material-UI komponentlar, responsiv dizayn va animatsiyalar.</p><span class="road-duration">⏱ 4 hafta</span></div></div>
+    <div class="roadmap-item reveal"><div class="roadmap-line"><div class="roadmap-dot"></div><div class="roadmap-connector"></div></div><div class="roadmap-content"><div class="road-phase">Bosqich 5</div><div class="road-title">HEMIS integratsiyasi</div><p class="road-desc">HEMIS API bilan sinxronlash, talabalar ma'lumotlarini avtomatik import qilish va real-vaqt yangilash.</p><span class="road-duration">⏱ 2 hafta</span></div></div>
+    <div class="roadmap-item reveal"><div class="roadmap-line"><div class="roadmap-dot"></div></div><div class="roadmap-content"><div class="road-phase">Bosqich 6</div><div class="road-title">Test va deploy</div><p class="road-desc">Unit test, integratsiya test, xavfsizlik auditi, server sozlash va foydalanuvchilarni o'qitish.</p><span class="road-duration">⏱ 3 hafta</span></div></div>
+  </div>
+</section>
+
+</div><!-- /page-home -->
+
+<!-- ═══ CATALOG PAGE ═══ -->
+<div id="page-catalog" class="page">
+<section id="catalog" style="padding-top:100px">
+  <div class="section-header reveal">
+    <div class="section-tag">Talabalar katalogi</div>
+    <h2 class="section-title">Barcha iqtidorli talabalar</h2>
+    <p class="section-sub">Qidiruv va filtrlar yordamida kerakli talabani toping</p>
+  </div>
+  <div class="search-bar">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="F.I.O. bo'yicha qidirish..." oninput="filterCatalog(this.value)">
+    </div>
+    <select class="filter-select" onchange="filterByFaculty(this.value)">
+      <option value="">Barcha fakultetlar</option>
+      <option>Kompyuter tizimlari</option>
+      <option>Axborot xavfsizligi</option>
+      <option>Dasturiy injiniring</option>
+      <option>Telekommunikatsiya</option>
+      <option>Raqamli iqtisodiyot</option>
+    </select>
+    <select class="filter-select">
+      <option value="">Barcha kurslar</option>
+      <option>1-kurs</option><option>2-kurs</option><option>3-kurs</option><option>4-kurs</option>
+    </select>
+    <select class="filter-select">
+      <option value="">Barcha yo'nalishlar</option>
+      <option>Ilmiy</option><option>Sport</option><option>Ijodiy</option><option>Ijtimoiy</option>
+    </select>
+  </div>
+  <div class="catalog-grid" id="catalog-grid"></div>
+</section>
+</div>
+
+<!-- ═══ ADMIN PAGE ═══ -->
+<div id="page-admin" class="page">
+<section id="admin" style="padding-top:100px;padding-left:6%;padding-right:6%;padding-bottom:100px">
+  <div class="section-header reveal">
+    <div class="section-tag">Boshqaruv</div>
+    <h2 class="section-title">Admin Panel</h2>
+    <p class="section-sub">Platforma boshqaruvi va moderatsiya</p>
+  </div>
+  <div class="admin-wrap reveal">
+    <div class="admin-header">
+      <div class="admin-title">🛡 TATU TalentHub Admin <span class="admin-badge">SUPER ADMIN</span></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-outline" onclick="showToast('📊 Hisobot yuklanmoqda...')">📊 Hisobot</button>
+        <button class="btn-primary" onclick="showToast('📤 Excel tayyorlanmoqda')">⬇ Eksport</button>
+      </div>
+    </div>
+    <div class="admin-body">
+      <div class="admin-sidebar">
+        <div class="admin-menu-item active" onclick="setAdminTab(this,'users')">👥 Foydalanuvchilar</div>
+        <div class="admin-menu-item" onclick="setAdminTab(this,'achievements')">🏅 Yutuqlar</div>
+        <div class="admin-menu-item" onclick="setAdminTab(this,'privileges')">🎁 Imtiyozlar</div>
+        <div class="admin-menu-item" onclick="setAdminTab(this,'reports')">📊 Statistika</div>
+        <div class="admin-menu-item" onclick="setAdminTab(this,'announcements')">📢 E'lonlar</div>
+        <div class="admin-menu-item" onclick="setAdminTab(this,'settings')">⚙️ Sozlamalar</div>
+      </div>
+      <div class="admin-content">
+        <div class="admin-stats-row">
+          <div class="admin-stat"><div class="admin-stat-n">2,418</div><div class="admin-stat-l">Jami talabalar</div></div>
+          <div class="admin-stat"><div class="admin-stat-n" style="color:var(--cyan)">148</div><div class="admin-stat-l">Kutayotgan yutuqlar</div></div>
+          <div class="admin-stat"><div class="admin-stat-n" style="color:#4AE387">8,750</div><div class="admin-stat-l">Tasdiqlangan</div></div>
+          <div class="admin-stat"><div class="admin-stat-n" style="color:#C864FF">340</div><div class="admin-stat-l">Faol imtiyozlar</div></div>
+          <div class="admin-stat"><div class="admin-stat-n" style="color:#FF5050">12</div><div class="admin-stat-l">Bloklangan</div></div>
+        </div>
+        <!-- Tab: Users -->
+        <div id="admin-tab-users">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+            <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700">Foydalanuvchilar ro'yxati</h3>
+            <button class="btn-primary" onclick="openModal('addUser')">+ Foydalanuvchi qo'shish</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>F.I.O.</th><th>Fakultet</th><th>Kurs</th><th>Rol</th><th>Ball</th><th>Status</th><th>Amallar</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Toshmatov Jahongir</strong></td><td>Kompyuter tizimlari</td><td>4-kurs</td><td><span class="status-pill" style="background:rgba(0,194,255,0.12);color:var(--cyan)">Talaba</span></td><td><strong style="color:var(--gold)">742</strong></td><td><span class="status-pill pill-active">Faol</span></td><td><button class="action-btn" onclick="showToast('✏️ Tahrirlash ochildi')">Tahrirlash</button><button class="action-btn" onclick="showToast('🚫 Bloklandi')">Bloklash</button></td></tr>
+                <tr><td><strong>Nazarova Malika</strong></td><td>Dasturiy injiniring</td><td>3-kurs</td><td><span class="status-pill" style="background:rgba(245,200,66,0.12);color:var(--gold)">Moderator</span></td><td><strong style="color:var(--gold)">689</strong></td><td><span class="status-pill pill-active">Faol</span></td><td><button class="action-btn" onclick="showToast('✏️ Tahrirlash ochildi')">Tahrirlash</button><button class="action-btn" onclick="showToast('🔑 Huquqlar o\'zgardi')">Huquqlar</button></td></tr>
+                <tr><td><strong>Rahimov Bobur</strong></td><td>Axborot xavfsizligi</td><td>2-kurs</td><td><span class="status-pill" style="background:rgba(0,194,255,0.12);color:var(--cyan)">Talaba</span></td><td><strong style="color:var(--gold)">521</strong></td><td><span class="status-pill pill-pending">Kutilmoqda</span></td><td><button class="action-btn" onclick="showToast('✅ Faollashtirildi')">Faollashtirish</button><button class="action-btn" onclick="showToast('❌ O\'chirildi')">O'chirish</button></td></tr>
+                <tr><td><strong>Yusupov Alisher</strong></td><td>Telekommunikatsiya</td><td>4-kurs</td><td><span class="status-pill" style="background:rgba(0,194,255,0.12);color:var(--cyan)">Talaba</span></td><td><strong style="color:var(--gold)">478</strong></td><td><span class="status-pill pill-blocked">Bloklangan</span></td><td><button class="action-btn" onclick="showToast('🔓 Blok olib tashlandi')">Blokni ochish</button><button class="action-btn" onclick="showToast('❌ O\'chirildi')">O'chirish</button></td></tr>
+                <tr><td><strong>Mirzayeva Saodat</strong></td><td>Raqamli iqtisodiyot</td><td>1-kurs</td><td><span class="status-pill" style="background:rgba(0,194,255,0.12);color:var(--cyan)">Talaba</span></td><td><strong style="color:var(--gold)">312</strong></td><td><span class="status-pill pill-active">Faol</span></td><td><button class="action-btn" onclick="showToast('✏️ Tahrirlash ochildi')">Tahrirlash</button><button class="action-btn" onclick="showToast('🚫 Bloklandi')">Bloklash</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Tab: Achievements -->
+        <div id="admin-tab-achievements" style="display:none">
+          <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:20px">Moderatsiya kutayotgan yutuqlar</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Talaba</th><th>Yutuq</th><th>Kategoriya</th><th>Sana</th><th>Hujjat</th><th>Amal</th></tr></thead>
+              <tbody>
+                <tr><td>Toshmatov J.</td><td>Xalqaro hackathon TOP-5</td><td>Xalqaro</td><td>Jan 2025</td><td>📎 sertifikat.pdf</td><td><button class="action-btn" onclick="showToast('✅ Tasdiqlandi!')">✓ Tasdiqlash</button><button class="action-btn" onclick="showToast('❌ Rad etildi')">✗ Rad</button></td></tr>
+                <tr><td>Qodirov A.</td><td>Respublika olimpiadasi 2-o'rin</td><td>Respublika</td><td>Feb 2025</td><td>📎 diplom.jpg</td><td><button class="action-btn" onclick="showToast('✅ Tasdiqlandi!')">✓ Tasdiqlash</button><button class="action-btn" onclick="showToast('❌ Rad etildi')">✗ Rad</button></td></tr>
+                <tr><td>Hamidova N.</td><td>IEEE publikatsiya</td><td>Xalqaro</td><td>Mar 2025</td><td>📎 paper.pdf</td><td><button class="action-btn" onclick="showToast('✅ Tasdiqlandi!')">✓ Tasdiqlash</button><button class="action-btn" onclick="showToast('❌ Rad etildi')">✗ Rad</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Tab: Privileges -->
+        <div id="admin-tab-privileges" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+            <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700">Imtiyozlar jadvali</h3>
+            <button class="btn-primary" onclick="showToast('➕ Yangi imtiyoz')">+ Imtiyoz qo'shish</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Imtiyoz</th><th>Min. ball</th><th>Yo'nalish</th><th>Faol arizalar</th><th>Status</th><th>Amal</th></tr></thead>
+              <tbody>
+                <tr><td>💰 Stipendiya oshirilishi</td><td>500</td><td>Barcha</td><td>34</td><td><span class="status-pill pill-active">Faol</span></td><td><button class="action-btn" onclick="showToast('✏️ Tahrirlandi')">Tahrirlash</button></td></tr>
+                <tr><td>✈️ Xorijiy grant</td><td>700</td><td>Ilmiy</td><td>12</td><td><span class="status-pill pill-active">Faol</span></td><td><button class="action-btn" onclick="showToast('✏️ Tahrirlandi')">Tahrirlash</button></td></tr>
+                <tr><td>🚀 TATU Inkubator</td><td>600</td><td>Barcha</td><td>8</td><td><span class="status-pill pill-pending">Kutilmoqda</span></td><td><button class="action-btn" onclick="showToast('✏️ Tahrirlandi')">Tahrirlash</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Tab: Reports -->
+        <div id="admin-tab-reports" style="display:none">
+          <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:20px">Dinamik statistika</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div class="dash-card"><div class="dash-card-title">Oylik yutuqlar dinamikasi</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:12px"><span style="color:var(--gray);font-size:0.75rem;min-width:50px">Yanvar</span><div style="flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:5px"><div style="width:65%;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:5px"></div></div><span style="font-size:0.75rem;color:var(--gold)">842</span></div>
+                <div style="display:flex;align-items:center;gap:12px"><span style="color:var(--gray);font-size:0.75rem;min-width:50px">Fevral</span><div style="flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:5px"><div style="width:78%;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:5px"></div></div><span style="font-size:0.75rem;color:var(--gold)">1,024</span></div>
+                <div style="display:flex;align-items:center;gap:12px"><span style="color:var(--gray);font-size:0.75rem;min-width:50px">Mart</span><div style="flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:5px"><div style="width:92%;height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:5px"></div></div><span style="font-size:0.75rem;color:var(--gold)">1,248</span></div>
+                <div style="display:flex;align-items:center;gap:12px"><span style="color:var(--gray);font-size:0.75rem;min-width:50px">Aprel</span><div style="flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:5px"><div style="width:55%;height:100%;background:linear-gradient(90deg,var(--cyan-dim),var(--cyan));border-radius:5px"></div></div><span style="font-size:0.75rem;color:var(--cyan)">712 (davom)</span></div>
+              </div>
+            </div>
+            <div class="dash-card"><div class="dash-card-title">Fakultetlar reytingi</div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.75rem;min-width:130px;color:var(--gray)">Kompyuter tizimlari</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px"><div style="width:88%;height:100%;background:var(--gold);border-radius:4px"></div></div><span style="font-size:0.72rem;color:var(--gold)">312</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.75rem;min-width:130px;color:var(--gray)">Axborot xavfsizligi</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px"><div style="width:75%;height:100%;background:var(--cyan);border-radius:4px"></div></div><span style="font-size:0.72rem;color:var(--cyan)">278</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.75rem;min-width:130px;color:var(--gray)">Dasturiy injiniring</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px"><div style="width:70%;height:100%;background:#C864FF;border-radius:4px"></div></div><span style="font-size:0.72rem;color:#C864FF">256</span></div>
+                <div style="display:flex;align-items:center;gap:10px"><span style="font-size:0.75rem;min-width:130px;color:var(--gray)">Telekommunikatsiya</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px"><div style="width:55%;height:100%;background:#4AE387;border-radius:4px"></div></div><span style="font-size:0.72rem;color:#4AE387">201</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Tab: Announcements -->
+        <div id="admin-tab-announcements" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+            <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700">E'lonlar boshqaruvi</h3>
+            <button class="btn-primary" onclick="showToast('📢 Yangi e\'lon')">+ E'lon qo'shish</button>
+          </div>
+          <p style="color:var(--gray);font-size:0.875rem;line-height:1.6">Hozircha 6 ta faol e'lon mavjud. E'lonlarni tahrirlash, o'chirish va yangi qo'shish uchun yuqoridagi tugmadan foydalaning.</p>
+        </div>
+        <!-- Tab: Settings -->
+        <div id="admin-tab-settings" style="display:none">
+          <h3 style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:20px">Tizim sozlamalari</h3>
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div class="form-group"><label class="form-label">HEMIS API URL</label><input class="form-input" type="text" value="https://api.hemis.uz/v1"></div>
+            <div class="form-group"><label class="form-label">Reyting hisoblash davri</label><select class="form-select"><option>Haftalik</option><option selected>Oylik</option><option>Semestrlik</option></select></div>
+            <div class="form-group"><label class="form-label">Telegram Bot Token</label><input class="form-input" type="password" value="••••••••••••••••"></div>
+            <button class="btn-primary" style="width:fit-content;padding:10px 24px" onclick="showToast('✅ Sozlamalar saqlandi')">Saqlash</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /page-admin -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-logo" style="margin-bottom:16px">
+        <div class="logo-badge">TH</div>
+        TATU TalentHub
+      </div>
+      <p>TATU universitetining iqtidorli talabalarini aniqlash, ularning yutuqlarini yoritish va rag'batlantirish tizimi.</p>
+    </div>
+    <div class="footer-links"><h4>Platforma</h4><ul><li><a onclick="showPage('home')">Bosh sahifa</a></li><li><a onclick="showPage('catalog')">Talabalar katalogi</a></li><li><a>Imtiyozlar</a></li><li><a>E'lonlar</a></li></ul></div>
+    <div class="footer-links"><h4>Hisob</h4><ul><li><a onclick="openModal('login')">Kirish</a></li><li><a onclick="openModal('register')">Ro'yxatdan o'tish</a></li><li><a>Profil sozlash</a></li><li><a>Yordam</a></li></ul></div>
+    <div class="footer-links"><h4>TATU</h4><ul><li><a href="https://tuit.uz" target="_blank">Asosiy sayt</a></li><li><a>HEMIS tizimi</a></li><li><a>Inkubatsiya dasturi</a></li><li><a>Aloqa</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 TATU TalentHub. Barcha huquqlar himoyalangan.</div>
+    <div class="footer-socials">
+      <a class="social-btn" onclick="showToast('📱 Telegram kanalimiz')">📱</a>
+      <a class="social-btn" onclick="showToast('✉️ Email: talenthub@tuit.uz')">✉️</a>
+      <a class="social-btn" onclick="showToast('💬 Telegram bot')">💬</a>
+      <a class="social-btn" onclick="showToast('📸 Instagram')">📸</a>
+    </div>
+  </div>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <div class="modal-header"><div class="modal-logo">🔐</div><div class="modal-title">Tizimga kirish</div><div class="modal-sub">HEMIS login ma'lumotlaringizni kiriting</div></div>
+    <div class="form-group"><label class="form-label">Login (HEMIS)</label><input class="form-input" type="text" placeholder="s.student@tuit.uz"></div>
+    <div class="form-group"><label class="form-label">Parol</label><input class="form-input" type="password" placeholder="••••••••"></div>
+    <div class="form-group"><label class="form-label">Rol</label><select class="form-select"><option>Talaba</option><option>Moderator</option><option>Admin</option></select></div>
+    <button class="btn-full" onclick="handleLogin()">Kirish</button>
+    <p style="text-align:center;margin-top:16px;color:var(--gray);font-size:0.8rem">Hisob yo'qmi? <a style="color:var(--gold);text-decoration:none;cursor:pointer" onclick="closeModal('login');openModal('register')">Ro'yxatdan o'tish</a></p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-register">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('register')">✕</button>
+    <div class="modal-header"><div class="modal-logo">✨</div><div class="modal-title">Ro'yxatdan o'tish</div><div class="modal-sub">TATU TalentHub platformasiga qo'shiling</div></div>
+    <div class="form-group"><label class="form-label">To'liq ism-sharif</label><input class="form-input" type="text" placeholder="Familiya Ism Otasining ismi"></div>
+    <div class="form-group"><label class="form-label">Fakultet</label><select class="form-select"><option>Kompyuter tizimlari</option><option>Axborot xavfsizligi</option><option>Dasturiy injiniring</option><option>Telekommunikatsiya</option><option>Raqamli iqtisodiyot</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Kurs</label><select class="form-select"><option>1-kurs</option><option>2-kurs</option><option>3-kurs</option><option>4-kurs</option></select></div>
+      <div class="form-group"><label class="form-label">Guruh</label><input class="form-input" type="text" placeholder="KT-21-01"></div>
+    </div>
+    <div class="form-group"><label class="form-label">HEMIS login</label><input class="form-input" type="text" placeholder="s.ism@tuit.uz"></div>
+    <button class="btn-full" onclick="handleRegister()">Ro'yxatdan o'tish</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-addAchievement">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addAchievement')">✕</button>
+    <div class="modal-header"><div class="modal-logo">🏅</div><div class="modal-title">Yutuq qo'shish</div><div class="modal-sub">Yangi yutuğingizni qo'shing</div></div>
+    <div class="form-group"><label class="form-label">Yutuq nomi</label><input class="form-input" type="text" placeholder="Masalan: ICPC Mintaqaviy 1-o'rin"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Kategoriya</label><select class="form-select"><option>Xalqaro</option><option>Respublika</option><option>Viloyat</option><option>Universitet</option></select></div>
+      <div class="form-group"><label class="form-label">Yo'nalish</label><select class="form-select"><option>Ilmiy</option><option>Sport</option><option>Ijodiy</option><option>Ijtimoiy</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Sana</label><input class="form-input" type="month"></div>
+    <div class="form-group"><label class="form-label">Tavsif</label><input class="form-input" type="text" placeholder="Qisqacha tavsif..."></div>
+    <div class="form-group"><label class="form-label">Hujjat (sertifikat/diplom)</label><input class="form-input" type="text" placeholder="📎 Fayl nomi (demo)"></div>
+    <button class="btn-full" onclick="handleAddAchievement()">Yuborish</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-addUser">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addUser')">✕</button>
+    <div class="modal-header"><div class="modal-logo">👤</div><div class="modal-title">Foydalanuvchi qo'shish</div><div class="modal-sub">Yangi foydalanuvchi ma'lumotlari</div></div>
+    <div class="form-group"><label class="form-label">To'liq ism-sharif</label><input class="form-input" type="text" placeholder="F.I.O."></div>
+    <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="talaba@tuit.uz"></div>
+    <div class="form-group"><label class="form-label">Rol</label><select class="form-select"><option>Talaba</option><option>Moderator</option><option>Admin</option></select></div>
+    <button class="btn-full" onclick="closeModal('addUser');showToast('✅ Foydalanuvchi qo\'shildi')">Qo'shish</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toast-text">✅ Muvaffaqiyatli!</span></div>
+
+<script>
+const studentsData = [
+  { name: "Toshmatov Jahongir", faculty: "Kompyuter tizimlari", year: "4-kurs", score: 742, tags: ["tag-science","tag-creative"], emoji: "👨‍💻" },
+  { name: "Nazarova Malika", faculty: "Dasturiy injiniring", year: "3-kurs", score: 689, tags: ["tag-science"], emoji: "👩‍💻" },
+  { name: "Rahimov Bobur", faculty: "Axborot xavfsizligi", year: "2-kurs", score: 621, tags: ["tag-sport","tag-science"], emoji: "👨‍🔬" },
+  { name: "Yusupova Dilnoza", faculty: "Telekommunikatsiya", year: "4-kurs", score: 598, tags: ["tag-creative"], emoji: "👩‍🎨" },
+  { name: "Qodirov Asilbek", faculty: "Raqamli iqtisodiyot", year: "3-kurs", score: 574, tags: ["tag-social","tag-science"], emoji: "👨‍💼" },
+  { name: "Hamidova Nilufar", faculty: "Kompyuter tizimlari", year: "2-kurs", score: 551, tags: ["tag-science"], emoji: "👩‍🔬" },
+  { name: "Mirzayev Sherzod", faculty: "Dasturiy injiniring", year: "4-kurs", score: 527, tags: ["tag-sport"], emoji: "⚽" },
+  { name: "Ergasheva Kamola", faculty: "Axborot xavfsizligi", year: "1-kurs", score: 498, tags: ["tag-creative","tag-social"], emoji: "🎨" },
+];
+const tagLabels = { "tag-science": "Ilmiy", "tag-sport": "Sport", "tag-creative": "Ijodiy", "tag-social": "Ijtimoiy" };
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById('nav-' + page);
+  if (el) el.classList.add('active');
+  if (page === 'catalog') renderCatalog(studentsData);
+  setTimeout(observeReveal, 100);
+}
+
+function renderLeaderboard(data) {
+  const list = document.getElementById('lb-list');
+  if (!list) return;
+  list.innerHTML = data.map((s, i) => `
+    <div class="student-row" onclick="showToast('👤 ${s.name} profili')">
+      <div class="rank-badge ${i<3?'rank-'+(i+1):'rank-other'}">${i<3?['🥇','🥈','🥉'][i]:'#'+(i+1)}</div>
+      <div class="student-avatar">${s.emoji}</div>
+      <div class="student-info"><div class="student-name">${s.name}</div><div class="student-meta">${s.faculty} · ${s.year}</div></div>
+      <div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:${(s.score/800*100).toFixed(0)}%"></div></div></div>
+      <div class="student-score"><div class="score-num">${s.score}</div><div class="score-label">ball</div></div>
+    </div>`).join('');
+}
+
+function setLbTab(btn, tab) {
+  document.querySelectorAll('.tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const map = { all: studentsData, ilm: studentsData.filter(s=>s.tags.includes('tag-science')), sport: studentsData.filter(s=>s.tags.includes('tag-sport')), ijod: studentsData.filter(s=>s.tags.includes('tag-creative')) };
+  renderLeaderboard(map[tab]);
+}
+
+function renderCatalog(data) {
+  const grid = document.getElementById('catalog-grid');
+  if (!grid) return;
+  grid.innerHTML = data.map(s => `
+    <div class="catalog-card" onclick="showToast('👤 ${s.name} profili ochildi')">
+      <div class="catalog-avatar">${s.emoji}</div>
+      <div class="catalog-name">${s.name}</div>
+      <div class="catalog-faculty">${s.faculty} · ${s.year}</div>
+      <div class="catalog-tags">${s.tags.map(t=>`<span class="tag ${t}">${tagLabels[t]}</span>`).join('')}</div>
+      <div class="catalog-score">${s.score}</div>
+      <div class="catalog-score-label">reyting bali</div>
+    </div>`).join('');
+}
+
+function filterCatalog(q) { renderCatalog(studentsData.filter(s=>s.name.toLowerCase().includes(q.toLowerCase()))); }
+function filterByFaculty(f) { renderCatalog(f ? studentsData.filter(s=>s.faculty===f) : studentsData); }
+
+function openModal(id) { document.getElementById('modal-'+id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeModal(id) { document.getElementById('modal-'+id).classList.remove('open'); document.body.style.overflow=''; }
+document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', function(e){ if(e.target===this){this.classList.remove('open');document.body.style.overflow='';} }));
+
+function handleLogin() { closeModal('login'); showToast('✅ Muvaffaqiyatli kirdingiz!'); }
+function handleRegister() { closeModal('register'); showToast("🎉 Ro'yxatdan o'tdingiz!"); }
+function handleAddAchievement() { closeModal('addAchievement'); showToast('📤 Yutuğingiz tekshirishga yuborildi!'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function setAdminTab(el, tab) {
+  document.querySelectorAll('.admin-menu-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+  ['users','achievements','privileges','reports','announcements','settings'].forEach(t => {
+    const e = document.getElementById('admin-tab-'+t);
+    if(e) e.style.display = t===tab ? 'block' : 'none';
+  });
+}
+
+function observeReveal() {
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.08 });
+  document.querySelectorAll('.reveal:not(.visible)').forEach(el => obs.observe(el));
+}
+observeReveal();
+renderLeaderboard(studentsData);
+</script>
+</body>
+</html>
