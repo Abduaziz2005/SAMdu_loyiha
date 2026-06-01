@@ -2,153 +2,282 @@
 <html lang="uz">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Admin Panel — S_TATU</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin.css') }}">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body class="admin-body-wrap">
 
-
-<!-- Flash -->
+{# ── FLASH ─────────────────────────────────────────────────────── #}
 {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flash-wrap">
-      {% for cat, msg in messages %}
-        <div class="flash flash-{{ cat }}">{{ '✅' if cat=='success' else 'ℹ️' }} {{ msg }}
-          <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+{% if messages %}
+<div class="flash-wrap">
+  {% for cat,msg in messages %}
+  <div class="flash flash-{{cat}}">
+    <span>{{ '✅' if cat=='success' else '⚠️' if cat=='warning' else '❌' if cat=='danger' else 'ℹ️' }} {{msg}}</span>
+    <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
 {% endwith %}
 
 <div class="admin-layout">
-<!-- ═══ ADMIN SIDEBAR ══════════════════════════════════════ -->
-<aside class="admin-sidebar">
+{# ══════════════════ SIDEBAR ══════════════════ #}
+<aside class="admin-sidebar" id="adminSidebar">
   <div class="admin-sidebar-top">
     <div class="admin-logo-mark">S</div>
-    <div>
+    <div class="admin-logo-texts">
       <div class="admin-logo-title">Admin Panel</div>
-      <div class="admin-logo-sub">S_TATU</div>
+      <div class="admin-logo-sub">S_TATU Platform</div>
     </div>
+    <button class="sidebar-toggle-btn" onclick="toggleAdminSidebar()" title="Yig'ish">‹</button>
   </div>
+
+  {# Real-time mini stats #}
+  <div class="admin-mini-stats" id="miniStats">
+    <div class="mini-stat"><span id="ms_students">—</span><span>Talaba</span></div>
+    <div class="mini-stat"><span id="ms_pending">—</span><span>Sessiya</span></div>
+    <div class="mini-stat danger" id="ms_failed_wrap"><span id="ms_failed">—</span><span>Login xato</span></div>
+  </div>
+
   <nav class="admin-nav">
     <div class="admin-nav-section">Boshqaruv</div>
-    <a href="{{ url_for('admin_dashboard') }}"    class="admin-nav-item {% if page=='dashboard' %}active{% endif %}">📊 Umumiy</a>
-    <a href="{{ url_for('admin_users') }}"        class="admin-nav-item {% if page=='users' %}active{% endif %}">👥 Foydalanuvchilar</a>
-    <a href="{{ url_for('admin_athletes') }}"     class="admin-nav-item {% if page=='athletes' %}active{% endif %}">⚽ Sportchilar</a>
-    <a href="{{ url_for('admin_mentors') }}"      class="admin-nav-item {% if page=='mentors' %}active{% endif %}">🎓 Mentorlar</a>
-    <a href="{{ url_for('admin_talents') }}"      class="admin-nav-item {% if page=='talents' %}active{% endif %}">🌟 Iqtidorlar</a>
+    <a href="{{ url_for('admin_dashboard') }}"    class="admin-nav-item {% if page=='dashboard' %}active{% endif %}">
+      <span class="nav-icon">📊</span><span class="nav-label">Umumiy</span>
+    </a>
+    <a href="{{ url_for('admin_users') }}"        class="admin-nav-item {% if 'users' in page %}active{% endif %}">
+      <span class="nav-icon">👥</span><span class="nav-label">Foydalanuvchilar</span>
+    </a>
+    <a href="{{ url_for('admin_athletes') }}"     class="admin-nav-item {% if 'athletes' in page %}active{% endif %}">
+      <span class="nav-icon">⚽</span><span class="nav-label">Sportchilar</span>
+    </a>
+    <a href="{{ url_for('admin_mentors') }}"      class="admin-nav-item {% if 'mentors' in page %}active{% endif %}">
+      <span class="nav-icon">🎓</span><span class="nav-label">Mentorlar</span>
+    </a>
+    <a href="{{ url_for('admin_talents') }}"      class="admin-nav-item {% if 'talents' in page %}active{% endif %}">
+      <span class="nav-icon">🌟</span><span class="nav-label">Iqtidorlar</span>
+    </a>
+
     <div class="admin-nav-section">Kontent</div>
-    <a href="{{ url_for('admin_events') }}"       class="admin-nav-item {% if page=='events' %}active{% endif %}">📅 Tadbirlar</a>
-    <a href="{{ url_for('admin_hackathons') }}"   class="admin-nav-item {% if page=='hackathons' %}active{% endif %}">💻 Hackathonlar</a>
-    <a href="{{ url_for('admin_notifications') %}" class="admin-nav-item {% if page=='notifications' %}active{% endif %}">🔔 Bildirishnomalar</a>
+    <a href="{{ url_for('admin_events') }}"       class="admin-nav-item {% if 'events' in page %}active{% endif %}">
+      <span class="nav-icon">📅</span><span class="nav-label">Tadbirlar</span>
+    </a>
+    <a href="{{ url_for('admin_hackathons') }}"   class="admin-nav-item {% if 'hackathons' in page %}active{% endif %}">
+      <span class="nav-icon">💻</span><span class="nav-label">Hackathonlar</span>
+    </a>
+    <a href="{{ url_for('admin_sessions') }}"     class="admin-nav-item {% if page=='sessions' %}active{% endif %}">
+      <span class="nav-icon">📚</span><span class="nav-label">Sessiyalar</span>
+      <span class="nav-badge" id="pendingBadge" style="display:none">0</span>
+    </a>
+    <a href="{{ url_for('admin_notifications') }}" class="admin-nav-item {% if page=='notifications' %}active{% endif %}">
+      <span class="nav-icon">🔔</span><span class="nav-label">Bildirishnomalar</span>
+    </a>
+    <a href="{{ url_for('admin_announcements') }}" class="admin-nav-item {% if page=='announcements' %}active{% endif %}">
+      <span class="nav-icon">📢</span><span class="nav-label">E'lonlar</span>
+    </a>
+    <a href="{{ url_for('admin_media') }}"        class="admin-nav-item {% if page=='media' %}active{% endif %}">
+      <span class="nav-icon">🖼</span><span class="nav-label">Media</span>
+    </a>
+
+    <div class="admin-nav-section">Tahlil</div>
+    <a href="{{ url_for('admin_statistics') }}"  class="admin-nav-item {% if page=='statistics' %}active{% endif %}">
+      <span class="nav-icon">📈</span><span class="nav-label">Statistika</span>
+    </a>
+    <a href="{{ url_for('admin_audit') }}"       class="admin-nav-item {% if page=='audit' %}active{% endif %}">
+      <span class="nav-icon">📋</span><span class="nav-label">Audit jurnal</span>
+    </a>
+    <a href="{{ url_for('admin_login_history') }}" class="admin-nav-item {% if page=='login_history' %}active{% endif %}">
+      <span class="nav-icon">🔑</span><span class="nav-label">Login tarixi</span>
+    </a>
+
     <div class="admin-nav-section">Tizim</div>
-    <a href="{{ url_for('admin_settings') }}"     class="admin-nav-item {% if page=='settings' %}active{% endif %}">⚙ Sozlamalar</a>
-    <a href="{{ url_for('index') }}"              class="admin-nav-item">🌐 Saytga o'tish</a>
-    <a href="{{ url_for('logout') }}"             class="admin-nav-item danger">🚪 Chiqish</a>
+    <a href="{{ url_for('admin_system') }}"      class="admin-nav-item {% if page=='system' %}active{% endif %}">
+      <span class="nav-icon">🖥</span><span class="nav-label">Tizim holati</span>
+    </a>
+    <a href="{{ url_for('admin_settings') }}"    class="admin-nav-item {% if page=='settings' %}active{% endif %}">
+      <span class="nav-icon">⚙</span><span class="nav-label">Sozlamalar</span>
+    </a>
+    <a href="{{ url_for('index') }}"             class="admin-nav-item">
+      <span class="nav-icon">🌐</span><span class="nav-label">Saytga o'tish</span>
+    </a>
+    <a href="{{ url_for('logout') }}"            class="admin-nav-item danger">
+      <span class="nav-icon">🚪</span><span class="nav-label">Chiqish</span>
+    </a>
   </nav>
 </aside>
 
 
-<!-- ═══ ADMIN MAIN ═══════════════════════════════════════════ -->
-<main class="admin-main">
+{# ══════════════════ MAIN ══════════════════ #}
+<main class="admin-main" id="adminMain">
   <div class="admin-topbar">
-    <h1 class="admin-page-title">
-      {% if page=='dashboard' %}📊 Umumiy ko'rinish
-      {% elif page=='users' %}👥 Foydalanuvchilar
-      {% elif page=='athletes' %}⚽ Sportchilar
-      {% elif page=='mentors' %}🎓 Mentorlar
-      {% elif page=='talents' %}🌟 Iqtidorli talabalar
-      {% elif page=='events' %}📅 Tadbirlar
-      {% elif page=='hackathons' %}💻 Hackathonlar
-      {% elif page=='notifications' %}🔔 Bildirishnomalar
-      {% elif page=='settings' %}⚙ Sozlamalar
-      {% else %}Admin Panel{% endif %}
-    </h1>
+    <div class="admin-topbar-left">
+      <button class="topbar-toggle-btn" onclick="toggleAdminSidebar()">☰</button>
+      <h1 class="admin-page-title">
+        {% if page=='dashboard' %}📊 Umumiy ko'rinish
+        {% elif 'users' in page %}👥 Foydalanuvchilar
+        {% elif 'athletes' in page %}⚽ Sportchilar
+        {% elif 'mentors' in page %}🎓 Mentorlar
+        {% elif 'talents' in page %}🌟 Iqtidorli talabalar
+        {% elif 'events' in page %}📅 Tadbirlar
+        {% elif 'hackathons' in page %}💻 Hackathonlar
+        {% elif page=='sessions' %}📚 Sessiyalar boshqaruvi
+        {% elif page=='notifications' %}🔔 Bildirishnomalar
+        {% elif page=='announcements' %}📢 E'lonlar
+        {% elif page=='media' %}🖼 Media fayllar
+        {% elif page=='statistics' %}📈 Statistika va grafik
+        {% elif page=='audit' %}📋 Audit jurnali
+        {% elif page=='login_history' %}🔑 Login tarixi
+        {% elif page=='system' %}🖥 Tizim holati
+        {% elif page=='settings' %}⚙ Sozlamalar
+        {% else %}Admin Panel{% endif %}
+      </h1>
+    </div>
     <div class="admin-topbar-right">
-      <span class="admin-user-badge">👤 {{ session.get('full_name','Admin') }}</span>
+      <div class="topbar-clock" id="adminClock"></div>
+      <div class="topbar-user">
+        <div class="topbar-avatar">{{ session.get('full_name','A')[0] }}</div>
+        <span class="topbar-username">{{ session.get('full_name','Admin') }}</span>
+      </div>
     </div>
   </div>
 
   <div class="admin-content">
 
-  {# ══════════════ DASHBOARD PAGE ══════════════ #}
+  {# ══ DASHBOARD ══════════════════════════════════════════════ #}
   {% if page == 'dashboard' %}
   <div class="admin-kpi-grid">
+    {% for icon,lbl,val,color in [
+      ('👥','Talabalar',stats.students,'blue'),
+      ('⚽','Sportchilar',stats.athletes,'green'),
+      ('🎓','Mentorlar',stats.mentors,'purple'),
+      ('🌟','Iqtidorlar',stats.talents,'gold'),
+      ('💻','Hackathonlar',stats.hackathons,'red'),
+      ('📅','Tadbirlar',stats.events,'teal'),
+      ('📚','Sessiyalar',stats.sessions,'orange'),
+      ('🔔','Bildirishnomalar',stats.get('announcements',0),'gray'),
+    ] %}
     <div class="admin-kpi-card">
-      <div class="kpi-icon bg-blue">👥</div>
-      <div class="kpi-num">{{ stats.students }}</div>
-      <div class="kpi-lbl">Talabalar</div>
+      <div class="kpi-icon bg-{{color}}">{{icon}}</div>
+      <div class="kpi-num">{{val}}</div>
+      <div class="kpi-lbl">{{lbl}}</div>
     </div>
-    <div class="admin-kpi-card">
-      <div class="kpi-icon bg-green">⚽</div>
-      <div class="kpi-num">{{ stats.athletes }}</div>
-      <div class="kpi-lbl">Sportchilar</div>
-    </div>
-    <div class="admin-kpi-card">
-      <div class="kpi-icon bg-purple">🎓</div>
-      <div class="kpi-num">{{ stats.mentors }}</div>
-      <div class="kpi-lbl">Mentorlar</div>
-    </div>
-    <div class="admin-kpi-card">
-      <div class="kpi-icon bg-gold">🌟</div>
-      <div class="kpi-num">{{ stats.talents }}</div>
-      <div class="kpi-lbl">Iqtidorlar</div>
-    </div>
-    <div class="admin-kpi-card">
-      <div class="kpi-icon bg-red">💻</div>
-      <div class="kpi-num">{{ stats.hackathons }}</div>
-      <div class="kpi-lbl">Hackathonlar</div>
-    </div>
-    <div class="admin-kpi-card">
-      <div class="kpi-icon bg-gray">📅</div>
-      <div class="kpi-num">{{ stats.events }}</div>
-      <div class="kpi-lbl">Tadbirlar</div>
-    </div>
+    {% endfor %}
   </div>
 
-  <div class="admin-two-col">
+  {% if pending_sessions > 0 %}
+  <div class="alert-banner alert-warning">
+    ⚠️ <strong>{{pending_sessions}}</strong> ta kutayotgan sessiya tasdiqlash kutmoqda.
+    <a href="{{ url_for('admin_sessions') }}?status=pending" class="btn btn-xs btn-primary ml-8">Ko'rish →</a>
+  </div>
+  {% endif %}
+
+  <div class="admin-dash-grid">
+    <div class="admin-card span-2">
+      <div class="admin-card-header">
+        <h3>📈 Oylik ro'yxatdan o'tish</h3>
+        <a href="{{ url_for('admin_statistics') }}" class="link-sm">Batafsil →</a>
+      </div>
+      <canvas id="dashMonthChart" height="80"></canvas>
+    </div>
+
     <div class="admin-card">
-      <div class="admin-card-header"><h3>So'nggi foydalanuvchilar</h3></div>
+      <div class="admin-card-header">
+        <h3>👥 So'nggi foydalanuvchilar</h3>
+        <a href="{{ url_for('admin_users') }}" class="link-sm">Hammasi →</a>
+      </div>
       <table class="data-table">
-        <thead><tr><th>#</th><th>Ism</th><th>Username</th><th>Rol</th><th>Holat</th></tr></thead>
+        <thead><tr><th>Ism</th><th>Rol</th><th>Holat</th></tr></thead>
         <tbody>
           {% for u in recent_users %}
           <tr>
-            <td>{{ u.id }}</td><td>{{ u.full_name }}</td><td>{{ u.username }}</td>
-            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'blue' }}">{{ u.role }}</span></td>
-            <td><span class="badge badge-{{ 'green' if u.active else 'gray' }}">{{ 'Faol' if u.active else 'Bloklangan' }}</span></td>
+            <td><strong>{{u.full_name}}</strong><br><small>{{u.username}}</small></td>
+            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'purple' if u.role=='mentor' else 'blue' }}">{{u.role}}</span></td>
+            <td><span class="badge badge-{{ 'green' if u.active else 'gray' }}">{{ 'Faol' if u.active else 'Blok' }}</span></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline mt-12">Barcha foydalanuvchilar →</a>
     </div>
+
     <div class="admin-card">
-      <div class="admin-card-header"><h3>So'nggi tadbirlar</h3></div>
+      <div class="admin-card-header">
+        <h3>📋 So'nggi amallar</h3>
+        <a href="{{ url_for('admin_audit') }}" class="link-sm">Jurnal →</a>
+      </div>
+      <div class="audit-mini-list">
+        {% for a in recent_audit %}
+        <div class="audit-mini-item">
+          <span class="audit-action-badge">{{a.action}}</span>
+          <span class="audit-user">{{a.username}}</span>
+          <span class="audit-time">{{a.created_at[11:16] if a.created_at else ''}}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3>🔑 So'nggi loginlar</h3>
+        <a href="{{ url_for('admin_login_history') }}" class="link-sm">Tarix →</a>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Foydalanuvchi</th><th>IP</th><th>Natija</th></tr></thead>
+        <tbody>
+          {% for l in recent_logins %}
+          <tr>
+            <td>{{l.username}}</td>
+            <td><code>{{l.ip_address}}</code></td>
+            <td><span class="badge badge-{{ 'green' if l.success else 'red' }}">{{ '✓' if l.success else '✗' }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h3>📅 So'nggi tadbirlar</h3>
+        <a href="{{ url_for('admin_events') }}" class="link-sm">Hammasi →</a>
+      </div>
       <table class="data-table">
         <thead><tr><th>Tadbir</th><th>Sana</th><th>Tur</th></tr></thead>
         <tbody>
           {% for ev in recent_events %}
           <tr>
-            <td>{{ ev.title }}</td>
-            <td>{{ ev.event_date or '—' }}</td>
-            <td><span class="badge badge-blue">{{ ev.category }}</span></td>
+            <td>{{ev.title}}</td>
+            <td>{{ev.event_date or '—'}}</td>
+            <td><span class="badge badge-blue">{{ev.category}}</span></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
-      <a href="{{ url_for('admin_events') }}" class="btn btn-sm btn-outline mt-12">Barcha tadbirlar →</a>
     </div>
   </div>
+
+  <script>
+  (function(){
+    const labels = {{ monthly_reg | map(attribute='month') | list | tojson }};
+    const data   = {{ monthly_reg | map(attribute='cnt')   | list | tojson }};
+    const ctx = document.getElementById('dashMonthChart');
+    if(ctx && labels.length){
+      new Chart(ctx,{type:'bar',data:{labels,datasets:[{
+        label:"Yangi talabalar",data,
+        backgroundColor:'rgba(88,166,255,0.6)',borderColor:'#58a6ff',borderWidth:1,borderRadius:4
+      }]},options:{responsive:true,plugins:{legend:{display:false}},scales:{
+        x:{ticks:{color:'#888'}},y:{ticks:{color:'#888'},beginAtZero:true}
+      }}});
+    }
+  })();
+  </script>
   {% endif %}
 
 
-  {# ══════════════ USERS PAGE ══════════════ #}
+  {# ══ USERS ══════════════════════════════════════════════════ #}
   {% if page == 'users' %}
   <div class="admin-card mb-16">
     <div class="admin-card-header">
@@ -156,104 +285,189 @@
       <button class="btn btn-sm btn-primary" onclick="toggleForm('addUserForm')">+ Qo'shish</button>
     </div>
     <form id="addUserForm" class="admin-form hidden" action="{{ url_for('admin_add_user') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form-row-4">
-        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
-        <div class="form-group"><label class="form-label">Username</label><input class="form-input" name="username" required></div>
-        <div class="form-group"><label class="form-label">Parol</label><input class="form-input" name="password" type="password" value="1234"></div>
+        <div class="form-group"><label class="form-label">To'liq ism *</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Username *</label><input class="form-input" name="username" required pattern="[a-zA-Z0-9_]+" title="Lotin, raqam, _"></div>
+        <div class="form-group"><label class="form-label">Parol</label><input class="form-input" type="password" name="password" value="1234" minlength="4"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
+      </div>
+      <div class="form-row-3">
         <div class="form-group"><label class="form-label">Rol</label>
           <select class="form-select" name="role">
-            <option value="student">Talaba</option>
-            <option value="mentor">Mentor</option>
-            <option value="admin">Admin</option>
+            <option value="student">Talaba</option><option value="mentor">Mentor</option><option value="admin">Admin</option>
           </select>
         </div>
-      </div>
-      <div class="form-row-2">
         <div class="form-group"><label class="form-label">Fakultet</label>
           <select class="form-select" name="faculty">
             <option value="KTIF">KTIF</option><option value="EIQ">EIQ</option>
             <option value="MMF">MMF</option><option value="ITF">ITF</option><option value="HF">HF</option>
           </select>
         </div>
-        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">💾 Saqlash</button></div>
       </div>
     </form>
   </div>
 
   <div class="admin-card">
     <div class="admin-card-header">
-      <h3>Foydalanuvchilar ({{ users|length if users else 0 }})</h3>
-      <form class="search-form" method="GET">
-        <input class="form-input sm" name="q" value="{{ search or '' }}" placeholder="Qidirish...">
-        <select class="form-select sm" name="role" onchange="this.form.submit()">
-          <option value="">Barcha rollar</option>
-          <option value="student" {% if role_filter=='student' %}selected{% endif %}>Talaba</option>
-          <option value="mentor"  {% if role_filter=='mentor'  %}selected{% endif %}>Mentor</option>
-          <option value="admin"   {% if role_filter=='admin'   %}selected{% endif %}>Admin</option>
-        </select>
-        <button class="btn btn-sm btn-outline">Qidirish</button>
-      </form>
+      <h3>Foydalanuvchilar ({{ total or 0 }})</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <form class="search-form" method="GET">
+          <input class="form-input sm" name="q" value="{{ search or '' }}" placeholder="🔍 Ism, username, email...">
+          <select class="form-select sm" name="role" onchange="this.form.submit()">
+            <option value="">Barcha rollar</option>
+            <option value="student" {% if role_filter=='student' %}selected{% endif %}>Talaba</option>
+            <option value="mentor"  {% if role_filter=='mentor'  %}selected{% endif %}>Mentor</option>
+            <option value="admin"   {% if role_filter=='admin'   %}selected{% endif %}>Admin</option>
+          </select>
+          <select class="form-select sm" name="faculty" onchange="this.form.submit()">
+            <option value="">Barcha fakultet</option>
+            {% for f in ['KTIF','EIQ','MMF','ITF','HF'] %}
+            <option value="{{f}}" {% if fac_filter==f %}selected{% endif %}>{{f}}</option>
+            {% endfor %}
+          </select>
+          <button class="btn btn-sm btn-outline">🔍</button>
+        </form>
+        <a href="{{ url_for('admin_export_users') }}" class="btn btn-sm btn-outline">⬇ CSV</a>
+      </div>
     </div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>ID</th><th>Ism</th><th>Username</th><th>Rol</th><th>Fakultet</th><th>Kurs</th><th>Holat</th><th>Amallar</th></tr></thead>
+        <thead><tr><th>ID</th><th>Ism</th><th>Username</th><th>Rol</th><th>Fakultet</th><th>Rating</th><th>Login</th><th>Holat</th><th>Amallar</th></tr></thead>
         <tbody>
           {% for u in users %}
           <tr>
-            <td>{{ u.id }}</td>
-            <td><strong>{{ u.full_name }}</strong></td>
-            <td><code>{{ u.username }}</code></td>
-            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'purple' if u.role=='mentor' else 'blue' }}">{{ u.role }}</span></td>
-            <td>{{ u.faculty or '—' }}</td>
-            <td>{{ u.course or '—' }}</td>
-            <td><span class="badge badge-{{ 'green' if u.active else 'gray' }}">{{ 'Faol' if u.active else 'Bloklangan' }}</span></td>
+            <td class="td-mono">{{u.id}}</td>
+            <td><strong>{{u.full_name}}</strong><br><small class="text-muted">{{u.email or ''}}</small></td>
+            <td><code>{{u.username}}</code></td>
+            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'purple' if u.role=='mentor' else 'blue' }}">{{u.role}}</span></td>
+            <td>{{u.faculty or '—'}}</td>
+            <td><span class="badge badge-gray">{{u.rating}}</span></td>
+            <td class="text-muted td-sm">{{u.last_login[:10] if u.last_login else '—'}}</td>
+            <td><span class="badge badge-{{ 'green' if u.active else 'red' }}">{{ 'Faol' if u.active else 'Blok' }}</span></td>
             <td class="actions-cell">
+              <a href="{{ url_for('admin_edit_user', uid=u.id) }}" class="btn btn-xs btn-outline" title="Tahrirlash">✏</a>
               <form method="POST" action="{{ url_for('admin_toggle_user', uid=u.id) }}" style="display:inline">
-                <button class="btn btn-xs btn-outline" title="Faollashtirish/Bloklash">{{ '🔓' if u.active else '🔒' }}</button>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-xs btn-outline" title="{{ 'Blok' if u.active else 'Faollashtirish' }}">
+                  {{ '🔒' if u.active else '🔓' }}
+                </button>
               </form>
-              <form method="POST" action="{{ url_for('admin_delete_user', uid=u.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+              {% if u.id != session.get('user_id') %}
+              <form method="POST" action="{{ url_for('admin_delete_user', uid=u.id) }}" style="display:inline"
+                    onsubmit="return confirmDelete('{{u.full_name}}')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-xs btn-danger" title="O'chirish">🗑</button>
               </form>
+              {% endif %}
             </td>
           </tr>
           {% else %}
-          <tr><td colspan="8" class="td-empty">Foydalanuvchi topilmadi</td></tr>
+          <tr><td colspan="9" class="td-empty">Foydalanuvchi topilmadi</td></tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+    {# Pagination #}
+    {% if total and per %}
+    <div class="pagination-row">
+      {% set total_pages = ((total + per - 1) // per) %}
+      {% for pn in range(1, total_pages+1) %}
+      <a href="?p={{pn}}{% if search %}&q={{search}}{% endif %}{% if role_filter %}&role={{role_filter}}{% endif %}"
+         class="page-btn {{ 'active' if pn == page_num else '' }}">{{pn}}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {# ══ USER EDIT ══════════════════════════════════════════════ #}
+  {% if page == 'users_edit' and edit_user %}
+  <div class="admin-card" style="max-width:700px">
+    <div class="admin-card-header">
+      <h3>✏ Foydalanuvchini tahrirlash: {{edit_user.full_name}}</h3>
+      <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline">← Orqaga</a>
+    </div>
+    <form action="{{ url_for('admin_edit_user', uid=edit_user.id) }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" value="{{edit_user.full_name or ''}}"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" name="email" value="{{edit_user.email or ''}}"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Telefon</label><input class="form-input" name="phone" value="{{edit_user.phone or ''}}"></div>
+        <div class="form-group"><label class="form-label">Mutaxassislik</label><input class="form-input" name="specialty" value="{{edit_user.specialty or ''}}"></div>
+      </div>
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">Rol</label>
+          <select class="form-select" name="role">
+            {% for r in ['student','mentor','admin'] %}
+            <option value="{{r}}" {% if edit_user.role==r %}selected{% endif %}>{{r}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty">
+            {% for f in ['KTIF','EIQ','MMF','ITF','HF'] %}
+            <option value="{{f}}" {% if edit_user.faculty==f %}selected{% endif %}>{{f}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Kurs</label>
+          <select class="form-select" name="course">
+            {% for c in [1,2,3,4] %}<option value="{{c}}" {% if edit_user.course==c %}selected{% endif %}>{{c}}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Reyting</label><input class="form-input" type="number" name="rating" value="{{edit_user.rating or 0}}" min="0"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Yangi parol (ixtiyoriy, kamida 4 belgi)</label>
+        <input class="form-input" type="password" name="new_password" minlength="4" placeholder="Bo'sh qoldirsa o'zgarmaydi">
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button type="submit" class="btn btn-primary">💾 Saqlash</button>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-ghost">Bekor</a>
+      </div>
+    </form>
   </div>
   {% endif %}
 
 
-  {# ══════════════ ATHLETES PAGE ══════════════ #}
+  {# ══ ATHLETES ══════════════════════════════════════════════ #}
   {% if page == 'athletes' %}
   <div class="admin-card mb-16">
     <div class="admin-card-header">
       <h3>Sportchi qo'shish</h3>
-      <button class="btn btn-sm btn-primary" onclick="toggleForm('addAthleteForm')">+ Qo'shish</button>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addAthForm')">+ Qo'shish</button>
     </div>
-    <form id="addAthleteForm" class="admin-form hidden" action="{{ url_for('admin_add_athlete') }}" method="POST">
+    <form id="addAthForm" class="admin-form hidden" action="{{ url_for('admin_add_athlete') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form-row-4">
-        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
-        <div class="form-group"><label class="form-label">Sport turi</label><input class="form-input" name="sport" required></div>
-        <div class="form-group"><label class="form-label">Fakultet</label>
-          <select class="form-select" name="faculty"><option>KTIF</option><option>EIQ</option><option>MMF</option><option>ITF</option><option>HF</option></select>
-        </div>
+        <div class="form-group"><label class="form-label">To'liq ism *</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Sport turi *</label><input class="form-input" name="sport" required></div>
+        <div class="form-group"><label class="form-label">Murabbiy</label><input class="form-input" name="coach"></div>
         <div class="form-group"><label class="form-label">Daraja</label>
           <select class="form-select" name="level">
-            <option value="university">Universitet</option>
-            <option value="region">Viloyat</option>
-            <option value="republic">Respublika</option>
-            <option value="international">Xalqaro</option>
+            <option value="university">Universitet</option><option value="region">Viloyat</option>
+            <option value="republic">Respublika</option><option value="international">Xalqaro</option>
           </select>
         </div>
       </div>
-      <div class="form-row-2">
-        <div class="form-group"><label class="form-label">Kurs</label>
-          <select class="form-select" name="course"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty">{% for f in ['KTIF','EIQ','MMF','ITF','HF'] %}<option>{{f}}</option>{% endfor %}</select>
         </div>
-        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
+        <div class="form-group"><label class="form-label">Kurs</label>
+          <select class="form-select" name="course">{% for c in [1,2,3,4] %}<option value="{{c}}">{{c}}</option>{% endfor %}</select>
+        </div>
+        <div class="form-group"><label class="form-label">Reyting bali</label><input class="form-input" type="number" name="rating_points" value="0" min="0"></div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">💾 Saqlash</button></div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">🥇 Oltin</label><input class="form-input" type="number" name="medals_gold" value="0" min="0"></div>
+        <div class="form-group"><label class="form-label">🥈 Kumush</label><input class="form-input" type="number" name="medals_silver" value="0" min="0"></div>
+        <div class="form-group"><label class="form-label">🥉 Bronza</label><input class="form-input" type="number" name="medals_bronze" value="0" min="0"></div>
       </div>
     </form>
   </div>
@@ -261,161 +475,271 @@
     <div class="admin-card-header"><h3>Sportchilar ({{ athletes|length if athletes else 0 }})</h3></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>Ism</th><th>Sport</th><th>Fakultet</th><th>Kurs</th><th>Daraja</th><th>⭐ Ball</th><th>Amallar</th></tr></thead>
+        <thead><tr><th>Ism</th><th>Sport</th><th>Fakultet</th><th>Daraja</th><th>🥇🥈🥉</th><th>Ball</th><th>Amallar</th></tr></thead>
         <tbody>
           {% for a in athletes %}
           <tr>
-            <td><strong>{{ a.full_name }}</strong></td>
-            <td>{{ a.sport }}</td><td>{{ a.faculty or '—' }}</td><td>{{ a.course }}</td>
+            <td><strong>{{a.full_name}}</strong>{% if a.coach %}<br><small class="text-muted">🧑‍🏫 {{a.coach}}</small>{% endif %}</td>
+            <td>{{a.sport}}</td>
+            <td>{{a.faculty or '—'}} · {{a.course}}-k</td>
             <td><span class="badge badge-{{ 'gold' if a.level=='international' else 'red' if a.level=='republic' else 'blue' if a.level=='region' else 'gray' }}">
-              {{ {'university':'Universitet','region':'Viloyat','republic':'Respublika','international':'Xalqaro'}.get(a.level,a.level) }}
+              {{ {'university':'Univ','region':'Viloyat','republic':'Respublika','international':'Xalqaro'}.get(a.level,a.level) }}
             </span></td>
-            <td><strong>{{ a.rating_points }}</strong></td>
-            <td>
-              <form method="POST" action="{{ url_for('admin_delete_athlete', aid=a.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+            <td>🥇{{a.medals_gold}} 🥈{{a.medals_silver}} 🥉{{a.medals_bronze}}</td>
+            <td><strong>{{a.rating_points}}</strong></td>
+            <td class="actions-cell">
+              <a href="{{ url_for('admin_edit_athlete', aid=a.id) }}" class="btn btn-xs btn-outline">✏</a>
+              <form method="POST" action="{{ url_for('admin_delete_athlete', aid=a.id) }}" style="display:inline" onsubmit="return confirmDelete('{{a.full_name}}')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-xs btn-danger">🗑</button>
               </form>
             </td>
           </tr>
-          {% else %}
-          <tr><td colspan="7" class="td-empty">Sportchi topilmadi</td></tr>
-          {% endfor %}
+          {% else %}<tr><td colspan="7" class="td-empty">Sportchi topilmadi</td></tr>{% endfor %}
         </tbody>
       </table>
     </div>
   </div>
   {% endif %}
 
-  {# ══════════════ MENTORS PAGE ══════════════ #}
+  {# ══ ATHLETES EDIT ══════════════════════════════════════════ #}
+  {% if page == 'athletes_edit' and edit_athlete %}
+  <div class="admin-card" style="max-width:700px">
+    <div class="admin-card-header">
+      <h3>✏ Sportchini tahrirlash: {{edit_athlete.full_name}}</h3>
+      <a href="{{ url_for('admin_athletes') }}" class="btn btn-sm btn-outline">← Orqaga</a>
+    </div>
+    <form action="{{ url_for('admin_edit_athlete', aid=edit_athlete.id) }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row"><div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" value="{{edit_athlete.full_name or ''}}"></div>
+        <div class="form-group"><label class="form-label">Sport turi</label><input class="form-input" name="sport" value="{{edit_athlete.sport or ''}}"></div></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Murabbiy</label><input class="form-input" name="coach" value="{{edit_athlete.coach or ''}}"></div>
+        <div class="form-group"><label class="form-label">Bio</label><input class="form-input" name="bio" value="{{edit_athlete.bio or ''}}"></div></div>
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty">{% for f in ['KTIF','EIQ','MMF','ITF','HF'] %}<option {% if edit_athlete.faculty==f %}selected{% endif %}>{{f}}</option>{% endfor %}</select></div>
+        <div class="form-group"><label class="form-label">Kurs</label>
+          <select class="form-select" name="course">{% for c in [1,2,3,4] %}<option value="{{c}}" {% if edit_athlete.course==c %}selected{% endif %}>{{c}}</option>{% endfor %}</select></div>
+        <div class="form-group"><label class="form-label">Daraja</label>
+          <select class="form-select" name="level">{% for l,n in [('university','Universitet'),('region','Viloyat'),('republic','Respublika'),('international','Xalqaro')] %}<option value="{{l}}" {% if edit_athlete.level==l %}selected{% endif %}>{{n}}</option>{% endfor %}</select></div>
+        <div class="form-group"><label class="form-label">Reyting bali</label><input class="form-input" type="number" name="rating_points" value="{{edit_athlete.rating_points or 0}}"></div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">🥇 Oltin</label><input class="form-input" type="number" name="medals_gold" value="{{edit_athlete.medals_gold or 0}}"></div>
+        <div class="form-group"><label class="form-label">🥈 Kumush</label><input class="form-input" type="number" name="medals_silver" value="{{edit_athlete.medals_silver or 0}}"></div>
+        <div class="form-group"><label class="form-label">🥉 Bronza</label><input class="form-input" type="number" name="medals_bronze" value="{{edit_athlete.medals_bronze or 0}}"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button type="submit" class="btn btn-primary">💾 Saqlash</button>
+        <a href="{{ url_for('admin_athletes') }}" class="btn btn-ghost">Bekor</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+
+  {# ══ MENTORS ══════════════════════════════════════════════ #}
   {% if page == 'mentors' %}
   <div class="admin-card mb-16">
     <div class="admin-card-header">
       <h3>Mentor qo'shish</h3>
-      <button class="btn btn-sm btn-primary" onclick="toggleForm('addMentorForm')">+ Qo'shish</button>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addMentForm')">+ Qo'shish</button>
     </div>
-    <form id="addMentorForm" class="admin-form hidden" action="{{ url_for('admin_add_mentor') }}" method="POST">
+    <form id="addMentForm" class="admin-form hidden" action="{{ url_for('admin_add_mentor') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form-row-4">
-        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
-        <div class="form-group"><label class="form-label">Fanlar (JSON)</label><input class="form-input" name="subjects" placeholder='["Python","ML"]'></div>
+        <div class="form-group"><label class="form-label">To'liq ism *</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Fanlar (vergul bilan)</label><input class="form-input" name="subjects" placeholder='Python, ML, Web'></div>
         <div class="form-group"><label class="form-label">Tajriba (yil)</label><input class="form-input" type="number" name="experience_years" value="1" min="1"></div>
-        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
+        <div class="form-group"><label class="form-label">Soatlik narx (so'm)</label><input class="form-input" type="number" name="price_per_hour" value="0" min="0"></div>
       </div>
-      <div class="form-group"><label class="form-label">Bio</label><textarea class="form-input" name="bio" rows="2"></textarea></div>
+      <div class="form-row"><div class="form-group"><label class="form-label">Bio</label><textarea class="form-input" name="bio" rows="2"></textarea></div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary mt-12">💾 Saqlash</button></div></div>
     </form>
   </div>
   <div class="admin-card">
     <div class="admin-card-header"><h3>Mentorlar ({{ mentors|length if mentors else 0 }})</h3></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>Ism</th><th>Fanlar</th><th>Reyting</th><th>Sessiyalar</th><th>Tajriba</th><th>Amallar</th></tr></thead>
+        <thead><tr><th>Ism</th><th>Fanlar</th><th>Reyting</th><th>Sessiyalar</th><th>Tajriba</th><th>Narx</th><th>Holat</th><th>Amallar</th></tr></thead>
         <tbody>
           {% for m in mentors %}
           <tr>
-            <td><strong>{{ m.full_name }}</strong></td>
-            <td>{{ m.subjects | replace('[','') | replace(']','') | replace('"','') }}</td>
-            <td>⭐ {{ m.rating }}</td><td>{{ m.sessions_total }}</td>
-            <td>{{ m.experience_years }} yil</td>
-            <td>
-              <form method="POST" action="{{ url_for('admin_delete_mentor', mid=m.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+            <td><strong>{{m.full_name}}</strong></td>
+            <td><div class="subj-tags">{% for s in m.subjects.replace('[','').replace(']','').replace('"','').split(',') if s.strip() %}<span class="subj-tag">{{s.strip()}}</span>{% endfor %}</div></td>
+            <td>⭐ {{m.rating}}</td><td>{{m.sessions_total}}</td>
+            <td>{{m.experience_years}} yil</td>
+            <td>{{m.price_per_hour or '—'}} so'm</td>
+            <td><span class="badge badge-{{ 'green' if m.available else 'gray' }}">{{ 'Mavjud' if m.available else 'Band' }}</span></td>
+            <td class="actions-cell">
+              <a href="{{ url_for('admin_edit_mentor', mid=m.id) }}" class="btn btn-xs btn-outline">✏</a>
+              <form method="POST" action="{{ url_for('admin_delete_mentor', mid=m.id) }}" style="display:inline" onsubmit="return confirmDelete('{{m.full_name}}')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-xs btn-danger">🗑</button>
               </form>
             </td>
           </tr>
-          {% else %}<tr><td colspan="6" class="td-empty">Mentor topilmadi</td></tr>{% endfor %}
+          {% else %}<tr><td colspan="8" class="td-empty">Mentor topilmadi</td></tr>{% endfor %}
         </tbody>
       </table>
     </div>
   </div>
   {% endif %}
 
+  {% if page == 'mentors_edit' and edit_mentor %}
+  <div class="admin-card" style="max-width:700px">
+    <div class="admin-card-header"><h3>✏ Mentorni tahrirlash: {{edit_mentor.full_name}}</h3>
+      <a href="{{ url_for('admin_mentors') }}" class="btn btn-sm btn-outline">← Orqaga</a></div>
+    <form action="{{ url_for('admin_edit_mentor', mid=edit_mentor.id) }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row"><div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" value="{{edit_mentor.full_name or ''}}"></div>
+        <div class="form-group"><label class="form-label">Fanlar (vergul bilan)</label><input class="form-input" name="subjects" value="{{ edit_mentor.subjects|replace('[','')|replace(']','')|replace('\"','') }}"></div></div>
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">Reyting (0-5)</label><input class="form-input" type="number" name="rating" step="0.1" min="0" max="5" value="{{edit_mentor.rating or 0}}"></div>
+        <div class="form-group"><label class="form-label">Tajriba (yil)</label><input class="form-input" type="number" name="experience_years" value="{{edit_mentor.experience_years or 1}}"></div>
+        <div class="form-group"><label class="form-label">Narx (so'm)</label><input class="form-input" type="number" name="price_per_hour" value="{{edit_mentor.price_per_hour or 0}}"></div>
+        <div class="form-group"><label class="form-label">Mavjudligi</label>
+          <select class="form-select" name="available"><option value="1" {% if edit_mentor.available %}selected{% endif %}>Mavjud</option><option value="" {% if not edit_mentor.available %}selected{% endif %}>Band</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Bio</label><textarea class="form-input" name="bio" rows="3">{{edit_mentor.bio or ''}}</textarea></div>
+      <div style="display:flex;gap:10px;margin-top:16px"><button type="submit" class="btn btn-primary">💾 Saqlash</button><a href="{{ url_for('admin_mentors') }}" class="btn btn-ghost">Bekor</a></div>
+    </form>
+  </div>
+  {% endif %}
 
-  {# ══════════════ TALENTS PAGE ══════════════ #}
+  {# ══ TALENTS ══════════════════════════════════════════════ #}
   {% if page == 'talents' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header"><h3>Iqtidor qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addTalForm')">+ Qo'shish</button></div>
+    <form id="addTalForm" class="admin-form hidden" action="{{ url_for('admin_add_talent') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">To'liq ism *</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty">{% for f in ['KTIF','EIQ','MMF','ITF','HF'] %}<option>{{f}}</option>{% endfor %}</select></div>
+        <div class="form-group"><label class="form-label">Mutaxassislik</label><input class="form-input" name="specialty"></div>
+        <div class="form-group"><label class="form-label">Kurs</label>
+          <select class="form-select" name="course">{% for c in [1,2,3,4] %}<option value="{{c}}">{{c}}</option>{% endfor %}</select></div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">Kategoriyalar</label>
+          <div class="check-group">
+            {% for c,l in [('science','Ilm'),('sport','Sport'),('creative','Ijod'),('social','Ijtimoiy')] %}
+            <label class="check-lbl"><input type="checkbox" name="cat_{{c}}" value="{{c}}"> {{l}}</label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Ball</label><input class="form-input" type="number" name="score" value="0" min="0" max="1000"></div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">💾 Saqlash</button></div>
+      </div>
+      {# JS categories helper #}
+      <script>
+      document.querySelector('#addTalForm button[type=submit]')?.closest('form')?.addEventListener('submit',function(e){
+        const cats=[];
+        ['science','sport','creative','social'].forEach(c=>{if(this.querySelector('[name=cat_'+c+']')?.checked)cats.push(c);});
+        let inp=this.querySelector('[name=categories]');
+        if(!inp){inp=document.createElement('input');inp.type='hidden';inp.name='categories';this.appendChild(inp);}
+        inp.value=JSON.stringify(cats);
+      });
+      </script>
+    </form>
+  </div>
   <div class="admin-card">
     <div class="admin-card-header"><h3>Iqtidorli talabalar ({{ talents|length if talents else 0 }})</h3></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>#</th><th>Ism</th><th>Fakultet</th><th>Mutaxassislik</th><th>Kurs</th><th>Ball</th><th>Amallar</th></tr></thead>
+        <thead><tr><th>#</th><th>Ism</th><th>Fakultet</th><th>Mutaxassislik</th><th>Kurs</th><th>Ball</th><th>Kategoriya</th><th>Amallar</th></tr></thead>
         <tbody>
           {% for t in talents %}
           <tr>
-            <td>{{ loop.index }}</td>
-            <td><strong>{{ t.full_name }}</strong></td>
-            <td>{{ t.faculty or '—' }}</td><td>{{ t.specialty or '—' }}</td><td>{{ t.course }}</td>
-            <td><strong>{{ t.score }}</strong></td>
-            <td>
-              <form method="POST" action="{{ url_for('admin_delete_talent', tid=t.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+            <td class="td-mono">{{loop.index}}</td>
+            <td><strong>{{t.full_name}}</strong></td>
+            <td>{{t.faculty or '—'}}</td><td>{{t.specialty or '—'}}</td><td>{{t.course}}</td>
+            <td><strong class="text-accent">{{t.score}}</strong></td>
+            <td><div class="subj-tags">{% for c in t.categories.replace('[','').replace(']','').replace('"','').split(',') if c.strip() %}<span class="subj-tag cat-{{c.strip()}}">{{c.strip()}}</span>{% endfor %}</div></td>
+            <td class="actions-cell">
+              <a href="{{ url_for('admin_edit_talent', tid=t.id) }}" class="btn btn-xs btn-outline">✏</a>
+              <form method="POST" action="{{ url_for('admin_delete_talent', tid=t.id) }}" style="display:inline" onsubmit="return confirmDelete('{{t.full_name}}')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-xs btn-danger">🗑</button>
               </form>
             </td>
           </tr>
-          {% else %}<tr><td colspan="7" class="td-empty">Iqtidor topilmadi</td></tr>{% endfor %}
+          {% else %}<tr><td colspan="8" class="td-empty">Iqtidor topilmadi</td></tr>{% endfor %}
         </tbody>
       </table>
     </div>
   </div>
   {% endif %}
 
-  {# ══════════════ EVENTS PAGE ══════════════ #}
+
+  {# ══ EVENTS ══════════════════════════════════════════════ #}
   {% if page == 'events' %}
   <div class="admin-card mb-16">
-    <div class="admin-card-header">
-      <h3>Tadbir qo'shish</h3>
-      <button class="btn btn-sm btn-primary" onclick="toggleForm('addEventForm')">+ Qo'shish</button>
-    </div>
-    <form id="addEventForm" class="admin-form hidden" action="{{ url_for('admin_add_event') }}" method="POST">
+    <div class="admin-card-header"><h3>Tadbir qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addEvForm')">+ Qo'shish</button></div>
+    <form id="addEvForm" class="admin-form hidden" action="{{ url_for('admin_add_event') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form-row-4">
-        <div class="form-group"><label class="form-label">Tadbir nomi</label><input class="form-input" name="title" required></div>
+        <div class="form-group"><label class="form-label">Nomi *</label><input class="form-input" name="title" required></div>
         <div class="form-group"><label class="form-label">Joylashuv</label><input class="form-input" name="location"></div>
         <div class="form-group"><label class="form-label">Sana</label><input class="form-input" type="date" name="event_date"></div>
         <div class="form-group"><label class="form-label">Vaqt</label><input class="form-input" type="time" name="event_time"></div>
       </div>
-      <div class="form-row-2">
+      <div class="form-row-3">
         <div class="form-group"><label class="form-label">Tur</label>
           <select class="form-select" name="category">
-            <option value="general">Umumiy</option><option value="sport">Sport</option>
-            <option value="it">IT</option><option value="science">Ilm</option><option value="education">Ta'lim</option>
+            {% for v,l in [('general','Umumiy'),('sport','Sport'),('it','IT'),('science','Ilm'),('education','Ta\'lim')] %}
+            <option value="{{v}}">{{l}}</option>{% endfor %}
           </select>
         </div>
-        <div class="form-group"><label class="form-label">Tavsif</label><input class="form-input" name="description"></div>
+        <div class="form-group"><label class="form-label">Sig'im</label><input class="form-input" type="number" name="capacity" value="0"></div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">💾 Saqlash</button></div>
       </div>
-      <button type="submit" class="btn btn-primary">Saqlash</button>
     </form>
   </div>
   <div class="admin-card">
     <div class="admin-card-header"><h3>Tadbirlar ({{ events|length if events else 0 }})</h3></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>Nomi</th><th>Joylashuv</th><th>Sana</th><th>Vaqt</th><th>Tur</th><th>Amallar</th></tr></thead>
+        <thead><tr><th>Nomi</th><th>Joylashuv</th><th>Sana</th><th>Vaqt</th><th>Tur</th><th>Sig'im</th><th>Holat</th><th>Amallar</th></tr></thead>
         <tbody>
           {% for ev in events %}
           <tr>
-            <td><strong>{{ ev.title }}</strong></td>
-            <td>{{ ev.location or '—' }}</td><td>{{ ev.event_date or '—' }}</td><td>{{ ev.event_time or '—' }}</td>
-            <td><span class="badge badge-blue">{{ ev.category }}</span></td>
-            <td>
-              <form method="POST" action="{{ url_for('admin_delete_event', eid=ev.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+            <td><strong>{{ev.title}}</strong></td>
+            <td>{{ev.location or '—'}}</td><td>{{ev.event_date or '—'}}</td><td>{{ev.event_time or '—'}}</td>
+            <td><span class="badge badge-blue">{{ev.category}}</span></td>
+            <td>{{ev.registered or 0}}/{{ev.capacity or '∞'}}</td>
+            <td><span class="badge badge-{{ 'green' if ev.active else 'gray' }}">{{ 'Faol' if ev.active else 'Yopiq' }}</span></td>
+            <td class="actions-cell">
+              <a href="{{ url_for('admin_edit_event', eid=ev.id) }}" class="btn btn-xs btn-outline">✏</a>
+              <form method="POST" action="{{ url_for('admin_toggle_event', eid=ev.id) }}" style="display:inline">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-xs btn-outline" title="{{ 'Yopish' if ev.active else 'Ochish' }}">{{ '⏸' if ev.active else '▶' }}</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_delete_event', eid=ev.id) }}" style="display:inline" onsubmit="return confirmDelete('{{ev.title}}')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-xs btn-danger">🗑</button>
               </form>
             </td>
           </tr>
-          {% else %}<tr><td colspan="6" class="td-empty">Tadbir topilmadi</td></tr>{% endfor %}
+          {% else %}<tr><td colspan="8" class="td-empty">Tadbir topilmadi</td></tr>{% endfor %}
         </tbody>
       </table>
     </div>
   </div>
   {% endif %}
 
-  {# ══════════════ HACKATHONS PAGE ══════════════ #}
+  {# ══ HACKATHONS ═══════════════════════════════════════════ #}
   {% if page == 'hackathons' %}
   <div class="admin-card mb-16">
-    <div class="admin-card-header">
-      <h3>Hackathon qo'shish</h3>
-      <button class="btn btn-sm btn-primary" onclick="toggleForm('addHackForm')">+ Qo'shish</button>
-    </div>
+    <div class="admin-card-header"><h3>Hackathon qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addHackForm')">+ Qo'shish</button></div>
     <form id="addHackForm" class="admin-form hidden" action="{{ url_for('admin_add_hackathon') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form-row-4">
-        <div class="form-group"><label class="form-label">Nomi</label><input class="form-input" name="title" required></div>
+        <div class="form-group"><label class="form-label">Nomi *</label><input class="form-input" name="title" required></div>
         <div class="form-group"><label class="form-label">Mukofot</label><input class="form-input" name="prize"></div>
         <div class="form-group"><label class="form-label">Muddat</label><input class="form-input" type="date" name="deadline"></div>
         <div class="form-group"><label class="form-label">Holat</label>
@@ -424,30 +748,37 @@
           </select>
         </div>
       </div>
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">Tashkilotchi</label><input class="form-input" name="organizer"></div>
+        <div class="form-group"><label class="form-label">Texnologiyalar</label><input class="form-input" name="tech_stack" placeholder="Python, React, ML..."></div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">💾 Saqlash</button></div>
+      </div>
       <div class="form-group"><label class="form-label">Tavsif</label><textarea class="form-input" name="description" rows="2"></textarea></div>
-      <button type="submit" class="btn btn-primary">Saqlash</button>
     </form>
   </div>
   <div class="admin-card">
     <div class="admin-card-header"><h3>Hackathonlar ({{ hackathons|length if hackathons else 0 }})</h3></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>Nomi</th><th>Mukofot</th><th>Muddat</th><th>Holat</th><th>Ishtirokchilar</th><th>Amallar</th></tr></thead>
+        <thead><tr><th>Nomi</th><th>Tashkilotchi</th><th>Mukofot</th><th>Muddat</th><th>Holat</th><th>Ishtirok</th><th>Amallar</th></tr></thead>
         <tbody>
           {% for h in hackathons %}
           <tr>
-            <td><strong>{{ h.title }}</strong></td><td>{{ h.prize or '—' }}</td><td>{{ h.deadline or '—' }}</td>
+            <td><strong>{{h.title}}</strong>{% if h.tech_stack %}<br><small class="text-muted">{{h.tech_stack}}</small>{% endif %}</td>
+            <td>{{h.organizer or '—'}}</td><td>{{h.prize or '—'}}</td><td>{{h.deadline or '—'}}</td>
             <td><span class="badge badge-{{ 'green' if h.status=='open' else 'yellow' if h.status=='upcoming' else 'gray' }}">
               {{ {'open':'Ochiq','upcoming':'Kutilmoqda','closed':'Yopildi'}.get(h.status,h.status) }}
             </span></td>
-            <td>{{ h.participants }}</td>
-            <td>
-              <form method="POST" action="{{ url_for('admin_delete_hackathon', hid=h.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+            <td>{{h.participants}}/{{h.max_participants or '∞'}}</td>
+            <td class="actions-cell">
+              <a href="{{ url_for('admin_edit_hackathon', hid=h.id) }}" class="btn btn-xs btn-outline">✏</a>
+              <form method="POST" action="{{ url_for('admin_delete_hackathon', hid=h.id) }}" style="display:inline" onsubmit="return confirmDelete('{{h.title}}')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-xs btn-danger">🗑</button>
               </form>
             </td>
           </tr>
-          {% else %}<tr><td colspan="6" class="td-empty">Hackathon topilmadi</td></tr>{% endfor %}
+          {% else %}<tr><td colspan="7" class="td-empty">Hackathon topilmadi</td></tr>{% endfor %}
         </tbody>
       </table>
     </div>
@@ -455,158 +786,612 @@
   {% endif %}
 
 
-  {# ══════════════ NOTIFICATIONS PAGE ══════════════ #}
+  {# ══ SESSIONS ════════════════════════════════════════════ #}
+  {% if page == 'sessions' %}
+  <div class="sess-status-bar">
+    {% for s,l,c in [('','Barchasi','gray'),('pending','Kutilmoqda','yellow'),('confirmed','Tasdiqlandi','green'),('done','Tugadi','blue'),('cancelled','Bekor','red')] %}
+    <a href="?status={{s}}" class="sess-status-chip {{ 'active' if status_filter==s else '' }} chip-{{c}}">
+      {{l}} <span>{{ sess_counts.get(s, '') if s else (sess_counts.values()|sum if sess_counts else '') }}</span>
+    </a>
+    {% endfor %}
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Sessiyalar boshqaruvi</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Talaba</th><th>Mentor</th><th>Fan</th><th>Sana/Vaqt</th><th>Holat</th><th>Admin eslatma</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for s in sessions_list %}
+          <tr>
+            <td class="td-mono">{{s.id}}</td>
+            <td>{{s.student_name or '—'}}</td>
+            <td>{{s.mentor_name or '—'}}</td>
+            <td>{{s.subject or '—'}}</td>
+            <td class="td-sm">{{s.session_date or '—'}}<br><small>{{s.session_time or ''}}</small></td>
+            <td>
+              <span class="badge badge-{{ 'green' if s.status=='done' else 'blue' if s.status=='confirmed' else 'yellow' if s.status=='pending' else 'red' }}">
+                {{ {'pending':'Kutilmoqda','confirmed':'Tasdiqlandi','done':'Tugadi','cancelled':'Bekor'}.get(s.status,s.status) }}
+              </span>
+            </td>
+            <td class="td-sm text-muted">{{s.admin_note or '—'}}</td>
+            <td>
+              <button class="btn btn-xs btn-outline" onclick="openSessionModal({{s.id}},'{{s.status}}','{{s.admin_note or ''}}')">✏ Yangilash</button>
+              <form method="POST" action="{{ url_for('admin_delete_session', sid=s.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="8" class="td-empty">Sessiya topilmadi</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {# Modal #}
+  <div class="admin-modal-overlay" id="sessionModalOverlay" onclick="closeSessionModal()"></div>
+  <div class="admin-modal" id="sessionModal">
+    <div class="admin-modal-header"><h3>📚 Sessiyani yangilash</h3><button onclick="closeSessionModal()">✕</button></div>
+    <form id="sessionUpdateForm" method="POST" action="">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-select" id="sess_status_sel" name="status">
+          <option value="pending">Kutilmoqda</option><option value="confirmed">Tasdiqlandi</option>
+          <option value="done">Tugadi</option><option value="cancelled">Bekor</option>
+        </select>
+      </div>
+      <div class="form-group mt-12"><label class="form-label">Admin eslatmasi</label>
+        <textarea class="form-input" id="sess_note_inp" name="admin_note" rows="3" placeholder="Ixtiyoriy izoh..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px">
+        <button type="submit" class="btn btn-primary">💾 Saqlash</button>
+        <button type="button" class="btn btn-ghost" onclick="closeSessionModal()">Bekor</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  {# ══ NOTIFICATIONS ═══════════════════════════════════════ #}
   {% if page == 'notifications' %}
   <div class="admin-card mb-16">
-    <div class="admin-card-header"><h3>Bildirishnoma yuborish</h3></div>
+    <div class="admin-card-header"><h3>🔔 Bildirishnoma yuborish</h3></div>
     <form action="{{ url_for('admin_notifications') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
       <div class="form-row-3">
-        <div class="form-group"><label class="form-label">Sarlavha</label><input class="form-input" name="title" required></div>
+        <div class="form-group"><label class="form-label">Sarlavha *</label><input class="form-input" name="title" required></div>
         <div class="form-group"><label class="form-label">Matn</label><input class="form-input" name="body"></div>
-        <div class="form-group"><label class="form-label">Kimga</label>
-          <select class="form-select" name="target">
-            <option value="all">Barcha talabalar</option>
+        <div class="form-group"><label class="form-label">Tur</label>
+          <select class="form-select" name="notif_type">
+            <option value="info">ℹ️ Ma'lumot</option><option value="success">✅ Muvaffaqiyat</option>
+            <option value="warning">⚠️ Ogohlantirish</option><option value="danger">❌ Xato</option>
           </select>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary">Yuborish 🔔</button>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Kimga yuborish</label>
+          <select class="form-select" name="target">
+            <option value="all">Barcha talabalar</option>
+            {% for fac in faculties %}<option value="faculty:{{fac.faculty}}">{{fac.faculty}} talabalari</option>{% endfor %}
+          </select>
+        </div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">📤 Yuborish</button></div>
+      </div>
     </form>
   </div>
   <div class="admin-card">
-    <div class="admin-card-header"><h3>Yuborilgan bildirishnomalar</h3></div>
+    <div class="admin-card-header"><h3>Yuborilganlar</h3></div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>Sarlavha</th><th>Matn</th><th>Foydalanuvchi</th><th>O'qilgan</th><th>Sana</th></tr></thead>
+        <thead><tr><th>Sarlavha</th><th>Matn</th><th>Foydalanuvchi</th><th>O'qilgan</th><th>Sana</th><th>Amallar</th></tr></thead>
         <tbody>
           {% for n in notifs %}
           <tr>
-            <td><strong>{{ n.title }}</strong></td><td>{{ n.body or '—' }}</td>
-            <td>{{ n.full_name or '—' }}</td>
+            <td><strong>{{n.title}}</strong></td><td>{{n.body or '—'}}</td>
+            <td>{{n.full_name or '—'}}</td>
             <td>{{ '✅' if n.read else '⏳' }}</td>
-            <td>{{ n.created_at[:16] if n.created_at else '—' }}</td>
+            <td class="td-sm">{{n.created_at[:16] if n.created_at else '—'}}</td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_delete_notif', nid=n.id) }}" style="display:inline">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
           </tr>
-          {% else %}<tr><td colspan="5" class="td-empty">Bildirishnoma yo'q</td></tr>{% endfor %}
+          {% else %}<tr><td colspan="6" class="td-empty">Bildirishnoma yo'q</td></tr>{% endfor %}
         </tbody>
       </table>
     </div>
   </div>
   {% endif %}
 
-  {# ══════════════ USERS PAGE ══════════════ #}
-  {% if page == 'users' %}
+
+  {# ══ ANNOUNCEMENTS ═══════════════════════════════════════ #}
+  {% if page == 'announcements' %}
   <div class="admin-card mb-16">
-    <div class="admin-card-header">
-      <h3>Foydalanuvchi qo'shish</h3>
-      <button class="btn btn-sm btn-primary" onclick="toggleForm('addUserForm')">+ Qo'shish</button>
-    </div>
-    <form id="addUserForm" class="admin-form hidden" action="{{ url_for('admin_add_user') }}" method="POST">
-      <div class="form-row-4">
-        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
-        <div class="form-group"><label class="form-label">Username</label><input class="form-input" name="username" required></div>
-        <div class="form-group"><label class="form-label">Parol</label><input class="form-input" name="password" type="password" value="1234"></div>
-        <div class="form-group"><label class="form-label">Rol</label>
-          <select class="form-select" name="role">
-            <option value="student">Talaba</option><option value="mentor">Mentor</option><option value="admin">Admin</option>
+    <div class="admin-card-header"><h3>📢 E'lon qo'shish</h3></div>
+    <form action="{{ url_for('admin_announcements') }}" method="POST">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="form-row"><div class="form-group"><label class="form-label">Sarlavha *</label><input class="form-input" name="title" required></div>
+        <div class="form-group"><label class="form-label">Tur</label>
+          <select class="form-select" name="type">
+            <option value="info">ℹ️ Ma'lumot</option><option value="success">✅ Yaxshi</option>
+            <option value="warning">⚠️ Diqqat</option><option value="danger">❌ Xavf</option>
           </select>
         </div>
       </div>
-      <div class="form-row-2">
-        <div class="form-group"><label class="form-label">Fakultet</label>
-          <select class="form-select" name="faculty"><option>KTIF</option><option>EIQ</option><option>MMF</option><option>ITF</option><option>HF</option></select>
+      <div class="form-group"><label class="form-label">Matn</label><textarea class="form-input" name="body" rows="3"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Muddati (ixtiyoriy)</label><input class="form-input" type="date" name="expires_at"></div>
+        <div class="form-group form-actions">
+          <label class="check-lbl"><input type="checkbox" name="pinned"> 📌 Muhim</label>
+          <button type="submit" class="btn btn-primary ml-16">💾 Qo'shish</button>
         </div>
-        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
       </div>
     </form>
   </div>
   <div class="admin-card">
+    <div class="admin-card-header"><h3>E'lonlar ({{ announcements|length if announcements else 0 }})</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Sarlavha</th><th>Muallif</th><th>Tur</th><th>Muhim</th><th>Muddat</th><th>Holat</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for a in announcements %}
+          <tr>
+            <td><strong>{{a.title}}</strong><br><small class="text-muted">{{(a.body or '')[:60]}}{% if a.body and a.body|length > 60 %}...{% endif %}</small></td>
+            <td>{{a.author or '—'}}</td>
+            <td><span class="notif-type-badge type-{{a.type}}">{{a.type}}</span></td>
+            <td>{{ '📌' if a.pinned else '—' }}</td>
+            <td class="td-sm">{{a.expires_at or '∞'}}</td>
+            <td><span class="badge badge-{{ 'green' if a.active else 'gray' }}">{{ 'Faol' if a.active else 'Yashirin' }}</span></td>
+            <td class="actions-cell">
+              <form method="POST" action="{{ url_for('admin_toggle_ann', aid=a.id) }}" style="display:inline">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-xs btn-outline">{{ '⏸' if a.active else '▶' }}</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_delete_ann', aid=a.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="7" class="td-empty">E'lon yo'q</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ══ MEDIA ══════════════════════════════════════════════ #}
+  {% if page == 'media' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header"><h3>🖼 Fayl yuklash</h3></div>
+    <form action="{{ url_for('admin_media') }}" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+      <div class="upload-drop-zone" id="dropZone">
+        <div class="upload-icon">📁</div>
+        <p>Faylni bu yerga tashlang yoki tanlang</p>
+        <p class="text-muted" style="font-size:.8rem">PNG, JPG, JPEG, GIF, WEBP · Maks 5 MB</p>
+        <input type="file" id="mediaFile" name="file" accept=".png,.jpg,.jpeg,.gif,.webp" class="hidden" onchange="previewMedia(this)">
+        <button type="button" class="btn btn-outline mt-12" onclick="document.getElementById('mediaFile').click()">📂 Fayl tanlash</button>
+      </div>
+      <div id="mediaPreview" class="media-preview hidden">
+        <img id="previewImg" src="" alt="" style="max-height:120px;border-radius:8px">
+        <span id="previewName" class="text-muted" style="font-size:.8rem"></span>
+      </div>
+      <button type="submit" class="btn btn-primary mt-12">⬆ Yuklash</button>
+    </form>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Media fayllar ({{ media_files|length if media_files else 0 }})</h3></div>
+    <div class="media-grid">
+      {% for m in media_files %}
+      <div class="media-card">
+        <img src="{{ url_for('static',filename='uploads/'+m.filename) }}" alt="{{m.original_name}}"
+             onerror="this.src='';this.parentElement.querySelector('.media-placeholder').style.display='flex'">
+        <div class="media-placeholder" style="display:none">📄</div>
+        <div class="media-info">
+          <div class="media-name" title="{{m.original_name}}">{{m.original_name[:20]}}{% if m.original_name|length>20 %}...{% endif %}</div>
+          <div class="media-size text-muted">{{ (m.file_size/1024)|round(1) }} KB</div>
+          <div class="media-uploader text-muted">{{m.uploader or 'Admin'}}</div>
+        </div>
+        <div class="media-actions">
+          <a href="{{ url_for('static',filename='uploads/'+m.filename) }}" target="_blank" class="btn btn-xs btn-outline">👁</a>
+          <form method="POST" action="{{ url_for('admin_delete_media', mid=m.id) }}" style="display:inline" onsubmit="return confirm('Faylni o\'chirishni tasdiqlaysizmi?')">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-xs btn-danger">🗑</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <div style="grid-column:1/-1" class="td-empty">Fayl yo'q. Yuklash tugmasini bosing.</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+
+  {# ══ STATISTICS ═════════════════════════════════════════ #}
+  {% if page == 'statistics' %}
+  <div class="stats-charts-grid">
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>📅 Oylik ro'yxatdan o'tish</h3></div>
+      <canvas id="monthlyChart" height="120"></canvas>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>🏫 Fakultet bo'yicha talabalar</h3></div>
+      <canvas id="facultyChart" height="120"></canvas>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>⚽ Sport bo'yicha sportchilar</h3></div>
+      <canvas id="sportChart" height="120"></canvas>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>📚 Sessiya holatlari</h3></div>
+      <canvas id="sessChart" height="120"></canvas>
+    </div>
+  </div>
+
+  <div class="admin-two-col mt-16">
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>🔑 Kunlik loginlar (14 kun)</h3></div>
+      <canvas id="loginChart" height="120"></canvas>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>🌟 Iqtidor kategoriyalari</h3></div>
+      <canvas id="talentCatChart" height="120"></canvas>
+    </div>
+  </div>
+
+  <script>
+  const _c = '#58a6ff', _r = '#f85149', _g = '#3fb950', _y = '#d29922', _p = '#bc8cff';
+  const chartDefaults = { responsive:true, plugins:{legend:{labels:{color:'#8b949e',font:{size:11}}}},
+    scales:{x:{ticks:{color:'#666'}},y:{ticks:{color:'#666'},beginAtZero:true}} };
+
+  {% if monthly_reg %}
+  new Chart(document.getElementById('monthlyChart'),{type:'bar',data:{
+    labels:{{ monthly_reg|map(attribute='month')|list|tojson }},
+    datasets:[{label:'Ro\'yxat',data:{{ monthly_reg|map(attribute='cnt')|list|tojson }},
+      backgroundColor:'rgba(88,166,255,0.65)',borderColor:_c,borderWidth:1,borderRadius:4}]
+  },options:{...chartDefaults}});
+  {% endif %}
+
+  {% if by_faculty %}
+  new Chart(document.getElementById('facultyChart'),{type:'doughnut',data:{
+    labels:{{ by_faculty|map(attribute='faculty')|list|tojson }},
+    datasets:[{data:{{ by_faculty|map(attribute='cnt')|list|tojson }},
+      backgroundColor:[_c,_g,_y,_p,_r,'#ff9500']}]
+  },options:{responsive:true,plugins:{legend:{labels:{color:'#8b949e'}}}}});
+  {% endif %}
+
+  {% if by_sport %}
+  new Chart(document.getElementById('sportChart'),{type:'bar',data:{
+    labels:{{ by_sport|map(attribute='sport')|list|tojson }},
+    datasets:[{label:'Sportchi',data:{{ by_sport|map(attribute='cnt')|list|tojson }},
+      backgroundColor:'rgba(63,185,80,0.65)',borderColor:_g,borderWidth:1,borderRadius:4}]
+  },options:{...chartDefaults,indexAxis:'y'}});
+  {% endif %}
+
+  {% if sess_status %}
+  new Chart(document.getElementById('sessChart'),{type:'pie',data:{
+    labels:{{ sess_status|map(attribute='status')|list|tojson }},
+    datasets:[{data:{{ sess_status|map(attribute='cnt')|list|tojson }},
+      backgroundColor:[_y,_g,_c,_r]}]
+  },options:{responsive:true,plugins:{legend:{labels:{color:'#8b949e'}}}}});
+  {% endif %}
+
+  {% if login_stats %}
+  new Chart(document.getElementById('loginChart'),{type:'bar',data:{
+    labels:{{ login_stats|map(attribute='day')|list|tojson }},
+    datasets:[
+      {label:'Muvaffaqiyatli',data:{{ login_stats|map(attribute='ok')|list|tojson }},backgroundColor:'rgba(63,185,80,0.65)',borderRadius:4},
+      {label:'Muvaffaqiyatsiz',data:{{ login_stats|map(attribute='fail')|list|tojson }},backgroundColor:'rgba(248,81,73,0.65)',borderRadius:4}
+    ]
+  },options:{...chartDefaults,scales:{x:{stacked:true,ticks:{color:'#666'}},y:{stacked:true,ticks:{color:'#666'}}}}});
+  {% endif %}
+
+  {% if talents_cat %}
+  new Chart(document.getElementById('talentCatChart'),{type:'doughnut',data:{
+    labels:{{ talents_cat|map(attribute='categories')|list|tojson }},
+    datasets:[{data:{{ talents_cat|map(attribute='cnt')|list|tojson }},
+      backgroundColor:[_p,_g,_y,_c]}]
+  },options:{responsive:true,plugins:{legend:{labels:{color:'#8b949e'}}}}});
+  {% endif %}
+  </script>
+  {% endif %}
+
+  {# ══ AUDIT LOG ══════════════════════════════════════════ #}
+  {% if page == 'audit' %}
+  <div class="admin-card mb-16">
     <div class="admin-card-header">
-      <h3>Foydalanuvchilar ({{ users|length if users else 0 }})</h3>
-      <form class="search-form" method="GET">
-        <input class="form-input sm" name="q" value="{{ search or '' }}" placeholder="Qidirish...">
-        <select class="form-select sm" name="role" onchange="this.form.submit()">
-          <option value="">Barcha rollar</option>
-          <option value="student" {% if role_filter=='student' %}selected{% endif %}>Talaba</option>
-          <option value="mentor"  {% if role_filter=='mentor'  %}selected{% endif %}>Mentor</option>
-          <option value="admin"   {% if role_filter=='admin'   %}selected{% endif %}>Admin</option>
-        </select>
-        <button class="btn btn-sm btn-outline">Qidirish</button>
+      <h3>📋 Audit jurnali ({{ total or 0 }} ta yozuv)</h3>
+      <div style="display:flex;gap:8px">
+        <form class="search-form" method="GET">
+          <input class="form-input sm" name="action" value="{{ action_filter or '' }}" placeholder="Amal bo'yicha...">
+          <input class="form-input sm" name="user" value="{{ user_filter or '' }}" placeholder="Username...">
+          <button class="btn btn-sm btn-outline">🔍</button>
+        </form>
+        <a href="{{ url_for('admin_export_audit') }}" class="btn btn-sm btn-outline">⬇ CSV</a>
+        <form method="POST" action="{{ url_for('admin_clear_audit') }}" onsubmit="return confirm('30 kundan eski yozuvlar o\'chirilsinmi?')">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-danger">🗑 Eski tozala</button>
+        </form>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Vaqt</th><th>Foydalanuvchi</th><th>Amal</th><th>Tur/ID</th><th>Tafsilot</th><th>IP</th></tr></thead>
+        <tbody>
+          {% for l in audit_logs %}
+          <tr>
+            <td class="td-sm td-mono">{{l.created_at[5:16] if l.created_at else '—'}}</td>
+            <td><code>{{l.username or '—'}}</code></td>
+            <td><span class="audit-action-badge action-{{l.action.split('_')[0]}}">{{l.action}}</span></td>
+            <td class="td-sm">{% if l.target_type %}{{l.target_type}}{% if l.target_id %}#{{l.target_id}}{% endif %}{% else %}—{% endif %}</td>
+            <td class="td-sm text-muted">{{(l.details or '')[:60]}}{% if l.details and l.details|length>60 %}...{% endif %}</td>
+            <td><code class="td-sm">{{l.ip_address or '—'}}</code></td>
+          </tr>
+          {% else %}<tr><td colspan="6" class="td-empty">Yozuv yo'q</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if total and per %}
+    <div class="pagination-row">
+      {% for pn in range(1, ((total+per-1)//per)+1) %}
+      <a href="?p={{pn}}{% if action_filter %}&action={{action_filter}}{% endif %}{% if user_filter %}&user={{user_filter}}{% endif %}"
+         class="page-btn {{ 'active' if pn==page_num else '' }}">{{pn}}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+
+  {# ══ LOGIN HISTORY ═══════════════════════════════════════ #}
+  {% if page == 'login_history' %}
+  <div class="admin-kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="admin-kpi-card"><div class="kpi-icon bg-blue">📊</div><div class="kpi-num">{{total or 0}}</div><div class="kpi-lbl">Jami urinish</div></div>
+    <div class="admin-kpi-card"><div class="kpi-icon bg-red">❌</div><div class="kpi-num">{{failed or 0}}</div><div class="kpi-lbl">Muvaffaqiyatsiz</div></div>
+    <div class="admin-kpi-card"><div class="kpi-icon bg-green">✅</div><div class="kpi-num">{{ (total or 0) - (failed or 0) }}</div><div class="kpi-lbl">Muvaffaqiyatli</div></div>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3>🔑 Login tarixi</h3>
+      <form method="POST" action="{{ url_for('admin_clear_login_history') }}" onsubmit="return confirm('14 kundan eski tarix o\'chirilsinmi?')">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-danger">🗑 Eski tozala</button>
       </form>
     </div>
     <div class="table-scroll">
       <table class="data-table">
-        <thead><tr><th>ID</th><th>Ism</th><th>Username</th><th>Rol</th><th>Fakultet</th><th>Holat</th><th>Amallar</th></tr></thead>
+        <thead><tr><th>Vaqt</th><th>Username</th><th>IP manzil</th><th>Natija</th><th>Brauzer</th></tr></thead>
         <tbody>
-          {% for u in users %}
+          {% for l in login_logs %}
           <tr>
-            <td>{{ u.id }}</td><td><strong>{{ u.full_name }}</strong></td>
-            <td><code>{{ u.username }}</code></td>
-            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'purple' if u.role=='mentor' else 'blue' }}">{{ u.role }}</span></td>
-            <td>{{ u.faculty or '—' }}</td>
-            <td><span class="badge badge-{{ 'green' if u.active else 'gray' }}">{{ 'Faol' if u.active else 'Blok' }}</span></td>
-            <td class="actions-cell">
-              <form method="POST" action="{{ url_for('admin_toggle_user', uid=u.id) }}" style="display:inline">
-                <button class="btn btn-xs btn-outline">{{ '🔓' if u.active else '🔒' }}</button>
-              </form>
-              <form method="POST" action="{{ url_for('admin_delete_user', uid=u.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
-                <button class="btn btn-xs btn-danger">🗑</button>
+            <td class="td-sm td-mono">{{l.created_at[:16] if l.created_at else '—'}}</td>
+            <td><code>{{l.username}}</code></td>
+            <td><code>{{l.ip_address or '—'}}</code></td>
+            <td>
+              {% if l.success %}<span class="badge badge-green">✅ Muvaffaqiyatli</span>
+              {% else %}<span class="badge badge-red">❌ Xato</span>{% endif %}
+            </td>
+            <td class="td-sm text-muted">{{(l.user_agent or '')[:50]}}...</td>
+          </tr>
+          {% else %}<tr><td colspan="5" class="td-empty">Login tarixi yo'q</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% if total and per %}
+    <div class="pagination-row">
+      {% for pn in range(1, ((total+per-1)//per)+1) %}
+      <a href="?p={{pn}}" class="page-btn {{ 'active' if pn==page_num else '' }}">{{pn}}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {# ══ SYSTEM HEALTH ═══════════════════════════════════════ #}
+  {% if page == 'system' %}
+  <div class="admin-kpi-grid">
+    <div class="admin-kpi-card"><div class="kpi-icon bg-blue">💾</div>
+      <div class="kpi-num">{{ (db_size/1024/1024)|round(2) if db_size else 0 }} MB</div><div class="kpi-lbl">DB hajmi</div></div>
+    <div class="admin-kpi-card"><div class="kpi-icon bg-purple">🖼</div>
+      <div class="kpi-num">{{ (uploads_size/1024/1024)|round(2) if uploads_size else 0 }} MB</div><div class="kpi-lbl">Yuklangan fayllar</div></div>
+    <div class="admin-kpi-card"><div class="kpi-icon bg-red">⛔</div>
+      <div class="kpi-num">{{ blocked_ips|length if blocked_ips else 0 }}</div><div class="kpi-lbl">Bloklangan IP</div></div>
+    <div class="admin-kpi-card"><div class="kpi-icon bg-yellow">⚠</div>
+      <div class="kpi-num">{{ failed_24h or 0 }}</div><div class="kpi-lbl">Xato login (24s)</div></div>
+    <div class="admin-kpi-card"><div class="kpi-icon bg-green">📚</div>
+      <div class="kpi-num">{{ active_sessions or 0 }}</div><div class="kpi-lbl">Kutayotgan sessiya</div></div>
+    <div class="admin-kpi-card"><div class="kpi-icon bg-gray">⚙</div>
+      <div class="kpi-num">{{ '🟢' if sys_settings.get('maintenance','0')!='1' else '🔴' }}</div>
+      <div class="kpi-lbl">Tizim holati</div></div>
+  </div>
+
+  {% if blocked_ips %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header"><h3>⛔ Bloklangan IP manzillar</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>IP manzil</th><th>Endpoint</th><th>So'rovlar</th><th>Blok tugaydi</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for b in blocked_ips %}
+          <tr>
+            <td><code>{{b.ip_address}}</code></td>
+            <td>{{b.endpoint}}</td>
+            <td>{{b.request_count}}</td>
+            <td class="td-sm">{{b.blocked_until[:16] if b.blocked_until else '—'}}</td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_unblock_ip', rid=b.id) }}" style="display:inline">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-xs btn-outline">🔓 Blok olib tashlash</button>
               </form>
             </td>
           </tr>
-          {% else %}<tr><td colspan="7" class="td-empty">Foydalanuvchi topilmadi</td></tr>{% endfor %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
   {% endif %}
 
-  {# ══════════════ SETTINGS PAGE ══════════════ #}
-  {% if page == 'settings' %}
   <div class="admin-card">
-    <div class="admin-card-header"><h3>Sayt sozlamalari</h3></div>
-    <form action="{{ url_for('admin_settings') }}" method="POST">
-      <div class="form-row-2">
+    <div class="admin-card-header"><h3>⚙ Joriy sozlamalar</h3>
+      <a href="{{ url_for('admin_settings') }}" class="btn btn-sm btn-outline">Sozlamalarga o'tish →</a>
+    </div>
+    <div class="settings-grid">
+      {% for k,v in sys_settings.items() if k in ['site_name','university','maintenance','registration_open','max_login_attempts','lockout_minutes','contact_email'] %}
+      <div class="setting-item">
+        <span class="setting-key">{{k}}</span>
+        <span class="setting-val">{{ '✅ Ha' if v=='1' else '❌ Yo\'q' if v=='0' and k in ['maintenance','registration_open'] else v }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+
+  {# ══ SETTINGS ════════════════════════════════════════════ #}
+  {% if page == 'settings' %}
+  <div class="admin-two-col">
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>⚙ Sayt sozlamalari</h3></div>
+      <form action="{{ url_for('admin_settings') }}" method="POST">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <div class="form-group"><label class="form-label">Sayt nomi</label>
-          <input class="form-input" name="site_name" value="{{ settings.site_name | default('S_TATU Platform') }}"></div>
-        <div class="form-group"><label class="form-label">Universitet nomi</label>
-          <input class="form-input" name="university" value="{{ settings.university | default('Samarqand TATU') }}"></div>
-      </div>
-      <div class="form-row-2">
-        <div class="form-group"><label class="form-label">Ro'yxatdan o'tish</label>
-          <select class="form-select" name="registration_open">
-            <option value="1" {% if settings.registration_open == '1' %}selected{% endif %}>Ochiq</option>
-            <option value="0" {% if settings.registration_open == '0' %}selected{% endif %}>Yopiq</option>
-          </select>
+          <input class="form-input" name="site_name" value="{{ settings.site_name|default('S_TATU Platform') }}"></div>
+        <div class="form-group mt-12"><label class="form-label">Universitet nomi</label>
+          <input class="form-input" name="university" value="{{ settings.university|default('Samarqand TATU') }}"></div>
+        <div class="form-group mt-12"><label class="form-label">Aloqa email</label>
+          <input class="form-input" type="email" name="contact_email" value="{{ settings.contact_email|default('') }}"></div>
+        <div class="form-group mt-12"><label class="form-label">Aloqa telefon</label>
+          <input class="form-input" name="contact_phone" value="{{ settings.contact_phone|default('') }}"></div>
+        <div class="form-row mt-12">
+          <div class="form-group"><label class="form-label">Ro'yxatdan o'tish</label>
+            <select class="form-select" name="registration_open">
+              <option value="1" {% if settings.get('registration_open')=='1' %}selected{% endif %}>✅ Ochiq</option>
+              <option value="0" {% if settings.get('registration_open')=='0' %}selected{% endif %}>❌ Yopiq</option>
+            </select>
+          </div>
+          <div class="form-group"><label class="form-label">Texnik ishlar</label>
+            <select class="form-select" name="maintenance">
+              <option value="0" {% if settings.get('maintenance')!='1' %}selected{% endif %}>🟢 O'chiq</option>
+              <option value="1" {% if settings.get('maintenance')=='1' %}selected{% endif %}>🔴 Yoqilgan</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group"><label class="form-label">Texnik ishlar rejimi</label>
-          <select class="form-select" name="maintenance">
-            <option value="0" {% if settings.maintenance != '1' %}selected{% endif %}>O'chiq</option>
-            <option value="1" {% if settings.maintenance == '1' %}selected{% endif %}>Yoqilgan</option>
-          </select>
-        </div>
+        <div class="form-group mt-12"><label class="form-label">Texnik ishlar xabari</label>
+          <textarea class="form-input" name="maintenance_msg" rows="2">{{ settings.maintenance_msg|default('') }}</textarea></div>
+        <button type="submit" class="btn btn-primary mt-16">💾 Saqlash</button>
+      </form>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>🔒 Xavfsizlik sozlamalari</h3></div>
+        <form action="{{ url_for('admin_settings') }}" method="POST">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Maks. login urinish</label>
+              <input class="form-input" type="number" name="max_login_attempts" value="{{ settings.max_login_attempts|default('5') }}" min="1" max="20"></div>
+            <div class="form-group"><label class="form-label">Bloklash (daqiqa)</label>
+              <input class="form-input" type="number" name="lockout_minutes" value="{{ settings.lockout_minutes|default('30') }}" min="1"></div>
+          </div>
+          <div class="form-group mt-12"><label class="form-label">Admin IP whitelist (vergul bilan, bo'sh=hammaga ruxsat)</label>
+            <input class="form-input" name="allowed_admin_ips" value="{{ settings.allowed_admin_ips|default('') }}" placeholder="192.168.1.1, 10.0.0.1"></div>
+          <button type="submit" class="btn btn-primary mt-12">💾 Saqlash</button>
+        </form>
       </div>
-      <button type="submit" class="btn btn-primary">💾 Saqlash</button>
-    </form>
-    <div class="settings-info mt-24">
-      <h4>Joriy statistika</h4>
-      <div class="settings-grid">
-        <div class="setting-item"><span class="setting-key">Jami talabalar</span><span class="setting-val">{{ settings.total_students | default('—') }}</span></div>
-        <div class="setting-item"><span class="setting-key">Jami sportchilar</span><span class="setting-val">{{ settings.total_athletes | default('—') }}</span></div>
-        <div class="setting-item"><span class="setting-key">Jami mentorlar</span><span class="setting-val">{{ settings.total_mentors | default('—') }}</span></div>
-        <div class="setting-item"><span class="setting-key">Jami iqtidorlar</span><span class="setting-val">{{ settings.total_talents | default('—') }}</span></div>
+
+      <div class="admin-card">
+        <div class="admin-card-header"><h3>🔑 Admin parolini o'zgartirish</h3></div>
+        <form action="{{ url_for('admin_change_password') }}" method="POST">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+          <div class="form-group"><label class="form-label">Eski parol</label>
+            <input class="form-input" type="password" name="old_password" required></div>
+          <div class="form-group mt-12"><label class="form-label">Yangi parol (min 6 belgi)</label>
+            <input class="form-input" type="password" name="new_password" required minlength="6"></div>
+          <div class="form-group mt-12"><label class="form-label">Yangi parolni tasdiqlash</label>
+            <input class="form-input" type="password" name="confirm_password" required minlength="6"></div>
+          <button type="submit" class="btn btn-primary mt-12">🔐 Parolni yangilash</button>
+        </form>
       </div>
     </div>
   </div>
   {% endif %}
 
-  </div><!-- admin-content -->
-</main><!-- admin-main -->
-</div><!-- admin-layout -->
+  </div>{# /admin-content #}
+</main>
+</div>{# /admin-layout #}
 
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{# ══ SCRIPTS ══════════════════════════════════════════════════ #}
+<script src="{{ url_for('static',filename='js/main.js') }}"></script>
 <script>
-function toggleForm(id) {
-  const f = document.getElementById(id);
-  if (f) f.classList.toggle('hidden');
+// Session modal
+function openSessionModal(id, status, note) {
+  document.getElementById('sessionUpdateForm').action = '/admin/sessions/update/' + id;
+  document.getElementById('sess_status_sel').value = status;
+  document.getElementById('sess_note_inp').value = note;
+  document.getElementById('sessionModal').classList.add('open');
+  document.getElementById('sessionModalOverlay').classList.add('open');
+}
+function closeSessionModal() {
+  document.getElementById('sessionModal').classList.remove('open');
+  document.getElementById('sessionModalOverlay').classList.remove('open');
+}
+
+// Media preview
+function previewMedia(inp) {
+  if (!inp.files[0]) return;
+  const wrap = document.getElementById('mediaPreview');
+  const img  = document.getElementById('previewImg');
+  const nm   = document.getElementById('previewName');
+  img.src = URL.createObjectURL(inp.files[0]);
+  nm.textContent = inp.files[0].name + ' (' + (inp.files[0].size/1024).toFixed(1) + ' KB)';
+  wrap.classList.remove('hidden');
+}
+
+// Clock
+setInterval(() => {
+  const el = document.getElementById('adminClock');
+  if (el) {
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('uz-UZ', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+}, 1000);
+
+// Real-time mini stats
+function loadMiniStats() {
+  fetch('/api/admin/stats').then(r=>r.json()).then(d=>{
+    const ms = document.getElementById('ms_students');
+    if(ms) ms.textContent = d.students;
+    const mp = document.getElementById('ms_pending');
+    if(mp) mp.textContent = d.pending_sessions;
+    const mf = document.getElementById('ms_failed');
+    if(mf) mf.textContent = d.failed_logins_24h;
+    const pb = document.getElementById('pendingBadge');
+    if(pb && d.pending_sessions > 0){
+      pb.textContent = d.pending_sessions; pb.style.display='inline-flex';
+    }
+  }).catch(()=>{});
+}
+loadMiniStats();
+setInterval(loadMiniStats, 30000);
+
+// Sidebar toggle
+function toggleAdminSidebar() {
+  const sb = document.getElementById('adminSidebar');
+  const mn = document.getElementById('adminMain');
+  sb.classList.toggle('collapsed');
+  mn.classList.toggle('sidebar-collapsed');
+  localStorage.setItem('adminSidebarCollapsed', sb.classList.contains('collapsed') ? '1' : '0');
+}
+// Restore state
+if (localStorage.getItem('adminSidebarCollapsed') === '1') {
+  const sb = document.getElementById('adminSidebar');
+  const mn = document.getElementById('adminMain');
+  if(sb) sb.classList.add('collapsed');
+  if(mn) mn.classList.add('sidebar-collapsed');
 }
 </script>
 </body>
