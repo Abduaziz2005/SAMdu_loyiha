@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ mentor.full_name }} — Mentor{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+  <div class="profile-hero-section">
+    <div class="container">
+      <a href="{{ url_for('stemate') }}" class="back-link">← STEMate ga qaytish</a>
+      <div class="profile-hero-inner">
+        <div class="profile-avatar-xl" style="background: linear-gradient(135deg,#0f0f0f,#1a1a2e)">
+          {{ mentor.full_name[0] }}
+        </div>
+        <div class="profile-hero-info">
+          <h1 class="profile-name">{{ mentor.full_name }}</h1>
+          <p class="profile-meta">Mentor · {{ mentor.experience_years }} yil tajriba</p>
+          <div class="mentor-rating-big">
+            {% for i in range(5) %}
+              <span class="star {% if i < mentor.rating|int %}filled{% endif %}">★</span>
+            {% endfor %}
+            <span class="rating-num-big">{{ mentor.rating }}</span>
+          </div>
+          <div class="profile-stats-row">
+            <div class="pstat-big"><div class="pstat-num">{{ mentor.sessions_total }}</div><div class="pstat-lbl">Sessiyalar</div></div>
+            <div class="pstat-big"><div class="pstat-num">{{ mentor.students_total }}</div><div class="pstat-lbl">Talabalar</div></div>
+            <div class="pstat-big"><div class="pstat-num">{{ mentor.experience_years }}</div><div class="pstat-lbl">Yil tajriba</div></div>
+          </div>
+          <div class="mentor-subjects-big">
+            {% set subjects = mentor.subjects | replace('[','') | replace(']','') | replace('"','') | split(',') %}
+            {% for s in subjects %}<span class="subject-tag lg">{{ s.strip() }}</span>{% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="mentor-detail-grid">
+        <div class="mentor-detail-main">
+          {% if mentor.bio %}
+          <div class="info-card mb-20">
+            <h4>Mentor haqida</h4>
+            <p class="bio-text">{{ mentor.bio }}</p>
+          </div>
+          {% endif %}
+          {% if sessions %}
+          <div class="info-card">
+            <h4>So'nggi sessiyalar</h4>
+            <table class="data-table">
+              <thead><tr><th>Talaba</th><th>Fan</th><th>Sana</th><th>Holat</th></tr></thead>
+              <tbody>
+                {% for s in sessions %}
+                <tr>
+                  <td>{{ s.student_name or '—' }}</td>
+                  <td>{{ s.subject or '—' }}</td>
+                  <td>{{ s.session_date or '—' }}</td>
+                  <td><span class="badge badge-{{ 'green' if s.status=='done' else 'yellow' if s.status=='confirmed' else 'gray' }}">
+                    {{ {'pending':'Kutilmoqda','confirmed':'Tasdiqlandi','done':'Tugadi','cancelled':'Bekor'}.get(s.status, s.status) }}
+                  </span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="mentor-book-sidebar">
+          <div class="book-card">
+            <h3>Sessiya band qilish</h3>
+            {% if session.get('user_id') %}
+            <form action="{{ url_for('book_session', mid=mentor.id) }}" method="POST">
+              <div class="form-group">
+                <label class="form-label">Fan / Mavzu</label>
+                <input class="form-input" name="subject" placeholder="Python, Math..." required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Sana</label>
+                <input class="form-input" type="date" name="date" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Vaqt</label>
+                <input class="form-input" type="time" name="time" required>
+              </div>
+              <button type="submit" class="btn btn-primary btn-full">📅 Band qilish</button>
+            </form>
+            {% else %}
+            <p class="book-login-hint">Sessiya band qilish uchun <a href="{{ url_for('login') }}">kiring</a>.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

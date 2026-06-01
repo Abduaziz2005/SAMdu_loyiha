@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — S_TATU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body class="admin-body-wrap">
+
+
+<!-- Flash -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-wrap">
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ '✅' if cat=='success' else 'ℹ️' }} {{ msg }}
+          <button class="flash-close" onclick="this.parentElement.remove()">✕</button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="admin-layout">
+<!-- ═══ ADMIN SIDEBAR ══════════════════════════════════════ -->
+<aside class="admin-sidebar">
+  <div class="admin-sidebar-top">
+    <div class="admin-logo-mark">S</div>
+    <div>
+      <div class="admin-logo-title">Admin Panel</div>
+      <div class="admin-logo-sub">S_TATU</div>
+    </div>
+  </div>
+  <nav class="admin-nav">
+    <div class="admin-nav-section">Boshqaruv</div>
+    <a href="{{ url_for('admin_dashboard') }}"    class="admin-nav-item {% if page=='dashboard' %}active{% endif %}">📊 Umumiy</a>
+    <a href="{{ url_for('admin_users') }}"        class="admin-nav-item {% if page=='users' %}active{% endif %}">👥 Foydalanuvchilar</a>
+    <a href="{{ url_for('admin_athletes') }}"     class="admin-nav-item {% if page=='athletes' %}active{% endif %}">⚽ Sportchilar</a>
+    <a href="{{ url_for('admin_mentors') }}"      class="admin-nav-item {% if page=='mentors' %}active{% endif %}">🎓 Mentorlar</a>
+    <a href="{{ url_for('admin_talents') }}"      class="admin-nav-item {% if page=='talents' %}active{% endif %}">🌟 Iqtidorlar</a>
+    <div class="admin-nav-section">Kontent</div>
+    <a href="{{ url_for('admin_events') }}"       class="admin-nav-item {% if page=='events' %}active{% endif %}">📅 Tadbirlar</a>
+    <a href="{{ url_for('admin_hackathons') }}"   class="admin-nav-item {% if page=='hackathons' %}active{% endif %}">💻 Hackathonlar</a>
+    <a href="{{ url_for('admin_notifications') %}" class="admin-nav-item {% if page=='notifications' %}active{% endif %}">🔔 Bildirishnomalar</a>
+    <div class="admin-nav-section">Tizim</div>
+    <a href="{{ url_for('admin_settings') }}"     class="admin-nav-item {% if page=='settings' %}active{% endif %}">⚙ Sozlamalar</a>
+    <a href="{{ url_for('index') }}"              class="admin-nav-item">🌐 Saytga o'tish</a>
+    <a href="{{ url_for('logout') }}"             class="admin-nav-item danger">🚪 Chiqish</a>
+  </nav>
+</aside>
+
+
+<!-- ═══ ADMIN MAIN ═══════════════════════════════════════════ -->
+<main class="admin-main">
+  <div class="admin-topbar">
+    <h1 class="admin-page-title">
+      {% if page=='dashboard' %}📊 Umumiy ko'rinish
+      {% elif page=='users' %}👥 Foydalanuvchilar
+      {% elif page=='athletes' %}⚽ Sportchilar
+      {% elif page=='mentors' %}🎓 Mentorlar
+      {% elif page=='talents' %}🌟 Iqtidorli talabalar
+      {% elif page=='events' %}📅 Tadbirlar
+      {% elif page=='hackathons' %}💻 Hackathonlar
+      {% elif page=='notifications' %}🔔 Bildirishnomalar
+      {% elif page=='settings' %}⚙ Sozlamalar
+      {% else %}Admin Panel{% endif %}
+    </h1>
+    <div class="admin-topbar-right">
+      <span class="admin-user-badge">👤 {{ session.get('full_name','Admin') }}</span>
+    </div>
+  </div>
+
+  <div class="admin-content">
+
+  {# ══════════════ DASHBOARD PAGE ══════════════ #}
+  {% if page == 'dashboard' %}
+  <div class="admin-kpi-grid">
+    <div class="admin-kpi-card">
+      <div class="kpi-icon bg-blue">👥</div>
+      <div class="kpi-num">{{ stats.students }}</div>
+      <div class="kpi-lbl">Talabalar</div>
+    </div>
+    <div class="admin-kpi-card">
+      <div class="kpi-icon bg-green">⚽</div>
+      <div class="kpi-num">{{ stats.athletes }}</div>
+      <div class="kpi-lbl">Sportchilar</div>
+    </div>
+    <div class="admin-kpi-card">
+      <div class="kpi-icon bg-purple">🎓</div>
+      <div class="kpi-num">{{ stats.mentors }}</div>
+      <div class="kpi-lbl">Mentorlar</div>
+    </div>
+    <div class="admin-kpi-card">
+      <div class="kpi-icon bg-gold">🌟</div>
+      <div class="kpi-num">{{ stats.talents }}</div>
+      <div class="kpi-lbl">Iqtidorlar</div>
+    </div>
+    <div class="admin-kpi-card">
+      <div class="kpi-icon bg-red">💻</div>
+      <div class="kpi-num">{{ stats.hackathons }}</div>
+      <div class="kpi-lbl">Hackathonlar</div>
+    </div>
+    <div class="admin-kpi-card">
+      <div class="kpi-icon bg-gray">📅</div>
+      <div class="kpi-num">{{ stats.events }}</div>
+      <div class="kpi-lbl">Tadbirlar</div>
+    </div>
+  </div>
+
+  <div class="admin-two-col">
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>So'nggi foydalanuvchilar</h3></div>
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Ism</th><th>Username</th><th>Rol</th><th>Holat</th></tr></thead>
+        <tbody>
+          {% for u in recent_users %}
+          <tr>
+            <td>{{ u.id }}</td><td>{{ u.full_name }}</td><td>{{ u.username }}</td>
+            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'blue' }}">{{ u.role }}</span></td>
+            <td><span class="badge badge-{{ 'green' if u.active else 'gray' }}">{{ 'Faol' if u.active else 'Bloklangan' }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline mt-12">Barcha foydalanuvchilar →</a>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header"><h3>So'nggi tadbirlar</h3></div>
+      <table class="data-table">
+        <thead><tr><th>Tadbir</th><th>Sana</th><th>Tur</th></tr></thead>
+        <tbody>
+          {% for ev in recent_events %}
+          <tr>
+            <td>{{ ev.title }}</td>
+            <td>{{ ev.event_date or '—' }}</td>
+            <td><span class="badge badge-blue">{{ ev.category }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a href="{{ url_for('admin_events') }}" class="btn btn-sm btn-outline mt-12">Barcha tadbirlar →</a>
+    </div>
+  </div>
+  {% endif %}
+
+
+  {# ══════════════ USERS PAGE ══════════════ #}
+  {% if page == 'users' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header">
+      <h3>Foydalanuvchi qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addUserForm')">+ Qo'shish</button>
+    </div>
+    <form id="addUserForm" class="admin-form hidden" action="{{ url_for('admin_add_user') }}" method="POST">
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Username</label><input class="form-input" name="username" required></div>
+        <div class="form-group"><label class="form-label">Parol</label><input class="form-input" name="password" type="password" value="1234"></div>
+        <div class="form-group"><label class="form-label">Rol</label>
+          <select class="form-select" name="role">
+            <option value="student">Talaba</option>
+            <option value="mentor">Mentor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty">
+            <option value="KTIF">KTIF</option><option value="EIQ">EIQ</option>
+            <option value="MMF">MMF</option><option value="ITF">ITF</option><option value="HF">HF</option>
+          </select>
+        </div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3>Foydalanuvchilar ({{ users|length if users else 0 }})</h3>
+      <form class="search-form" method="GET">
+        <input class="form-input sm" name="q" value="{{ search or '' }}" placeholder="Qidirish...">
+        <select class="form-select sm" name="role" onchange="this.form.submit()">
+          <option value="">Barcha rollar</option>
+          <option value="student" {% if role_filter=='student' %}selected{% endif %}>Talaba</option>
+          <option value="mentor"  {% if role_filter=='mentor'  %}selected{% endif %}>Mentor</option>
+          <option value="admin"   {% if role_filter=='admin'   %}selected{% endif %}>Admin</option>
+        </select>
+        <button class="btn btn-sm btn-outline">Qidirish</button>
+      </form>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>ID</th><th>Ism</th><th>Username</th><th>Rol</th><th>Fakultet</th><th>Kurs</th><th>Holat</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{ u.id }}</td>
+            <td><strong>{{ u.full_name }}</strong></td>
+            <td><code>{{ u.username }}</code></td>
+            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'purple' if u.role=='mentor' else 'blue' }}">{{ u.role }}</span></td>
+            <td>{{ u.faculty or '—' }}</td>
+            <td>{{ u.course or '—' }}</td>
+            <td><span class="badge badge-{{ 'green' if u.active else 'gray' }}">{{ 'Faol' if u.active else 'Bloklangan' }}</span></td>
+            <td class="actions-cell">
+              <form method="POST" action="{{ url_for('admin_toggle_user', uid=u.id) }}" style="display:inline">
+                <button class="btn btn-xs btn-outline" title="Faollashtirish/Bloklash">{{ '🔓' if u.active else '🔒' }}</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_delete_user', uid=u.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <button class="btn btn-xs btn-danger" title="O'chirish">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="8" class="td-empty">Foydalanuvchi topilmadi</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+
+  {# ══════════════ ATHLETES PAGE ══════════════ #}
+  {% if page == 'athletes' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header">
+      <h3>Sportchi qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addAthleteForm')">+ Qo'shish</button>
+    </div>
+    <form id="addAthleteForm" class="admin-form hidden" action="{{ url_for('admin_add_athlete') }}" method="POST">
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Sport turi</label><input class="form-input" name="sport" required></div>
+        <div class="form-group"><label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty"><option>KTIF</option><option>EIQ</option><option>MMF</option><option>ITF</option><option>HF</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Daraja</label>
+          <select class="form-select" name="level">
+            <option value="university">Universitet</option>
+            <option value="region">Viloyat</option>
+            <option value="republic">Respublika</option>
+            <option value="international">Xalqaro</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">Kurs</label>
+          <select class="form-select" name="course"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
+        </div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Sportchilar ({{ athletes|length if athletes else 0 }})</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Ism</th><th>Sport</th><th>Fakultet</th><th>Kurs</th><th>Daraja</th><th>⭐ Ball</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for a in athletes %}
+          <tr>
+            <td><strong>{{ a.full_name }}</strong></td>
+            <td>{{ a.sport }}</td><td>{{ a.faculty or '—' }}</td><td>{{ a.course }}</td>
+            <td><span class="badge badge-{{ 'gold' if a.level=='international' else 'red' if a.level=='republic' else 'blue' if a.level=='region' else 'gray' }}">
+              {{ {'university':'Universitet','region':'Viloyat','republic':'Respublika','international':'Xalqaro'}.get(a.level,a.level) }}
+            </span></td>
+            <td><strong>{{ a.rating_points }}</strong></td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_delete_athlete', aid=a.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="td-empty">Sportchi topilmadi</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ══════════════ MENTORS PAGE ══════════════ #}
+  {% if page == 'mentors' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header">
+      <h3>Mentor qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addMentorForm')">+ Qo'shish</button>
+    </div>
+    <form id="addMentorForm" class="admin-form hidden" action="{{ url_for('admin_add_mentor') }}" method="POST">
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Fanlar (JSON)</label><input class="form-input" name="subjects" placeholder='["Python","ML"]'></div>
+        <div class="form-group"><label class="form-label">Tajriba (yil)</label><input class="form-input" type="number" name="experience_years" value="1" min="1"></div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
+      </div>
+      <div class="form-group"><label class="form-label">Bio</label><textarea class="form-input" name="bio" rows="2"></textarea></div>
+    </form>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Mentorlar ({{ mentors|length if mentors else 0 }})</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Ism</th><th>Fanlar</th><th>Reyting</th><th>Sessiyalar</th><th>Tajriba</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for m in mentors %}
+          <tr>
+            <td><strong>{{ m.full_name }}</strong></td>
+            <td>{{ m.subjects | replace('[','') | replace(']','') | replace('"','') }}</td>
+            <td>⭐ {{ m.rating }}</td><td>{{ m.sessions_total }}</td>
+            <td>{{ m.experience_years }} yil</td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_delete_mentor', mid=m.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="6" class="td-empty">Mentor topilmadi</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+
+  {# ══════════════ TALENTS PAGE ══════════════ #}
+  {% if page == 'talents' %}
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Iqtidorli talabalar ({{ talents|length if talents else 0 }})</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>#</th><th>Ism</th><th>Fakultet</th><th>Mutaxassislik</th><th>Kurs</th><th>Ball</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for t in talents %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><strong>{{ t.full_name }}</strong></td>
+            <td>{{ t.faculty or '—' }}</td><td>{{ t.specialty or '—' }}</td><td>{{ t.course }}</td>
+            <td><strong>{{ t.score }}</strong></td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_delete_talent', tid=t.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="7" class="td-empty">Iqtidor topilmadi</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ══════════════ EVENTS PAGE ══════════════ #}
+  {% if page == 'events' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header">
+      <h3>Tadbir qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addEventForm')">+ Qo'shish</button>
+    </div>
+    <form id="addEventForm" class="admin-form hidden" action="{{ url_for('admin_add_event') }}" method="POST">
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">Tadbir nomi</label><input class="form-input" name="title" required></div>
+        <div class="form-group"><label class="form-label">Joylashuv</label><input class="form-input" name="location"></div>
+        <div class="form-group"><label class="form-label">Sana</label><input class="form-input" type="date" name="event_date"></div>
+        <div class="form-group"><label class="form-label">Vaqt</label><input class="form-input" type="time" name="event_time"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">Tur</label>
+          <select class="form-select" name="category">
+            <option value="general">Umumiy</option><option value="sport">Sport</option>
+            <option value="it">IT</option><option value="science">Ilm</option><option value="education">Ta'lim</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Tavsif</label><input class="form-input" name="description"></div>
+      </div>
+      <button type="submit" class="btn btn-primary">Saqlash</button>
+    </form>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Tadbirlar ({{ events|length if events else 0 }})</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Nomi</th><th>Joylashuv</th><th>Sana</th><th>Vaqt</th><th>Tur</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for ev in events %}
+          <tr>
+            <td><strong>{{ ev.title }}</strong></td>
+            <td>{{ ev.location or '—' }}</td><td>{{ ev.event_date or '—' }}</td><td>{{ ev.event_time or '—' }}</td>
+            <td><span class="badge badge-blue">{{ ev.category }}</span></td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_delete_event', eid=ev.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="6" class="td-empty">Tadbir topilmadi</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ══════════════ HACKATHONS PAGE ══════════════ #}
+  {% if page == 'hackathons' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header">
+      <h3>Hackathon qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addHackForm')">+ Qo'shish</button>
+    </div>
+    <form id="addHackForm" class="admin-form hidden" action="{{ url_for('admin_add_hackathon') }}" method="POST">
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">Nomi</label><input class="form-input" name="title" required></div>
+        <div class="form-group"><label class="form-label">Mukofot</label><input class="form-input" name="prize"></div>
+        <div class="form-group"><label class="form-label">Muddat</label><input class="form-input" type="date" name="deadline"></div>
+        <div class="form-group"><label class="form-label">Holat</label>
+          <select class="form-select" name="status">
+            <option value="upcoming">Kutilmoqda</option><option value="open">Ochiq</option><option value="closed">Yopildi</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Tavsif</label><textarea class="form-input" name="description" rows="2"></textarea></div>
+      <button type="submit" class="btn btn-primary">Saqlash</button>
+    </form>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Hackathonlar ({{ hackathons|length if hackathons else 0 }})</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Nomi</th><th>Mukofot</th><th>Muddat</th><th>Holat</th><th>Ishtirokchilar</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for h in hackathons %}
+          <tr>
+            <td><strong>{{ h.title }}</strong></td><td>{{ h.prize or '—' }}</td><td>{{ h.deadline or '—' }}</td>
+            <td><span class="badge badge-{{ 'green' if h.status=='open' else 'yellow' if h.status=='upcoming' else 'gray' }}">
+              {{ {'open':'Ochiq','upcoming':'Kutilmoqda','closed':'Yopildi'}.get(h.status,h.status) }}
+            </span></td>
+            <td>{{ h.participants }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('admin_delete_hackathon', hid=h.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="6" class="td-empty">Hackathon topilmadi</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+
+  {# ══════════════ NOTIFICATIONS PAGE ══════════════ #}
+  {% if page == 'notifications' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header"><h3>Bildirishnoma yuborish</h3></div>
+    <form action="{{ url_for('admin_notifications') }}" method="POST">
+      <div class="form-row-3">
+        <div class="form-group"><label class="form-label">Sarlavha</label><input class="form-input" name="title" required></div>
+        <div class="form-group"><label class="form-label">Matn</label><input class="form-input" name="body"></div>
+        <div class="form-group"><label class="form-label">Kimga</label>
+          <select class="form-select" name="target">
+            <option value="all">Barcha talabalar</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Yuborish 🔔</button>
+    </form>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Yuborilgan bildirishnomalar</h3></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>Sarlavha</th><th>Matn</th><th>Foydalanuvchi</th><th>O'qilgan</th><th>Sana</th></tr></thead>
+        <tbody>
+          {% for n in notifs %}
+          <tr>
+            <td><strong>{{ n.title }}</strong></td><td>{{ n.body or '—' }}</td>
+            <td>{{ n.full_name or '—' }}</td>
+            <td>{{ '✅' if n.read else '⏳' }}</td>
+            <td>{{ n.created_at[:16] if n.created_at else '—' }}</td>
+          </tr>
+          {% else %}<tr><td colspan="5" class="td-empty">Bildirishnoma yo'q</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ══════════════ USERS PAGE ══════════════ #}
+  {% if page == 'users' %}
+  <div class="admin-card mb-16">
+    <div class="admin-card-header">
+      <h3>Foydalanuvchi qo'shish</h3>
+      <button class="btn btn-sm btn-primary" onclick="toggleForm('addUserForm')">+ Qo'shish</button>
+    </div>
+    <form id="addUserForm" class="admin-form hidden" action="{{ url_for('admin_add_user') }}" method="POST">
+      <div class="form-row-4">
+        <div class="form-group"><label class="form-label">To'liq ism</label><input class="form-input" name="full_name" required></div>
+        <div class="form-group"><label class="form-label">Username</label><input class="form-input" name="username" required></div>
+        <div class="form-group"><label class="form-label">Parol</label><input class="form-input" name="password" type="password" value="1234"></div>
+        <div class="form-group"><label class="form-label">Rol</label>
+          <select class="form-select" name="role">
+            <option value="student">Talaba</option><option value="mentor">Mentor</option><option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty"><option>KTIF</option><option>EIQ</option><option>MMF</option><option>ITF</option><option>HF</option></select>
+        </div>
+        <div class="form-group form-actions"><button type="submit" class="btn btn-primary">Saqlash</button></div>
+      </div>
+    </form>
+  </div>
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h3>Foydalanuvchilar ({{ users|length if users else 0 }})</h3>
+      <form class="search-form" method="GET">
+        <input class="form-input sm" name="q" value="{{ search or '' }}" placeholder="Qidirish...">
+        <select class="form-select sm" name="role" onchange="this.form.submit()">
+          <option value="">Barcha rollar</option>
+          <option value="student" {% if role_filter=='student' %}selected{% endif %}>Talaba</option>
+          <option value="mentor"  {% if role_filter=='mentor'  %}selected{% endif %}>Mentor</option>
+          <option value="admin"   {% if role_filter=='admin'   %}selected{% endif %}>Admin</option>
+        </select>
+        <button class="btn btn-sm btn-outline">Qidirish</button>
+      </form>
+    </div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>ID</th><th>Ism</th><th>Username</th><th>Rol</th><th>Fakultet</th><th>Holat</th><th>Amallar</th></tr></thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{ u.id }}</td><td><strong>{{ u.full_name }}</strong></td>
+            <td><code>{{ u.username }}</code></td>
+            <td><span class="badge badge-{{ 'red' if u.role=='admin' else 'purple' if u.role=='mentor' else 'blue' }}">{{ u.role }}</span></td>
+            <td>{{ u.faculty or '—' }}</td>
+            <td><span class="badge badge-{{ 'green' if u.active else 'gray' }}">{{ 'Faol' if u.active else 'Blok' }}</span></td>
+            <td class="actions-cell">
+              <form method="POST" action="{{ url_for('admin_toggle_user', uid=u.id) }}" style="display:inline">
+                <button class="btn btn-xs btn-outline">{{ '🔓' if u.active else '🔒' }}</button>
+              </form>
+              <form method="POST" action="{{ url_for('admin_delete_user', uid=u.id) }}" style="display:inline" onsubmit="return confirm('O\'chirilsinmi?')">
+                <button class="btn btn-xs btn-danger">🗑</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}<tr><td colspan="7" class="td-empty">Foydalanuvchi topilmadi</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  {# ══════════════ SETTINGS PAGE ══════════════ #}
+  {% if page == 'settings' %}
+  <div class="admin-card">
+    <div class="admin-card-header"><h3>Sayt sozlamalari</h3></div>
+    <form action="{{ url_for('admin_settings') }}" method="POST">
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">Sayt nomi</label>
+          <input class="form-input" name="site_name" value="{{ settings.site_name | default('S_TATU Platform') }}"></div>
+        <div class="form-group"><label class="form-label">Universitet nomi</label>
+          <input class="form-input" name="university" value="{{ settings.university | default('Samarqand TATU') }}"></div>
+      </div>
+      <div class="form-row-2">
+        <div class="form-group"><label class="form-label">Ro'yxatdan o'tish</label>
+          <select class="form-select" name="registration_open">
+            <option value="1" {% if settings.registration_open == '1' %}selected{% endif %}>Ochiq</option>
+            <option value="0" {% if settings.registration_open == '0' %}selected{% endif %}>Yopiq</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Texnik ishlar rejimi</label>
+          <select class="form-select" name="maintenance">
+            <option value="0" {% if settings.maintenance != '1' %}selected{% endif %}>O'chiq</option>
+            <option value="1" {% if settings.maintenance == '1' %}selected{% endif %}>Yoqilgan</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">💾 Saqlash</button>
+    </form>
+    <div class="settings-info mt-24">
+      <h4>Joriy statistika</h4>
+      <div class="settings-grid">
+        <div class="setting-item"><span class="setting-key">Jami talabalar</span><span class="setting-val">{{ settings.total_students | default('—') }}</span></div>
+        <div class="setting-item"><span class="setting-key">Jami sportchilar</span><span class="setting-val">{{ settings.total_athletes | default('—') }}</span></div>
+        <div class="setting-item"><span class="setting-key">Jami mentorlar</span><span class="setting-val">{{ settings.total_mentors | default('—') }}</span></div>
+        <div class="setting-item"><span class="setting-key">Jami iqtidorlar</span><span class="setting-val">{{ settings.total_talents | default('—') }}</span></div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  </div><!-- admin-content -->
+</main><!-- admin-main -->
+</div><!-- admin-layout -->
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+function toggleForm(id) {
+  const f = document.getElementById(id);
+  if (f) f.classList.toggle('hidden');
+}
+</script>
+</body>
+</html>

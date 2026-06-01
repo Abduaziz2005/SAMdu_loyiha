@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}STEMate — Mentorlik{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero-text">
+      <div class="page-tag">🎓 STEMATE</div>
+      <h1>Mentorlik Platformasi</h1>
+      <p>Tajribali mentorlar bilan bog'laning. Online va offline sessiyalar, barcha fanlar bo'yicha.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="container">
+    <div class="filter-bar">
+      <form method="GET" class="filter-form">
+        <div class="filter-group">
+          <label class="filter-label">Fan bo'yicha qidirish</label>
+          <input class="form-input" name="subject" value="{{ subj_filter or '' }}" placeholder="Python, Math, Design...">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Qidirish</button>
+        <a href="{{ url_for('stemate') }}" class="btn btn-ghost btn-sm">Tozala</a>
+      </form>
+      <div class="filter-count">{{ mentors|length }} mentor topildi</div>
+    </div>
+
+    {% if mentors %}
+    <div class="mentors-grid">
+      {% for m in mentors %}
+      <div class="mentor-card">
+        <div class="mentor-card-top">
+          <div class="mentor-avatar">{{ m.full_name[0] }}</div>
+          <div class="mentor-info">
+            <div class="mentor-name">{{ m.full_name }}</div>
+            <div class="mentor-exp">{{ m.experience_years }} yil tajriba</div>
+            <div class="mentor-rating">
+              {% for i in range(5) %}
+                <span class="star {% if i < m.rating|int %}filled{% endif %}">★</span>
+              {% endfor %}
+              <span class="rating-num">{{ m.rating }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="mentor-subjects">
+          {% set subjects = m.subjects | replace('[','') | replace(']','') | replace('"','') | split(',') %}
+          {% for s in subjects[:4] %}
+          <span class="subject-tag">{{ s.strip() }}</span>
+          {% endfor %}
+        </div>
+        {% if m.bio %}
+        <p class="mentor-bio">{{ m.bio[:120] }}{% if m.bio|length > 120 %}...{% endif %}</p>
+        {% endif %}
+        <div class="mentor-footer">
+          <div class="mentor-stats">
+            <span>📚 {{ m.sessions_total }} sessiya</span>
+            <span>👥 {{ m.students_total }} talaba</span>
+          </div>
+          <a href="{{ url_for('mentor_detail', mid=m.id) }}" class="btn btn-primary btn-sm">Batafsil →</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🎓</div>
+      <p>Bunday mentor topilmadi.</p>
+      <a href="{{ url_for('stemate') }}" class="btn btn-outline mt-12">Barcha mentorlar</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

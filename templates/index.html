@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+{% block title %}Bosh Sahifa{% endblock %}
+
+{% block content %}
+
+<!-- ═══ HERO ════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Samarqand TATU — Iqtidorli Talabalar Platformasi
+      </div>
+      <h1 class="hero-title">
+        Iste'dodingizni<br>
+        <em>kashf eting</em>
+      </h1>
+      <p class="hero-desc">
+        Sport, mentorlik va iqtidor — hammasi bir platformada.
+        O'z salohiyatingizni namoyon eting, yutuqlarga erishing.
+      </p>
+      <div class="hero-btns">
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+          Hozir boshlash →
+        </a>
+        <a href="#platform" class="btn btn-outline btn-lg">
+          Batafsil ko'rish
+        </a>
+      </div>
+    </div>
+    <div class="hero-stats-wrap">
+      <div class="hero-stat-card">
+        <div class="hstat-num">{{ stats.students | default(0) }}+</div>
+        <div class="hstat-lbl">Talabalar</div>
+      </div>
+      <div class="hero-stat-card accent">
+        <div class="hstat-num">{{ stats.athletes | default(0) }}+</div>
+        <div class="hstat-lbl">Sportchilar</div>
+      </div>
+      <div class="hero-stat-card">
+        <div class="hstat-num">{{ stats.mentors | default(0) }}+</div>
+        <div class="hstat-lbl">Mentorlar</div>
+      </div>
+      <div class="hero-stat-card accent">
+        <div class="hstat-num">{{ stats.talents | default(0) }}+</div>
+        <div class="hstat-lbl">Iqtidorlar</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint">
+    <span>Pastga aylantiring</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══ PLATFORM MODULES ══════════════════════════════════════ -->
+<section class="section" id="platform">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">PLATFORMANING BO'LIMLARI</div>
+      <h2 class="section-title">Hamma narsa bir joyda</h2>
+      <p class="section-desc">To'rtta asosiy bo'lim orqali o'z imkoniyatingizni to'liq namoyon qiling</p>
+    </div>
+    <div class="modules-grid">
+
+      <a href="{{ url_for('sport') }}" class="module-card module-sport">
+        <div class="module-icon">⚽</div>
+        <h3 class="module-title">Sport</h3>
+        <p class="module-desc">Sport musobaqalari, reyting va natijalar. Eng yaxshi sportchilar ro'yxati.</p>
+        <div class="module-meta">{{ stats.athletes }}+ sportchi · Turli sport turlari</div>
+        <div class="module-arrow">→</div>
+      </a>
+
+      <a href="{{ url_for('stemate') }}" class="module-card module-stem">
+        <div class="module-icon">🎓</div>
+        <h3 class="module-title">STEMate</h3>
+        <p class="module-desc">Mentorlik platformasi. Tajribali mentorlar bilan shug'ullaning.</p>
+        <div class="module-meta">{{ stats.mentors }}+ mentor · Online va offline</div>
+        <div class="module-arrow">→</div>
+      </a>
+
+      <a href="{{ url_for('talenthub') }}" class="module-card module-talent">
+        <div class="module-icon">🌟</div>
+        <h3 class="module-title">TalentHub</h3>
+        <p class="module-desc">Iqtidorli talabalar reytingi. Fan, ijod va ijtimoiy faollik.</p>
+        <div class="module-meta">{{ stats.talents }}+ iqtidor · Reyting tizimi</div>
+        <div class="module-arrow">→</div>
+      </a>
+
+      <a href="{{ url_for('hackathons') }}" class="module-card module-hack">
+        <div class="module-icon">💻</div>
+        <h3 class="module-title">Hackathon</h3>
+        <p class="module-desc">Dasturlash musobaqalari va IT loyihalari. Yangi g'oyalarni amalga oshiring.</p>
+        <div class="module-meta">{{ stats.hackathons }}+ musobaqa · Katta mukofotlar</div>
+        <div class="module-arrow">→</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TOP ATHLETES ══════════════════════════════════════════ -->
+{% if top_athletes %}
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">SPORT</div>
+      <h2 class="section-title">Top sportchilar</h2>
+      <p class="section-desc">Eng yuqori natijalarga erishgan talabalar</p>
+    </div>
+    <div class="athletes-grid">
+      {% for a in top_athletes %}
+      <a href="{{ url_for('athlete_detail', aid=a.id) }}" class="athlete-card">
+        <div class="athlete-top" style="background: linear-gradient(135deg,#111 0%,#222 100%)">
+          <div class="athlete-avatar">{{ a.full_name[0] }}</div>
+          <div class="athlete-rank-badge level-{{ a.level }}">
+            {{ {'university':'Universitet','region':'Viloyat','republic':'Respublika','international':'Xalqaro'}.get(a.level, a.level) }}
+          </div>
+        </div>
+        <div class="athlete-body">
+          <div class="athlete-name">{{ a.full_name }}</div>
+          <div class="athlete-sport-lbl">{{ a.sport }}</div>
+          <div class="athlete-footer">
+            <span class="athlete-faculty">{{ a.faculty }} · {{ a.course }}-kurs</span>
+            <span class="athlete-pts">{{ a.rating_points }} pt</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="section-more">
+      <a href="{{ url_for('sport') }}" class="btn btn-outline">Barcha sportchilar →</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ TOP TALENTS ════════════════════════════════════════════ -->
+{% if top_talents %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">TALENTHUB</div>
+      <h2 class="section-title">Iqtidorli talabalar reytingi</h2>
+    </div>
+    <div class="leaderboard-wrap">
+      <div class="leaderboard-list">
+        {% for t in top_talents %}
+        <div class="lb-row {% if loop.index <= 3 %}lb-top{% endif %}">
+          <div class="lb-rank {% if loop.index == 1 %}rank-gold{% elif loop.index == 2 %}rank-silver{% elif loop.index == 3 %}rank-bronze{% else %}rank-num{% endif %}">
+            {{ loop.index }}
+          </div>
+          <div class="lb-avatar">{{ t.full_name[0] }}</div>
+          <div class="lb-info">
+            <div class="lb-name">{{ t.full_name }}</div>
+            <div class="lb-meta">{{ t.faculty }} · {{ t.specialty }} · {{ t.course }}-kurs</div>
+          </div>
+          <div class="lb-score-wrap">
+            <div class="lb-score">{{ t.score }}</div>
+            <div class="lb-score-lbl">ball</div>
+          </div>
+          <div class="lb-bar-wrap">
+            <div class="lb-bar">
+              <div class="lb-bar-fill" style="width: {{ (t.score / 1000 * 100)|round }}%"></div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="section-more">
+      <a href="{{ url_for('talenthub') }}" class="btn btn-outline">To'liq reyting →</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══ EVENTS + HACKATHONS ════════════════════════════════════ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="two-col-section">
+
+      <!-- Events -->
+      <div class="two-col-block">
+        <div class="section-header left">
+          <div class="section-tag">TADBIRLAR</div>
+          <h2 class="section-title sm">Yaqin tadbirlar</h2>
+        </div>
+        <div class="events-list">
+          {% for ev in events %}
+          <div class="event-card">
+            <div class="event-date-box">
+              <div class="ev-day">{{ ev.event_date[-2:] if ev.event_date else '?' }}</div>
+              <div class="ev-mon">
+                {% set months = {'01':'Yan','02':'Fev','03':'Mar','04':'Apr','05':'May','06':'Iyn','07':'Iyl','08':'Avg','09':'Sen','10':'Okt','11':'Nov','12':'Dek'} %}
+                {{ months.get(ev.event_date[5:7], '') if ev.event_date else '' }}
+              </div>
+            </div>
+            <div class="event-info">
+              <div class="ev-title">{{ ev.title }}</div>
+              <div class="ev-loc">📍 {{ ev.location }}</div>
+              <div class="ev-time">🕐 {{ ev.event_time }}</div>
+            </div>
+            <div class="ev-cat-badge cat-{{ ev.category }}">{{ ev.category }}</div>
+          </div>
+          {% else %}
+          <p class="empty-text">Hozircha tadbir yo'q.</p>
+          {% endfor %}
+        </div>
+        <a href="{{ url_for('events') }}" class="btn btn-outline mt-12">Barcha tadbirlar →</a>
+      </div>
+
+      <!-- Hackathons -->
+      <div class="two-col-block">
+        <div class="section-header left">
+          <div class="section-tag">HACKATHON</div>
+          <h2 class="section-title sm">Faol musobaqalar</h2>
+        </div>
+        <div class="hack-list">
+          {% for h in hackathons %}
+          <div class="hack-item">
+            <div class="hack-item-header">
+              <div class="hack-title">{{ h.title }}</div>
+              <span class="hack-badge status-{{ h.status }}">
+                {{ {'open':'Ochiq','upcoming':'Kutilmoqda','closed':'Yopildi'}.get(h.status, h.status) }}
+              </span>
+            </div>
+            <div class="hack-desc">{{ h.description }}</div>
+            <div class="hack-footer">
+              <span>🏆 {{ h.prize }}</span>
+              <span>👥 {{ h.participants }} ishtirokchi</span>
+              <span>⏰ {{ h.deadline }}</span>
+            </div>
+          </div>
+          {% else %}
+          <p class="empty-text">Hozircha musobaqa yo'q.</p>
+          {% endfor %}
+        </div>
+        <a href="{{ url_for('hackathons') }}" class="btn btn-outline mt-12">Barcha hackathonlar →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ════════════════════════════════════════════════════ -->
+<section class="section cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <div class="cta-text">
+        <h2>Platformaga qo'shiling</h2>
+        <p>8,000+ talabalar allaqachon foydalanmoqda. Siz ham boshlang!</p>
+      </div>
+      <div class="cta-btns">
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Ro'yxatdan o'tish</a>
+        <a href="{{ url_for('login') }}" class="btn btn-outline btn-lg">Kirish</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
