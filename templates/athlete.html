@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{{ athlete.full_name }}{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+  <div class="profile-hero-section">
+    <div class="container">
+      <a href="{{ url_for('sport') }}" class="back-link">← Sport ro'yxatiga qaytish</a>
+      <div class="profile-hero-inner">
+        <div class="profile-avatar-xl" style="background: linear-gradient(135deg,#111,#333)">
+          {{ athlete.full_name[0] }}
+        </div>
+        <div class="profile-hero-info">
+          <div class="profile-level-badge level-{{ athlete.level }}">
+            {{ {'university':'Universitet darajasi','region':'Viloyat darajasi','republic':'Respublika darajasi','international':'Xalqaro daraja'}.get(athlete.level, athlete.level) }}
+          </div>
+          <h1 class="profile-name">{{ athlete.full_name }}</h1>
+          <p class="profile-meta">{{ athlete.sport }} · {{ athlete.faculty }} · {{ athlete.course }}-kurs</p>
+          <div class="profile-stats-row">
+            <div class="pstat-big"><div class="pstat-num">{{ athlete.rating_points }}</div><div class="pstat-lbl">Reyting balli</div></div>
+            <div class="pstat-big"><div class="pstat-num">🥇 {{ athlete.medals_gold }}</div><div class="pstat-lbl">Oltin medal</div></div>
+            <div class="pstat-big"><div class="pstat-num">🥈 {{ athlete.medals_silver }}</div><div class="pstat-lbl">Kumush medal</div></div>
+            <div class="pstat-big"><div class="pstat-num">🥉 {{ athlete.medals_bronze }}</div><div class="pstat-lbl">Bronza medal</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="container">
+      <div class="info-grid">
+        <div class="info-card">
+          <h4>Shaxsiy ma'lumotlar</h4>
+          <div class="info-rows">
+            <div class="info-row"><span class="info-key">To'liq ism</span><span class="info-val">{{ athlete.full_name }}</span></div>
+            <div class="info-row"><span class="info-key">Sport turi</span><span class="info-val">{{ athlete.sport }}</span></div>
+            <div class="info-row"><span class="info-key">Fakultet</span><span class="info-val">{{ athlete.faculty or '—' }}</span></div>
+            <div class="info-row"><span class="info-key">Kurs</span><span class="info-val">{{ athlete.course }}-kurs</span></div>
+            <div class="info-row"><span class="info-key">Daraja</span><span class="info-val">
+              {{ {'university':'Universitet','region':'Viloyat','republic':'Respublika','international':'Xalqaro'}.get(athlete.level, athlete.level) }}
+            </span></div>
+            {% if athlete.coach %}<div class="info-row"><span class="info-key">Murabbiy</span><span class="info-val">{{ athlete.coach }}</span></div>{% endif %}
+          </div>
+        </div>
+        <div class="info-card">
+          <h4>Medallar va natijalar</h4>
+          <div class="medals-display">
+            <div class="medal-item gold"><span class="medal-emoji">🥇</span><span class="medal-count">{{ athlete.medals_gold }}</span><span class="medal-lbl">Oltin</span></div>
+            <div class="medal-item silver"><span class="medal-emoji">🥈</span><span class="medal-count">{{ athlete.medals_silver }}</span><span class="medal-lbl">Kumush</span></div>
+            <div class="medal-item bronze"><span class="medal-emoji">🥉</span><span class="medal-count">{{ athlete.medals_bronze }}</span><span class="medal-lbl">Bronza</span></div>
+          </div>
+          <div class="rating-bar-wrap">
+            <div class="rating-bar-lbl"><span>Reyting balli</span><span>{{ athlete.rating_points }} pt</span></div>
+            <div class="rating-bar"><div class="rating-bar-fill" style="width: {{ [athlete.rating_points, 500]|min / 5 }}%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

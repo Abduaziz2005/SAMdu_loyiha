@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Hackathonlar{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero-text">
+      <div class="page-tag">💻 HACKATHON</div>
+      <h1>Dasturlash Musobaqalari</h1>
+      <p>IT loyihalari va hackathonlar. G'oyangizni amalga oshiring, mukofot qozonging.</p>
+    </div>
+  </div>
+</div>
+<div class="section">
+  <div class="container">
+    <div class="hack-grid">
+      {% for h in hackathons %}
+      <div class="hack-card">
+        <div class="hack-card-top">
+          <div class="hack-icon">💻</div>
+          <span class="hack-badge status-{{ h.status }}">
+            {{ {'open':'🟢 Ochiq','upcoming':'🟡 Kutilmoqda','closed':'🔴 Yopildi'}.get(h.status, h.status) }}
+          </span>
+        </div>
+        <h3 class="hack-title">{{ h.title }}</h3>
+        <p class="hack-desc">{{ h.description or '' }}</p>
+        <div class="hack-details">
+          <div class="hack-detail"><span class="hd-icon">🏆</span><span>{{ h.prize or '—' }}</span></div>
+          <div class="hack-detail"><span class="hd-icon">⏰</span><span>{{ h.deadline or '—' }}</span></div>
+          <div class="hack-detail"><span class="hd-icon">👥</span><span>{{ h.participants }} ishtirokchi</span></div>
+        </div>
+        {% if h.status == 'open' %}
+        <a href="#" class="btn btn-primary btn-full mt-12">Ishtirok etish →</a>
+        {% elif h.status == 'upcoming' %}
+        <button class="btn btn-outline btn-full mt-12" disabled>Tez kunda ochiladi</button>
+        {% else %}
+        <button class="btn btn-ghost btn-full mt-12" disabled>Musobaqa yakunlandi</button>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">💻</div>
+        <p>Hozircha hackathon yo'q.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

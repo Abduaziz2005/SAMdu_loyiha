@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Xato {{ code }} — S_TATU</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#0a0a0a;color:#e6edf3;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+.card{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:48px 40px;max-width:500px;width:100%}
+.code{font-size:80px;font-weight:800;line-height:1;margin-bottom:16px;background:linear-gradient(135deg,#f85149,#d29922);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h1{font-size:20px;font-weight:700;color:#fff;margin-bottom:10px}
+p{font-size:14px;color:#8b949e;line-height:1.7;margin-bottom:24px}
+a{display:inline-block;padding:10px 24px;background:#fff;color:#000;border-radius:8px;font-weight:700;font-size:14px;text-decoration:none}
+a:hover{background:#ddd}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="code">{{ code }}</div>
+  <h1>{% if code==404 %}Sahifa topilmadi{% elif code==403 %}Ruxsat etilmagan{% elif code==429 %}Juda ko'p so'rov{% else %}Server xatosi{% endif %}</h1>
+  <p>{{ msg or 'Xatolik yuz berdi.' }}</p>
+  <a href="/">🏠 Bosh sahifaga qaytish</a>
+</div>
+</body></html>

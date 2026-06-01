@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Kirish{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+
+    <div class="auth-logo">
+      <div class="auth-logo-mark">S</div>
+      <div>
+        <div class="auth-logo-title">S_TATU</div>
+        <div class="auth-logo-sub">SAMdu Platform</div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="auth-tab {% if tab != 'register' %}active{% endif %}"
+              onclick="switchTab('login')" type="button">Kirish</button>
+      <button class="auth-tab {% if tab == 'register' %}active{% endif %}"
+              onclick="switchTab('register')" type="button">Ro'yxat</button>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-danger">⚠️ {{ error }}</div>
+    {% endif %}
+
+    <!-- ── LOGIN FORM ── -->
+    <form id="loginForm"
+          class="auth-form {% if tab == 'register' %}hidden{% endif %}"
+          action="{{ url_for('login') }}" method="POST"
+          autocomplete="on">
+
+      {# CSRF — MUHIM #}
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label class="form-label">Login (username)</label>
+        <input class="form-input" type="text" name="username"
+               placeholder="200519992806"
+               required autocomplete="username"
+               id="loginUser">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Parol</label>
+        <div class="input-pass-wrap">
+          <input class="form-input" type="password" name="password"
+                 placeholder="••••••••" required
+                 id="loginPass" autocomplete="current-password">
+          <button type="button" class="pass-toggle"
+                  onclick="togglePass('loginPass')" title="Ko'rish/Yashirish">👁</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">
+        Kirish →
+      </button>
+
+      <div class="auth-hint">
+        <div class="hint-row">
+          <span class="hint-role">⚙ Admin:</span>
+          <code>200519992806</code>
+          <span class="hint-sep">/</span>
+          <code>200519992806</code>
+        </div>
+        <div class="hint-row">
+          <span class="hint-role">👤 Talaba:</span>
+          <code>1200519992806</code>
+          <span class="hint-sep">/</span>
+          <code>1200519992806</code>
+        </div>
+      </div>
+    </form>
+
+    <!-- ── REGISTER FORM ── -->
+    <form id="registerForm"
+          class="auth-form {% if tab != 'register' %}hidden{% endif %}"
+          action="{{ url_for('register') }}" method="POST"
+          autocomplete="off">
+
+      {# CSRF — MUHIM #}
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">To'liq ism *</label>
+          <input class="form-input" type="text" name="full_name"
+                 placeholder="Ism Familiya" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username *</label>
+          <input class="form-input" type="text" name="username"
+                 placeholder="ism_familiya" required
+                 minlength="3" autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Parol * (min 4 belgi)</label>
+          <div class="input-pass-wrap">
+            <input class="form-input" type="password" name="password"
+                   id="regPass" required minlength="4"
+                   autocomplete="new-password">
+            <button type="button" class="pass-toggle"
+                    onclick="togglePass('regPass')">👁</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kurs</label>
+          <select class="form-select" name="course">
+            <option value="1">1-kurs</option>
+            <option value="2">2-kurs</option>
+            <option value="3">3-kurs</option>
+            <option value="4">4-kurs</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Fakultet</label>
+          <select class="form-select" name="faculty">
+            <option value="KTIF">KTIF</option>
+            <option value="EIQ">EIQ</option>
+            <option value="MMF">MMF</option>
+            <option value="ITF">ITF</option>
+            <option value="HF">HF</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mutaxassislik</label>
+          <input class="form-input" type="text" name="specialty"
+                 placeholder="Dasturlash">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full">
+        Ro'yxatdan o'tish →
+      </button>
+    </form>
+
+  </div>
+</div>
+
+<style>
+.hint-row {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 0; font-size: 12px; color: var(--gray-400);
+}
+.hint-role { color: var(--gray-500); min-width: 70px; }
+.hint-sep  { color: var(--gray-600); }
+</style>
+
+<script>
+function switchTab(tab) {
+  const loginForm  = document.getElementById('loginForm');
+  const regForm    = document.getElementById('registerForm');
+  const tabs       = document.querySelectorAll('.auth-tab');
+  tabs[0].classList.toggle('active', tab === 'login');
+  tabs[1].classList.toggle('active', tab === 'register');
+  loginForm.classList.toggle('hidden', tab !== 'login');
+  regForm.classList.toggle('hidden',   tab !== 'register');
+}
+function togglePass(id) {
+  const inp = document.getElementById(id);
+  if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+</script>
+{% endblock %}

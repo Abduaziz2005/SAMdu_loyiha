@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Sport{% endblock %}
+
+{% block content %}
+<div class="page-hero sport-hero">
+  <div class="container">
+    <div class="page-hero-text">
+      <div class="page-tag">⚽ SPORT BO'LIMI</div>
+      <h1>Samarqand TATU Sport</h1>
+      <p>Talaba sportchilarning yutuqlari va reytingi. Eng yaxshi natijalar, musobaqalar va ko'rsatkichlar.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="container">
+    <!-- Filters -->
+    <div class="filter-bar">
+      <form method="GET" class="filter-form">
+        <div class="filter-group">
+          <label class="filter-label">Sport turi</label>
+          <select class="form-select" name="sport" onchange="this.form.submit()">
+            <option value="">Barchasi</option>
+            {% for s in sports_list %}
+            <option value="{{ s.sport }}" {% if sport_filter == s.sport %}selected{% endif %}>{{ s.sport }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Daraja</label>
+          <select class="form-select" name="level" onchange="this.form.submit()">
+            <option value="">Barchasi</option>
+            <option value="university"    {% if level_filter=='university'    %}selected{% endif %}>Universitet</option>
+            <option value="region"        {% if level_filter=='region'        %}selected{% endif %}>Viloyat</option>
+            <option value="republic"      {% if level_filter=='republic'      %}selected{% endif %}>Respublika</option>
+            <option value="international" {% if level_filter=='international' %}selected{% endif %}>Xalqaro</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Filtrla</button>
+        <a href="{{ url_for('sport') }}" class="btn btn-ghost btn-sm">Tozala</a>
+      </form>
+      <div class="filter-count">{{ athletes|length }} sportchi topildi</div>
+    </div>
+
+    <!-- Athletes grid -->
+    {% if athletes %}
+    <div class="athletes-grid large">
+      {% for a in athletes %}
+      <a href="{{ url_for('athlete_detail', aid=a.id) }}" class="athlete-card">
+        <div class="athlete-top"
+             style="background: linear-gradient(135deg,
+               {{ '#1a1a2e' if loop.index0 % 4 == 0 else
+                  '#0d1b2a' if loop.index0 % 4 == 1 else
+                  '#1c1c1c' if loop.index0 % 4 == 2 else
+                  '#0f0f0f' }})">
+          <div class="athlete-avatar">{{ a.full_name[0] }}</div>
+          <div class="athlete-rank-badge level-{{ a.level }}">
+            {{ {'university':'Univ.','region':'Viloyat','republic':'Respublika','international':'Xalqaro'}.get(a.level,a.level) }}
+          </div>
+        </div>
+        <div class="athlete-body">
+          <div class="athlete-name">{{ a.full_name }}</div>
+          <div class="athlete-sport-lbl">{{ a.sport }}</div>
+          <div class="athlete-medals">
+            {% if a.medals_gold %}🥇 {{ a.medals_gold }}{% endif %}
+            {% if a.medals_silver %}🥈 {{ a.medals_silver }}{% endif %}
+            {% if a.medals_bronze %}🥉 {{ a.medals_bronze }}{% endif %}
+          </div>
+          <div class="athlete-footer">
+            <span class="athlete-faculty">{{ a.faculty }} · {{ a.course }}-kurs</span>
+            <span class="athlete-pts">{{ a.rating_points }} pt</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🏟️</div>
+      <p>Filtr bo'yicha sportchi topilmadi.</p>
+      <a href="{{ url_for('sport') }}" class="btn btn-outline mt-12">Barcha sportchilar</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

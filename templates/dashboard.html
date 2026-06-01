@@ -1,0 +1,331 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dash-page">
+
+  <!-- Sidebar -->
+  <aside class="dash-sidebar">
+    <div class="dash-user-card">
+      <div class="dash-avatar">{{ session.full_name[0] if session.full_name else 'U' }}</div>
+      <div class="dash-user-info">
+        <div class="dash-user-name">{{ session.full_name }}</div>
+        <div class="dash-user-role">{{ user.faculty }} · {{ user.course }}-kurs</div>
+      </div>
+    </div>
+    <div class="dash-score-wrap">
+      <div class="dash-score-num">{{ user.rating | default(0) }}</div>
+      <div class="dash-score-lbl">Reyting balli</div>
+    </div>
+    <nav class="dash-nav">
+      <a class="dash-nav-item active" onclick="showPanel('overview')">📊 Umumiy</a>
+      <a class="dash-nav-item" onclick="showPanel('profile')">👤 Profil</a>
+      <a class="dash-nav-item" onclick="showPanel('sessions')">📚 Sessiyalar</a>
+      <a class="dash-nav-item" onclick="showPanel('notifications')">
+        🔔 Bildirishnomalar
+        {% if unread > 0 %}<span class="notif-badge">{{ unread }}</span>{% endif %}
+      </a>
+      <a class="dash-nav-item" onclick="showPanel('password')">🔐 Parol o'zgartirish</a>
+      <a class="dash-nav-item" href="{{ url_for('stemate') }}">🎓 Mentor topish</a>
+      <a class="dash-nav-item" href="{{ url_for('hackathons') }}">💻 Hackathonlar</a>
+    </nav>
+  </aside>
+
+  <!-- Content -->
+  <div class="dash-content">
+    <div class="dash-topbar">
+      <h1 class="dash-page-title" id="panelTitle">Umumiy ko'rinish</h1>
+      <div class="dash-topbar-right">
+        <span class="dash-date" id="currentDate"></span>
+        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-ghost">Chiqish</a>
+      </div>
+    </div>
+
+    <div class="dash-body">
+
+      <!-- OVERVIEW PANEL -->
+      <div class="dpanel active" id="panel-overview">
+        <div class="dash-kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">⭐</div>
+            <div class="kpi-num">{{ user.rating | default(0) }}</div>
+            <div class="kpi-lbl">Reyting</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🏆</div>
+            <div class="kpi-num">{{ user.achievements | default(0) }}</div>
+            <div class="kpi-lbl">Yutuqlar</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">📚</div>
+            <div class="kpi-num">{{ my_sessions | length }}</div>
+            <div class="kpi-lbl">Sessiyalar</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🔔</div>
+            <div class="kpi-num">{{ unread }}</div>
+            <div class="kpi-lbl">O'qilmagan</div>
+          </div>
+        </div>
+
+        <div class="dash-two-col">
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <h3>So'nggi sessiyalar</h3>
+              <a href="{{ url_for('stemate') }}" class="link-sm">Mentor topish →</a>
+            </div>
+            {% if my_sessions %}
+            <table class="data-table">
+              <thead><tr><th>Mentor</th><th>Fan</th><th>Sana</th><th>Holat</th></tr></thead>
+              <tbody>
+                {% for s in my_sessions %}
+                <tr>
+                  <td>{{ s.mentor_name or '—' }}</td>
+                  <td>{{ s.subject or '—' }}</td>
+                  <td>{{ s.session_date or '—' }}</td>
+                  <td><span class="badge badge-{{ 'green' if s.status=='done' else 'yellow' if s.status=='confirmed' else 'gray' }}">
+                    {{ {'pending':'Kutilmoqda','confirmed':'Tasdiqlandi','done':'Tugadi','cancelled':'Bekor'}.get(s.status, s.status) }}
+                  </span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+              <div class="empty-icon">📚</div>
+              <p>Hali sessiya yo'q. <a href="{{ url_for('stemate') }}">Mentor toping!</a></p>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <h3>Bildirishnomalar</h3>
+              <button class="link-sm" onclick="markAllRead()">Hammasini o'qi</button>
+            </div>
+            {% if notifs %}
+            <div class="notif-list">
+              {% for n in notifs %}
+              <div class="notif-item {% if not n.read %}unread{% endif %}">
+                <div class="notif-dot"></div>
+                <div class="notif-body">
+                  <div class="notif-title">{{ n.title }}</div>
+                  <div class="notif-text">{{ n.body }}</div>
+                  <div class="notif-time">{{ n.created_at[:16] if n.created_at else '' }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+              <div class="empty-icon">🔔</div>
+              <p>Bildirishnomalar yo'q</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFILE PANEL -->
+      <div class="dpanel" id="panel-profile">
+        <div class="profile-hero-card">
+          <div class="profile-avatar-big">{{ user.full_name[0] if user.full_name else 'U' }}</div>
+          <div class="profile-hero-info">
+            <h2>{{ user.full_name }}</h2>
+            <p>{{ user.faculty }} · {{ user.specialty }} · {{ user.course }}-kurs</p>
+            <div class="profile-stats-row">
+              <div class="pstat"><span class="pstat-num">{{ user.rating | default(0) }}</span><span class="pstat-lbl">Reyting</span></div>
+              <div class="pstat"><span class="pstat-num">{{ user.achievements | default(0) }}</span><span class="pstat-lbl">Yutuqlar</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>Shaxsiy ma'lumotlar</h4>
+            <div class="info-rows">
+              <div class="info-row"><span class="info-key">To'liq ism</span><span class="info-val">{{ user.full_name }}</span></div>
+              <div class="info-row"><span class="info-key">Username</span><span class="info-val">{{ user.username }}</span></div>
+              <div class="info-row"><span class="info-key">Rol</span><span class="info-val">{{ user.role }}</span></div>
+              <div class="info-row"><span class="info-key">HEMIS ID</span><span class="info-val">{{ user.hemis_id or '—' }}</span></div>
+            </div>
+          </div>
+          <div class="info-card">
+            <h4>Ta'lim ma'lumotlari</h4>
+            <div class="info-rows">
+              <div class="info-row"><span class="info-key">Fakultet</span><span class="info-val">{{ user.faculty or '—' }}</span></div>
+              <div class="info-row"><span class="info-key">Mutaxassislik</span><span class="info-val">{{ user.specialty or '—' }}</span></div>
+              <div class="info-row"><span class="info-key">Kurs</span><span class="info-val">{{ user.course }}-kurs</span></div>
+              <div class="info-row"><span class="info-key">Ro'yxat sanasi</span><span class="info-val">{{ user.created_at[:10] if user.created_at else '—' }}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SESSIONS PANEL -->
+      <div class="dpanel" id="panel-sessions">
+        <div class="dash-card">
+          <div class="dash-card-header"><h3>Barcha sessiyalar</h3></div>
+          {% if my_sessions %}
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Mentor</th><th>Fan</th><th>Sana</th><th>Vaqt</th><th>Holat</th></tr></thead>
+            <tbody>
+              {% for s in my_sessions %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ s.mentor_name or '—' }}</td>
+                <td>{{ s.subject or '—' }}</td>
+                <td>{{ s.session_date or '—' }}</td>
+                <td>{{ s.session_time or '—' }}</td>
+                <td><span class="badge badge-{{ 'green' if s.status=='done' else 'yellow' if s.status=='confirmed' else 'gray' }}">
+                  {{ {'pending':'Kutilmoqda','confirmed':'Tasdiqlandi','done':'Tugadi','cancelled':'Bekor'}.get(s.status, s.status) }}
+                </span></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>Hali sessiya band qilinmagan.</p>
+            <a href="{{ url_for('stemate') }}" class="btn btn-primary mt-12">Mentor toping</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS PANEL -->
+      <div class="dpanel" id="panel-notifications">
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>Barcha bildirishnomalar</h3>
+            <button class="btn btn-sm btn-outline" onclick="markAllRead()">Hammasini o'qi ✓</button>
+          </div>
+          {% if notifs %}
+          <div class="notif-list full">
+            {% for n in notifs %}
+            <div class="notif-item {% if not n.read %}unread{% endif %}">
+              <div class="notif-dot"></div>
+              <div class="notif-body">
+                <div class="notif-title">{{ n.title }}</div>
+                <div class="notif-text">{{ n.body or '' }}</div>
+                <div class="notif-time">{{ n.created_at[:16] if n.created_at else '' }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">🔔</div>
+            <p>Bildirishnomalar yo'q</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- PAROL O'ZGARTIRISH PANEL -->
+      <div class="dpanel" id="panel-password">
+        <div class="dash-card" style="max-width:480px">
+          <div class="dash-card-header">
+            <h3>🔐 Parolni o'zgartirish</h3>
+          </div>
+
+          <div class="user-info-row" style="margin-bottom:20px;padding:12px 14px;background:var(--gray-900);border-radius:var(--radius-sm);border:1px solid var(--gray-700)">
+            <span style="font-size:12px;color:var(--gray-500)">Joriy username:</span>
+            <code style="font-size:14px;color:var(--white);margin-left:8px">{{ user.username }}</code>
+          </div>
+
+          <form action="{{ url_for('change_password') }}" method="POST" id="changePassForm">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">Eski parol *</label>
+              <div class="input-pass-wrap">
+                <input class="form-input" type="password" name="old_password"
+                       id="oldPass" required placeholder="Joriy parolingiz">
+                <button type="button" class="pass-toggle" onclick="togglePass('oldPass')">👁</button>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:14px">
+              <label class="form-label">Yangi parol * (min 4 belgi)</label>
+              <div class="input-pass-wrap">
+                <input class="form-input" type="password" name="new_password"
+                       id="newPass" required minlength="4" placeholder="Yangi parol">
+                <button type="button" class="pass-toggle" onclick="togglePass('newPass')">👁</button>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:20px">
+              <label class="form-label">Yangi parolni tasdiqlash *</label>
+              <div class="input-pass-wrap">
+                <input class="form-input" type="password" name="confirm_password"
+                       id="confPass" required minlength="4" placeholder="Qayta kiriting">
+                <button type="button" class="pass-toggle" onclick="togglePass('confPass')">👁</button>
+              </div>
+            </div>
+
+            <div id="passMatchErr" class="alert alert-danger" style="display:none;margin-bottom:12px">
+              ⚠️ Yangi parollar mos emas!
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full"
+                    onclick="return checkPassMatch()">
+              🔐 Parolni yangilash
+            </button>
+          </form>
+
+          <div class="auth-hint" style="margin-top:16px;border-top:1px solid var(--gray-800);padding-top:14px">
+            <p style="font-size:12px;color:var(--gray-500);line-height:1.6">
+              💡 Parol o'zgartirilgandan so'ng siz avtomatik tizimdan chiqarilmaysiz.
+              Keyingi kirishda yangi parolni ishlating.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- dash-body -->
+  </div><!-- dash-content -->
+</div><!-- dash-page -->
+
+<script>
+function showPanel(name) {
+  document.querySelectorAll('.dpanel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.dash-nav-item').forEach(i => i.classList.remove('active'));
+  const panel = document.getElementById('panel-' + name);
+  if (panel) panel.classList.add('active');
+  const titles = {
+    overview:'Umumiy ko\'rinish', profile:'Mening profilim',
+    sessions:'Sessiyalar', notifications:'Bildirishnomalar',
+    password:'Parolni o\'zgartirish'
+  };
+  const titleEl = document.getElementById('panelTitle');
+  if (titleEl) titleEl.textContent = titles[name] || name;
+  if (event && event.target) event.target.classList.add('active');
+}
+function markAllRead() {
+  fetch('/api/notifications/mark-read', {method:'POST',
+    headers:{'X-CSRF-Token': document.querySelector('[name="_csrf_token"]')?.value || ''}})
+    .then(() => {
+      document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+      document.querySelectorAll('.notif-badge').forEach(el => el.remove());
+    });
+}
+function checkPassMatch() {
+  const n1 = document.getElementById('newPass').value;
+  const n2 = document.getElementById('confPass').value;
+  const err = document.getElementById('passMatchErr');
+  if (n1 !== n2) {
+    err.style.display = 'block';
+    return false;
+  }
+  err.style.display = 'none';
+  return true;
+}
+function togglePass(id) {
+  const inp = document.getElementById(id);
+  if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+</script>
+document.getElementById('currentDate').textContent = new Date().toLocaleDateString('uz-UZ', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+</script>
+{% endblock %}

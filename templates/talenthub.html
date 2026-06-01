@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}TalentHub{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero-text">
+      <div class="page-tag">🌟 TALENTHUB</div>
+      <h1>Iqtidorli Talabalar</h1>
+      <p>Fan, sport, ijod va ijtimoiy faollik sohalari bo'yicha eng yaxshi talabalar reytingi.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="container">
+    <div class="filter-bar">
+      <form method="GET" class="filter-form">
+        <label class="filter-label">Kategoriya:</label>
+        <a href="{{ url_for('talenthub') }}"           class="filter-chip {% if not cat_filter %}active{% endif %}">Barchasi</a>
+        <a href="?cat=science"    class="filter-chip {% if cat_filter=='science'  %}active{% endif %}">🔬 Fan</a>
+        <a href="?cat=sport"      class="filter-chip {% if cat_filter=='sport'    %}active{% endif %}">⚽ Sport</a>
+        <a href="?cat=creative"   class="filter-chip {% if cat_filter=='creative' %}active{% endif %}">🎨 Ijod</a>
+        <a href="?cat=social"     class="filter-chip {% if cat_filter=='social'   %}active{% endif %}">🤝 Ijtimoiy</a>
+      </form>
+      <div class="filter-count">{{ talents|length }} talaba</div>
+    </div>
+
+    <div class="leaderboard-full">
+      {% for t in talents %}
+      <div class="lb-row-full {% if loop.index <= 3 %}lb-top{% endif %}">
+        <div class="lb-rank-big {% if loop.index == 1 %}rank-gold{% elif loop.index == 2 %}rank-silver{% elif loop.index == 3 %}rank-bronze{% else %}rank-num{% endif %}">
+          {{ loop.index }}
+        </div>
+        <div class="lb-avatar-big">{{ t.full_name[0] }}</div>
+        <div class="lb-info-main">
+          <div class="lb-name-big">{{ t.full_name }}</div>
+          <div class="lb-meta-row">
+            <span>🏛 {{ t.faculty }}</span>
+            <span>📚 {{ t.specialty }}</span>
+            <span>{{ t.course }}-kurs</span>
+          </div>
+          <div class="lb-cats">
+            {% set cats = t.categories | replace('[','') | replace(']','') | replace('"','') | split(',') %}
+            {% for c in cats %}
+            {% set c = c.strip() %}
+            <span class="cat-chip cat-{{ c }}">
+              {{ {'science':'🔬 Fan','sport':'⚽ Sport','creative':'🎨 Ijod','social':'🤝 Ijtimoiy'}.get(c, c) }}
+            </span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="lb-score-big">
+          <div class="lb-score-num-big">{{ t.score }}</div>
+          <div class="lb-score-label">ball</div>
+          <div class="lb-bar-full"><div class="lb-bar-fill-full" style="width: {{ (t.score / 1000 * 100)|round }}%"></div></div>
+        </div>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">🌟</div>
+        <p>Iqtidorli talabalar topilmadi.</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

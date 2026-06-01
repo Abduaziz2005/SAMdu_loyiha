@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Tadbirlar{% endblock %}
+
+{% block content %}
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero-text">
+      <div class="page-tag">📅 TADBIRLAR</div>
+      <h1>Yaqin Tadbirlar</h1>
+      <p>TATU da bo'lib o'tadigan sport, ilmiy va madaniy tadbirlar jadvali.</p>
+    </div>
+  </div>
+</div>
+<div class="section">
+  <div class="container">
+    {% if events %}
+    <div class="events-list-full">
+      {% for ev in events %}
+      {% set months = {'01':'Yanvar','02':'Fevral','03':'Mart','04':'Aprel','05':'May','06':'Iyun','07':'Iyul','08':'Avgust','09':'Sentabr','10':'Oktabr','11':'Noyabr','12':'Dekabr'} %}
+      <div class="event-card-full">
+        <div class="event-date-big">
+          <div class="ev-day-big">{{ ev.event_date[-2:] if ev.event_date else '?' }}</div>
+          <div class="ev-month-big">{{ months.get(ev.event_date[5:7], '') if ev.event_date else '' }}</div>
+          <div class="ev-year-big">{{ ev.event_date[:4] if ev.event_date else '' }}</div>
+        </div>
+        <div class="event-info-main">
+          <div class="ev-cat-wrap">
+            <span class="ev-cat cat-{{ ev.category }}">{{ {'sport':'⚽ Sport','it':'💻 IT','science':'🔬 Ilm','education':'📚 Ta\'lim','general':'📌 Umumiy'}.get(ev.category, ev.category) }}</span>
+          </div>
+          <h3 class="ev-title-big">{{ ev.title }}</h3>
+          {% if ev.description %}<p class="ev-desc">{{ ev.description }}</p>{% endif %}
+          <div class="ev-meta-row">
+            <span>📍 {{ ev.location or '—' }}</span>
+            <span>🕐 {{ ev.event_time or '—' }}</span>
+          </div>
+        </div>
+        <div class="event-action">
+          <a href="#" class="btn btn-outline btn-sm">Batafsil</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <p>Hozircha tadbir rejalashtirilmagan.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
