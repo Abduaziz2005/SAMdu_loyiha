@@ -323,25 +323,40 @@ def _hash(pw: str) -> str:
 
 def _seed_data(conn):
     c = conn.cursor()
-    c.execute("SELECT id FROM users WHERE username='admin'")
+    c.execute("SELECT id FROM users WHERE username='200519992806'")
     if c.fetchone():
         return  # already seeded
 
-    # Admin
-    admin_hash, admin_salt = _hash_password("admin123")
+    # ── ADMIN ─────────────────────────────────────────────────
+    # Login: 200519992806  |  Parol: 200519992806
+    admin_hash, admin_salt = _hash_password("200519992806")
     c.execute("""INSERT INTO users(username,password,password_salt,full_name,role,email)
                  VALUES(?,?,?,?,?,?)""",
-              ("admin", admin_hash, admin_salt, "Bosh Administrator", "admin", "admin@tatu.uz"))
+              ("200519992806", admin_hash, admin_salt,
+               "Bosh Administrator", "admin", "admin@tatu.uz"))
 
-    # Demo students
-    s1h, s1s = _hash_password("1234")
+    # ── TALABA (asosiy) ────────────────────────────────────────
+    # Login: 1200519992806  |  Parol: 1200519992806
+    st_hash, st_salt = _hash_password("1200519992806")
+    c.execute("""INSERT INTO users(username,password,password_salt,full_name,role,
+                 faculty,course,specialty,rating,achievements)
+                 VALUES(?,?,?,?,?,?,?,?,?,?)""",
+              ("1200519992806", st_hash, st_salt,
+               "Asosiy Talaba", "student", "KTIF", 3, "Dasturlash", 847, 12))
+
+    # ── QO'SHIMCHA DEMO FOYDALANUVCHILAR ──────────────────────
     s2h, s2s = _hash_password("1234")
-    c.execute("""INSERT INTO users(username,password,password_salt,full_name,role,faculty,course,specialty,rating,achievements)
+    s3h, s3s = _hash_password("1234")
+    c.execute("""INSERT INTO users(username,password,password_salt,full_name,role,
+                 faculty,course,specialty,rating,achievements)
                  VALUES(?,?,?,?,?,?,?,?,?,?)""",
-              ("student1", s1h, s1s, "Ali Karimov", "student", "KTIF", 3, "Dasturlash", 847, 12))
-    c.execute("""INSERT INTO users(username,password,password_salt,full_name,role,faculty,course,specialty,rating,achievements)
+              ("student2", s2h, s2s,
+               "Zulfiya Tosheva", "student", "EIQ", 2, "AI/ML", 792, 9))
+    c.execute("""INSERT INTO users(username,password,password_salt,full_name,role,
+                 faculty,course,specialty,rating,achievements)
                  VALUES(?,?,?,?,?,?,?,?,?,?)""",
-              ("student2", s2h, s2s, "Zulfiya Tosheva", "student", "EIQ", 2, "AI/ML", 792, 9))
+              ("student3", s3h, s3s,
+               "Bobur Nazarov", "student", "MMF", 1, "Matematika", 620, 5))
 
     # Athletes
     for fn, sp, fac, crs, lvl, mg, ms, mb, rp in [

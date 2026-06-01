@@ -70,6 +70,7 @@
             <h3>Sessiya band qilish</h3>
             {% if session.get('user_id') %}
             <form action="{{ url_for('book_session', mid=mentor.id) }}" method="POST">
+              <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
               <div class="form-group">
                 <label class="form-label">Fan / Mavzu</label>
                 <input class="form-input" name="subject" placeholder="Python, Math..." required>

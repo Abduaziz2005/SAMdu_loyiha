@@ -421,7 +421,9 @@ def register():
         if not password or len(password) < 4:
             return render_template("login.html", error="Parol kamida 4 belgi bo'lishi kerak.", tab="register")
         if not re.match(r'^[a-zA-Z0-9_]+$', username):
-            return render_template("login.html", error="Username faqat lotin harflari, raqam va _ bo'lishi kerak.", tab="register")
+            return render_template("login.html",
+                error="Username faqat lotin harflari, raqam va _ bo'lishi kerak.",
+                tab="register")
         existing = db_query("SELECT id FROM users WHERE username=?", (username,), one=True)
         if existing:
             return render_template("login.html", error="Bu username allaqachon mavjud!", tab="register")
